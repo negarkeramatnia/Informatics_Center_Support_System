@@ -6,7 +6,9 @@ use Inertia\Inertia;
 Route::get('/', function () {
     return view('welcome');
 });
-
+Route::get('/', function () {
+    return view('welcome-2');
+});
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
