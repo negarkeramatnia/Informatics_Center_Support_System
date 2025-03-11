@@ -13,8 +13,8 @@ return new class extends Migration
 {
     Schema::create('messages', function (Blueprint $table) {
         $table->id();
-        $table->foreignId('ticket_id')->constrained()->onDelete('cascade'); // Ticket the message belongs to
-        $table->foreignId('user_id')->constrained()->onDelete('cascade'); // User who sent the message
+        $table->foreignId('ticket_id')->constrained()->onDelete('cascade');
+        $table->foreignId('user_id')->constrained()->onDelete('cascade');
         $table->text('message');
         $table->timestamps();
     });
