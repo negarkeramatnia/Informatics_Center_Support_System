@@ -10,6 +10,12 @@ Route::get('/', function () {
 //     return view('home');
 // });
 
+Route::resource('messages', MessageController::class);
+Route::resource('assets', AssetController::class);
+Route::resource('message-reads', MessageReadController::class);
+Route::resource('tickets', TicketController::class);
+Route::resource('users', ProfileController::class);
+
 
 Route::get('/dashboard', function () {
     return view('dashboard');
