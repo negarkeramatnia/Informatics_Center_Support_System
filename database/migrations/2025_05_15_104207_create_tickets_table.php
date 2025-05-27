@@ -14,6 +14,7 @@ return new class extends Migration
     Schema::create('tickets', function (Blueprint $table) {
         $table->id();
         $table->foreignId('user_id')->constrained()->onDelete('cascade');
+        $table->foreignId('assigned_to')->nullable()->constrained('users')->onDelete('set null');
         $table->unsignedBigInteger('asset_id')->nullable();
         $table->foreign('asset_id')->references('id')->on('assets')->onDelete('set null');
         $table->string('title');

@@ -11,6 +11,7 @@ class Ticket extends Model
 
     protected $fillable = [
         'user_id',
+        'asset_id',
         'assigned_to',
         'title',
         'description',
