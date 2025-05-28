@@ -56,11 +56,12 @@
                         class="input-focus w-full px-4 py-3 border border-gray-300 rounded-lg">
                 </div>
 
-                <!-- username -->
+                <!-- Username -->
                 <div>
                     <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
                     <input type="text" id="username" name="username" required
-                        class="input-focus w-full px-4 py-3 border border-gray-300 rounded-lg">
+                        class="input-focus w-full px-4 py-3 border border-gray-300 rounded-lg"
+                        placeholder="Enter a unique username">
                 </div>
 
                 <!-- Phone -->
