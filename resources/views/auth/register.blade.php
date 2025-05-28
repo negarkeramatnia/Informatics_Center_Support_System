@@ -64,6 +64,14 @@
                         placeholder="Enter a unique username">
                 </div>
 
+                <!-- Email -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" id="email" name="email"
+                        class="input-focus w-full px-4 py-3 border border-gray-300 rounded-lg"
+                        placeholder="Enter a unique email">
+                </div>
+
                 <!-- Phone -->
                 <div>
                     <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
