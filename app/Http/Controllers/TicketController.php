@@ -4,9 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Ticket;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TicketController extends Controller
 {
+    public function create()
+    {
+        return view('tickets.create');
+    }
     public function index()
     {
         return Ticket::with(['user', 'assignedUser'])->latest()->get();
@@ -55,5 +60,11 @@ class TicketController extends Controller
         $ticket->delete();
 
         return response()->json(null, 204);
+    }
+
+    public function myTickets()
+    {
+        $myTickets = Ticket::where('user_id', Auth::id())->latest()->paginate(10);
+        return view('tickets.my-tickets', ['tickets' => $myTickets]);
     }
 }
