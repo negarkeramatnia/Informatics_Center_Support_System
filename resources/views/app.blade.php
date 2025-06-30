@@ -7,16 +7,13 @@
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
-        <!-- Fonts & Icons -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
         <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
 
-        <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-        <!-- Custom Styles for the New Layout -->
         <style>
-            body { font-family: 'Vazirmatn', sans-serif !important; }
+            body { font-family: 'Vazirmatn', sans-serif !important; background-color: #f4f6f9; }
             .sidebar { transition: all 0.3s ease-in-out; }
             .main-content { transition: margin-right 0.3s ease-in-out; }
             .sidebar.collapsed { width: 5.5rem; }
@@ -39,11 +36,10 @@
         </style>
         @stack('styles')
     </head>
-    <body class="font-sans antialiased bg-gray-100 dark:bg-gray-900">
+    <body class="font-sans antialiased">
         <div class="flex h-screen overflow-hidden">
-            <!-- Sidebar -->
-            <aside id="sidebar" class="sidebar bg-white text-gray-800 w-72 shadow-lg flex flex-col flex-shrink-0 dark:bg-gray-800 dark:text-gray-200">
-                <div class="p-4 flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
+            <aside id="sidebar" class="sidebar bg-white text-gray-800 w-72 shadow-lg flex flex-col flex-shrink-0">
+                <div class="p-4 flex items-center justify-between border-b">
                     <a href="{{ route('dashboard') }}" class="flex items-center">
                         <img src="{{ asset('images/company-logo.png') }}" alt="Company Logo" class="h-10 w-10">
                         <span class="logo-text font-bold text-xl mr-3">مرکز انفورماتیک</span>
@@ -52,13 +48,13 @@
                         <i class="fas fa-bars"></i>
                     </button>
                 </div>
-                
-                <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+
+                <div class="p-4 border-b">
                     <div class="flex items-center user-info-container">
                         <img src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) . '&color=3B82F6&background=DBEAFE' }}" alt="User" class="w-12 h-12 rounded-full object-cover">
                         <div class="mr-3 sidebar-text">
-                            <div class="font-medium dark:text-white">{{ Auth::user()->name }}</div>
-                            <div class="text-sm text-gray-500 dark:text-gray-400 user-role">{{ __(ucfirst(Auth::user()->role)) }}</div>
+                            <div class="font-medium">{{ Auth::user()->name }}</div>
+                            <div class="text-sm text-gray-500 user-role">{{ __(ucfirst(Auth::user()->role)) }}</div>
                         </div>
                     </div>
                 </div>
@@ -67,10 +63,10 @@
                     @include('layouts.navigation')
                 </nav>
 
-                 <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+                 <div class="p-4 border-t">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <a href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();" class="menu-item flex items-center w-full px-4 py-3 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-lg dark:text-gray-400 dark:hover:bg-red-900/50 dark:hover:text-red-400">
+                        <a href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();" class="menu-item flex items-center w-full px-4 py-3 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-lg">
                             <i class="fas fa-sign-out-alt ml-3"></i>
                             <span class="sidebar-text">خروج از سیستم</span>
                         </a>
@@ -80,23 +76,20 @@
 
             <div id="sidebar-overlay" class="sidebar-overlay md:hidden"></div>
 
-            <!-- Main Content -->
-            <div id="mainContent" class="main-content flex-1 flex flex-col overflow-auto" style="margin-right: 18rem;">
-                <!-- Header (The part that was causing the black space is now fixed) -->
-                @if (isset($header))
-                    <header class="bg-white dark:bg-gray-800 shadow sticky top-0 z-10">
-                        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-                            {{-- Mobile Toggle --}}
-                            <button id="mobileToggleSidebar" class="md:hidden text-gray-500 hover:text-gray-700 mr-4">
-                                <i class="fas fa-bars text-xl"></i>
-                            </button>
-                            {{ $header }}
-                             <div class="w-8 md:hidden"></div> <!-- Spacer for mobile header alignment -->
-                        </div>
-                    </header>
-                @endif
+            <header class="bg-white shadow sticky top-0 z-10">
+                <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+                    <button id="mobileToggleSidebar" class="md:hidden text-gray-500 hover:text-gray-700 mr-4">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    @if (isset($header))
+                        {{ $header }}
+                    @endif
+                     <div class="w-8 md:hidden"></div>
+                    </div>
+                </header>
                 
-                <!-- Page Content -->
+            <div id="mainContent" class="main-content flex-1 flex flex-col overflow-auto">
+                
                 <main class="flex-grow p-6">
                     {{ $slot }}
                 </main>
@@ -112,10 +105,10 @@
                 const sidebarOverlay = document.getElementById('sidebar-overlay');
 
                 if (toggleSidebar) {
-                    toggleSidebar.addEventListener('click', () => {
-                        sidebar.classList.toggle('collapsed');
-                        mainContent.style.marginRight = sidebar.classList.contains('collapsed') ? '5.5rem' : '18rem';
-                    });
+                    // toggleSidebar.addEventListener('click', () => {
+                    //     sidebar.classList.toggle('collapsed');
+                    //     mainContent.style.marginRight = sidebar.classList.contains('collapsed') ? '2.5rem' : '2.5rem';
+                    // });
                 }
                 if (mobileToggleSidebar) mobileToggleSidebar.addEventListener('click', () => {
                     sidebar.classList.add('open');

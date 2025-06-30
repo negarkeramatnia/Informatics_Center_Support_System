@@ -79,17 +79,17 @@
             <div id="mainContent" class="main-content flex-1 flex flex-col overflow-auto">
                 <header class="bg-white shadow sticky top-0 z-10">
                     <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-                        {{-- Mobile Toggle --}}
                         <button id="mobileToggleSidebar" class="md:hidden text-gray-500 hover:text-gray-700 mr-4">
                             <i class="fas fa-bars text-xl"></i>
                         </button>
                         @if (isset($header))
                             {{ $header }}
                         @endif
+                         <div class="w-8 md:hidden"></div>
                     </div>
                 </header>
                 
-                <main class="flex-grow">
+                <main class="flex-grow p-6">
                     {{ $slot }}
                 </main>
             </div>
@@ -106,7 +106,7 @@
                 if (toggleSidebar) {
                     toggleSidebar.addEventListener('click', () => {
                         sidebar.classList.toggle('collapsed');
-                        mainContent.style.marginRight = sidebar.classList.contains('collapsed') ? '5.5rem' : '18rem';
+                        mainContent.style.marginRight = sidebar.classList.contains('collapsed') ? '2.5rem' : '2.5rem';
                     });
                 }
                 if (mobileToggleSidebar) mobileToggleSidebar.addEventListener('click', () => {

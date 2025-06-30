@@ -8,10 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class TicketController extends Controller
 {
-    public function create()
-    {
-        return view('tickets.create');
-    }
+    public function create() { return view('tickets.create'); }
 
     public function store(Request $request)
     {
@@ -34,10 +31,9 @@ class TicketController extends Controller
         $myTickets = Ticket::where('user_id', Auth::id())->latest()->paginate(10);
         return view('tickets.my-tickets', ['tickets' => $myTickets]);
     }
-    
+
     public function show(Ticket $ticket)
     {
-        // Add authorization here later if needed
         return view('tickets.show', ['ticket' => $ticket]);
     }
 }
