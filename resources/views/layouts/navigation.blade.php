@@ -1,7 +1,6 @@
 <div class="p-2">
     <div class="text-xs uppercase text-gray-500 dark:text-gray-400 font-semibold px-4 py-2 sidebar-text">منوی اصلی</div>
 
-    {{-- Dashboard Link --}}
     <a href="{{ route('dashboard') }}" class="menu-item flex items-center px-4 py-3 rounded-lg mx-2 mt-1 {{ request()->routeIs('dashboard') ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300' : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700' }}">
         <i class="fas fa-tachometer-alt ml-3"></i>
         <span class="sidebar-text">داشبورد</span>
@@ -25,7 +24,6 @@
         <a href="{{ url('/tickets') }}" class="menu-item flex items-center px-4 py-3 rounded-lg mx-2 mt-1 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
             <i class="fas fa-inbox ml-3"></i>
             <span class="sidebar-text">همه درخواست‌ها</span>
-            {{-- You can add a badge for new tickets here later --}}
         </a>
     @endif
 

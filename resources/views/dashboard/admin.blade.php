@@ -1,0 +1,5 @@
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="dashboard-card p-6 flex items-center"><i class="fas fa-users text-3xl text-purple-500 ml-5"></i><div><p class="text-gray-500 text-sm font-medium">کل کاربران</p><p class="text-3xl font-bold text-gray-800">{{ $adminData['total_users'] ?? 0 }}</p></div></div>
+    <div class="dashboard-card p-6 flex items-center"><i class="fas fa-folder-open text-3xl text-red-500 ml-5"></i><div><p class="text-gray-500 text-sm font-medium">درخواست‌های باز</p><p class="text-3xl font-bold text-gray-800">{{ $adminData['total_open_tickets'] ?? 0 }}</p></div></div>
+    <div class="dashboard-card p-6 flex items-center"><i class="fas fa-microchip text-3xl text-blue-500 ml-5"></i><div><p class="text-gray-500 text-sm font-medium">کل قطعات</p><p class="text-3xl font-bold text-gray-800">{{ $adminData['total_assets'] ?? 0 }}</p></div></div>
+</div>
