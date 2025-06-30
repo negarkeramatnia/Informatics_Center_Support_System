@@ -1,47 +1,143 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @class(['dark' => ($appearance ?? 'system') == 'dark'])>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="rtl">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        {{-- Inline script to detect system dark mode preference and apply it immediately --}}
-        <script>
-            (function() {
-                const appearance = '{{ $appearance ?? "system" }}';
+        <title>{{ config('app.name', 'Laravel') }}</title>
 
-                if (appearance === 'system') {
-                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+        <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
 
-                    if (prefersDark) {
-                        document.documentElement.classList.add('dark');
-                    }
-                }
-            })();
-        </script>
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-        {{-- Inline style to set the HTML background color based on our theme in app.css --}}
         <style>
-            html {
-                background-color: oklch(1 0 0);
-            }
+            body { font-family: 'Vazirmatn', sans-serif !important; }
+            .sidebar { transition: all 0.3s ease-in-out; }
+            .main-content { transition: margin-right 0.3s ease-in-out; }
+            .sidebar.collapsed { width: 5.5rem; }
+            .sidebar.collapsed .sidebar-text,
+            .sidebar.collapsed .logo-text,
+            .sidebar.collapsed .user-role { display: none; }
+            .sidebar.collapsed .menu-item { justify-content: center; }
+            .sidebar.collapsed .menu-item .ml-auto { display: none; }
+            .sidebar.collapsed .user-info-container > div { margin-right: 0; }
+            .sidebar.collapsed .user-info-container { justify-content: center; }
 
-            html.dark {
-                background-color: oklch(0.145 0 0);
+            @media (max-width: 768px) {
+                .sidebar { position: fixed; right: -288px; z-index: 40; }
+                .sidebar.open { right: 0; }
+                .main-content { margin-right: 0 !important; }
+                .sidebar-overlay {
+                    position: fixed; inset: 0; background-color: rgba(0,0,0,0.5);
+                    z-index: 30; opacity: 0; visibility: hidden; transition: opacity 0.3s ease-in-out;
+                }
+                .sidebar-overlay.open { opacity: 1; visibility: visible; }
             }
         </style>
-
-        <title inertia>{{ config('app.name', 'Laravel') }}</title>
-
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
-
-        @routes
-        @viteReactRefresh
-        @vite(['resources/js/app.tsx'])
-        @inertiaHead
+        @stack('styles')
     </head>
-    <body class="font-sans antialiased">
-        <!-- @inertia -->
-        @yield('content')
+    <body class="font-sans antialiased bg-gray-100 dark:bg-gray-900">
+        <div class="flex h-screen overflow-hidden">
+            <aside id="sidebar" class="sidebar bg-white text-gray-800 w-72 shadow-lg flex flex-col flex-shrink-0 dark:bg-gray-800 dark:text-gray-200">
+                <div class="p-4 flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
+                    <a href="{{ route('dashboard') }}" class="flex items-center">
+                        <img src="{{ asset('images/company-logo.png') }}" alt="Company Logo" class="h-10 w-10">
+                        <span class="logo-text font-bold text-xl mr-3">مرکز انفورماتیک</span>
+                    </a>
+                    <button id="toggleSidebar" class="text-gray-500 hover:text-gray-700 hidden md:block">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+                
+                <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center user-info-container">
+                        <img src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) . '&color=7F9CF5&background=EBF4FF' }}" alt="User" class="w-12 h-12 rounded-full object-cover">
+                        <div class="mr-3 sidebar-text">
+                            <div class="font-medium dark:text-white">{{ Auth::user()->name }}</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 user-role">{{ __(ucfirst(Auth::user()->role)) }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <nav class="flex-1 overflow-y-auto">
+                    @include('layouts.navigation')
+                </nav>
+
+                 <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <a href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();" class="menu-item flex items-center w-full px-4 py-3 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-lg dark:text-gray-400 dark:hover:bg-red-900/50 dark:hover:text-red-400">
+                            <i class="fas fa-sign-out-alt ml-3"></i>
+                            <span class="sidebar-text">خروج از سیستم</span>
+                        </a>
+                    </form>
+                </div>
+            </aside>
+
+            <div id="sidebar-overlay" class="sidebar-overlay md:hidden"></div>
+
+            <div id="mainContent" class="main-content flex-1 flex flex-col overflow-auto" style="margin-right: 18rem;">
+                <header class="bg-white dark:bg-gray-800 shadow sticky top-0 z-10">
+                    <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+                        {{-- Mobile Toggle --}}
+                        <button id="mobileToggleSidebar" class="md:hidden text-gray-500 hover:text-gray-700 mr-4">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                        {{-- Page Header Slot --}}
+                         @if (isset($header))
+                            {{ $header }}
+                        @endif
+                    </div>
+                </header>
+                
+                <x-app-layout>
+                <div>
+                    <h1>My Page Title</h1>
+                    <p>This content will be placed inside the $slot.</p>
+                </div>
+            </x-app-layout>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const toggleSidebar = document.getElementById('toggleSidebar');
+                const mobileToggleSidebar = document.getElementById('mobileToggleSidebar');
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.getElementById('mainContent');
+                const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+                const collapseSidebar = () => {
+                    sidebar.classList.add('collapsed');
+                    mainContent.style.marginRight = '5.5rem';
+                };
+
+                const expandSidebar = () => {
+                    sidebar.classList.remove('collapsed');
+                    mainContent.style.marginRight = '18rem';
+                };
+
+                const openMobileSidebar = () => {
+                    sidebar.classList.add('open');
+                    sidebarOverlay.classList.add('open');
+                };
+
+                const closeMobileSidebar = () => {
+                    sidebar.classList.remove('open');
+                    sidebarOverlay.classList.remove('open');
+                };
+
+                if (toggleSidebar) {
+                    toggleSidebar.addEventListener('click', () => {
+                        sidebar.classList.contains('collapsed') ? expandSidebar() : collapseSidebar();
+                    });
+                }
+
+                if (mobileToggleSidebar) mobileToggleSidebar.addEventListener('click', openMobileSidebar);
+                if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeMobileSidebar);
+            });
+        </script>
     </body>
 </html>
