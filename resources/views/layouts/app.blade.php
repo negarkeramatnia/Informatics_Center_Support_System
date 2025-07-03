@@ -22,7 +22,17 @@
             .sidebar.collapsed .menu-item .ml-auto { display: none; }
             .sidebar.collapsed .user-info-container > div { margin-right: 0; }
             .sidebar.collapsed .user-info-container { justify-content: center; }
-
+            .sidebar.collapsed .menu-item i { margin-left: 0;}
+            .sidebar.collapsed .menu-item i { margin-left: 0 !important;}
+            .sidebar.collapsed #toggleSidebar {
+                justify-content: center;
+                width: 100%;
+                display: flex;
+                align-items: center;
+            }
+            .sidebar.collapsed #toggleSidebarIcon {
+                margin: 0 !important;
+            }
             @media (max-width: 768px) {
                 .sidebar { position: fixed; right: -288px; z-index: 40; }
                 .sidebar.open { right: 0; }
@@ -39,15 +49,17 @@
     <body class="font-sans antialiased">
         <div class="flex h-screen overflow-hidden">
             <aside id="sidebar" class="sidebar bg-white text-gray-800 w-72 shadow-lg flex flex-col flex-shrink-0">
-                <div class="p-4 flex items-center justify-between border-b">
-                    <a href="{{ route('dashboard') }}" class="flex items-center">
-                        <img src="{{ asset('images/company-logo.png') }}" alt="Company Logo" class="h-10 w-10">
-                        <span class="logo-text font-bold text-xl mr-3">مرکز انفورماتیک</span>
-                    </a>
+                <div class="p-4 flex items-center justify-between border-b h-16">
+                    <div class="flex items-center sidebar-text">
+                        <a href="{{ route('dashboard') }}" class="flex items-center">
+                            <img src="{{ asset('images/company-logo.png') }}" alt="Company Logo" class="h-10 w-10">
+                            <span class="logo-text font-bold text-xl mr-3">مرکز انفورماتیک</span>
+                        </a>
+                    </div>
                     <button id="toggleSidebar" class="text-gray-500 hover:text-gray-700 hidden md:block">
-                        <i class="fas fa-bars"></i>
+                        <i id="toggleSidebarIcon" class="fas fa-bars"></i>
                     </button>
-                </div>
+                    </div>
                 
                 <div class="p-4 border-b">
                     <div class="flex items-center user-info-container">
@@ -106,7 +118,7 @@
                 if (toggleSidebar) {
                     toggleSidebar.addEventListener('click', () => {
                         sidebar.classList.toggle('collapsed');
-                        mainContent.style.marginRight = sidebar.classList.contains('collapsed') ? '2.5rem' : '2.5rem';
+                        mainContent.style.marginRight = sidebar.classList.contains('collapsed');
                     });
                 }
                 if (mobileToggleSidebar) mobileToggleSidebar.addEventListener('click', () => {

@@ -21,7 +21,7 @@
 
     <div dir="rtl">
         @if (session('success'))
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mb-6">
+            <div class="mb-6">
                 <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md shadow-md" role="alert">
                     <p>{{ session('success') }}</p>
                 </div>
