@@ -1,49 +1,101 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('ثبت درخواست جدید') }}
         </h2>
     </x-slot>
 
-    <div class="py-12" dir="rtl">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 md:p-8 text-gray-900 dark:text-gray-100">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
-                        لطفا جزئیات درخواست خود را وارد نمایید.
-                    </h3>
+    @pushOnce('styles')
+    <style>
+        .form-input-custom {
+            background-color: #fff;
+            border: 1px solid #d1d5db; /* gray-300 */
+            border-radius: 0.375rem;
+            padding: 0.5rem 0.75rem;
+            width: 100%;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-input-custom:focus {
+            outline: none;
+            border-color: #e91e63; /* Pink */
+            box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.2);
+        }
+        .btn-primary-custom {
+            background-color: #e91e63; /* Pink */
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            transition: background-color 0.2s;
+            border: none;
+        }
+        .btn-primary-custom:hover { 
+            background-color: #c2185b; /* Darker Pink */
+        }
+        .btn-secondary-custom {
+            background-color: #e5e7eb; /* gray-200 */
+            color: #374151; /* gray-700 */
+            padding: 0.6rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            transition: background-color 0.2s;
+            border: 1px solid #d1d5db;
+        }
+        .btn-secondary-custom:hover { 
+            background-color: #d1d5db; /* gray-300 */
+        }
+    </style>
+    @endPushOnce
 
-                    {{-- Form to submit a new ticket --}}
+    <div class="py-12" dir="rtl">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 md:p-8 text-gray-900">
+                    <div class="border-b border-gray-200 pb-5 mb-6">
+                        <h3 class="text-xl font-bold text-gray-900">
+                            جزئیات درخواست
+                        </h3>
+                        <p class="mt-1 text-sm text-gray-600">
+                           برای تسریع در روند کار، لطفاً جزئیات درخواست خود را با دقت وارد نمایید.
+                        </p>
+                    </div>
+
                     <form method="POST" action="{{ route('tickets.store') }}">
                         @csrf
+                        <div class="space-y-6">
+                            {{-- Title --}}
+                            <div>
+                                <label for="title" class="block font-medium text-sm text-gray-700 mb-1">عنوان درخواست</label>
+                                <input id="title" class="form-input-custom" type="text" name="title" value="{{ old('title') }}" required autofocus placeholder="مثال: مشکل در اتصال به پرینتر"/>
+                                @error('title') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                            </div>
 
-                        <div class="mb-4">
-                            <label for="title" class="block font-medium text-sm text-gray-700 dark:text-gray-300">عنوان درخواست</label>
-                            <input id="title" class="block mt-1 w-full rounded-md shadow-sm border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600" type="text" name="title" value="{{ old('title') }}" required autofocus />
-                            @error('title') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                            {{-- Description --}}
+                            <div>
+                                <label for="description" class="block font-medium text-sm text-gray-700 mb-1">شرح درخواست</label>
+                                <textarea id="description" name="description" rows="6" class="form-input-custom" placeholder="جزئیات کامل مشکل یا درخواست خود را بنویسید (شامل هرگونه پیغام خطا).">{{ old('description') }}</textarea>
+                                @error('description') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                            </div>
+
+                            {{-- Priority --}}
+                            <div>
+                                <label for="priority" class="block font-medium text-sm text-gray-700 mb-1">اولویت</label>
+                                <select id="priority" name="priority" class="form-input-custom" required>
+                                    <option value="low" @if(old('priority') == 'low') selected @endif>کم</option>
+                                    <option value="medium" @if(old('priority', 'medium') == 'medium') selected @endif>متوسط</option>
+                                    <option value="high" @if(old('priority') == 'high') selected @endif>زیاد</option>
+                                </select>
+                                @error('priority') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                            </div>
                         </div>
 
-                        <div class="mb-4">
-                            <label for="description" class="block font-medium text-sm text-gray-700 dark:text-gray-300">شرح درخواست (شامل جزئیات کامل مشکل یا درخواست)</label>
-                            <textarea id="description" name="description" rows="5" class="block mt-1 w-full rounded-md shadow-sm border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ old('description') }}</textarea>
-                            @error('description') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
-                        </div>
-
-                        <div class="mb-6">
-                            <label for="priority" class="block font-medium text-sm text-gray-700 dark:text-gray-300">اولویت</label>
-                            <select id="priority" name="priority" class="block mt-1 w-full rounded-md shadow-sm border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600" required>
-                                <option value="low" @if(old('priority') == 'low') selected @endif>کم</option>
-                                <option value="medium" @if(old('priority', 'medium') == 'medium') selected @endif>متوسط</option>
-                                <option value="high" @if(old('priority') == 'high') selected @endif>زیاد</option>
-                            </select>
-                            @error('priority') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
-                        </div>
-
-                        <div class="flex items-center justify-end mt-6">
-                            <a href="{{ route('dashboard') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
+                        {{-- Action Buttons --}}
+                        <div class="flex items-center justify-end mt-8 pt-5 border-t border-gray-200">
+                            <a href="{{ route('dashboard') }}" class="btn-secondary-custom ml-4">
                                 انصراف
                             </a>
-                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:border-blue-900 focus:ring ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150 mr-4">
+                            <button type="submit" class="btn-primary-custom">
+                                <i class="fas fa-paper-plane mr-2"></i>
                                 ثبت درخواست
                             </button>
                         </div>

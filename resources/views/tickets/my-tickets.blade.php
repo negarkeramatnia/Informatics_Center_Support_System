@@ -1,40 +1,86 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('درخواست‌های من') }}
         </h2>
     </x-slot>
 
+    @pushOnce('styles')
+    <style>
+        .table-custom th { 
+            background-color: #f9fafb; /* gray-50 */
+            color: #374151; /* gray-700 */
+            font-weight: 600; 
+            text-align: right; 
+            font-size: 0.75rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.05em; 
+            padding: 0.75rem 1.5rem; 
+        }
+        .table-custom td { 
+            padding: 1rem 1.5rem; 
+            border-bottom-width: 1px; 
+            border-color: #e5e7eb; /* gray-200 */
+            vertical-align: middle; 
+            color: #374151; /* gray-700 */
+        }
+        .table-custom tbody tr:last-child td { 
+            border-bottom-width: 0; 
+        }
+        .table-custom tbody tr:hover { 
+            background-color: #f9fafb; /* gray-50 */
+        }
+        
+        .status-badge, .priority-badge { 
+            padding: 0.25em 0.75em; 
+            font-size: 0.75rem; 
+            font-weight: 600; 
+            border-radius: 9999px; 
+            display: inline-block; 
+            line-height: 1.5; 
+        }
+        
+        /* Statuses */
+        .status-pending { background-color: #fef3c7; color: #92400e; } /* Amber */
+        .status-in_progress { background-color: #dbeafe; color: #1e40af; } /* Blue */
+        .status-completed { background-color: #d1fae5; color: #065f46; } /* Green */
+
+        /* Priorities */
+        .priority-low { background-color: #dcfce7; color: #166534; } /* Green */
+        .priority-medium { background-color: #fef9c3; color: #92400e; } /* Amber */
+        .priority-high { background-color: #fee2e2; color: #991b1b; } /* Red */
+    </style>
+    @endPushOnce
+
     <div class="py-12" dir="rtl">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-0">
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead class="bg-gray-50 dark:bg-gray-700">
+                        <table class="min-w-full table-custom">
+                            <thead>
                                 <tr>
-                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">عنوان</th>
-                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">وضعیت</th>
-                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">اولویت</th>
-                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">آخرین بروزرسانی</th>
-                                    <th scope="col" class="relative px-6 py-3"><span class="sr-only">مشاهده</span></th>
+                                    <th>عنوان</th>
+                                    <th>وضعیت</th>
+                                    <th>اولویت</th>
+                                    <th>آخرین بروزرسانی</th>
+                                    <th></th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            <tbody>
                                 @forelse ($tickets as $ticket)
                                     <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ Str::limit($ticket->title, 50) }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ $ticket->status }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ $ticket->priority }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ $ticket->updated_at->diffForHumans() }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            {{-- This link will eventually go to the single ticket view --}}
-                                            <a href="#" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-200">مشاهده</a>
+                                        <td class="font-medium">{{ Str::limit($ticket->title, 50) }}</td>
+                                        <td><span class="status-badge status-{{ $ticket->status }}">{{ __($ticket->status) }}</span></td>
+                                        <td><span class="priority-badge priority-{{ $ticket->priority }}">{{ __($ticket->priority) }}</span></td>
+                                        <td class="text-sm text-gray-500">{{ $ticket->updated_at->diffForHumans() }}</td>
+                                        <td>
+                                            <a href="{{ route('tickets.show', $ticket) }}" class="text-sm text-blue-600 hover:text-blue-800 font-semibold">مشاهده</a>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
+                                        <td colspan="5" class="text-center py-10 text-gray-500">
                                             شما تاکنون درخواستی ثبت نکرده‌اید.
                                         </td>
                                     </tr>
@@ -42,9 +88,12 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="mt-4">
-                        {{ $tickets->links() }}
-                    </div>
+                    
+                    @if ($tickets->hasPages())
+                        <div class="p-4 border-t border-gray-200">
+                            {{ $tickets->links() }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
