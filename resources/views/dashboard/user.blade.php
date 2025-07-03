@@ -2,7 +2,7 @@
     <div class="lg:col-span-2">
         <div class="dashboard-card">
             <div class="dashboard-card-header flex justify-between items-center">
-                <h3 class="dashboard-card-title"><i class="fas fa-history mr-2 text-gray-400"></i>آخرین درخواست‌های شما</h3>
+                <h3 class="dashboard-card-title"><i class="fas fa-history mr-2 text-gray-400"></i> آخرین درخواست‌های شما</h3>
                 <a href="{{ url('/tickets/my') }}" class="text-sm text-blue-600 hover:underline font-medium">مشاهده همه</a>
             </div>
             <div class="overflow-x-auto">
@@ -26,7 +26,7 @@
     </div>
     <div class="lg:col-span-1">
         <div class="dashboard-card">
-             <div class="dashboard-card-header"><h3 class="dashboard-card-title"><i class="fas fa-chart-pie mr-2 text-gray-400"></i>خلاصه وضعیت</h3></div>
+             <div class="dashboard-card-header"><h3 class="dashboard-card-title"><i class="fas fa-chart-pie mr-2 text-gray-400"></i> خلاصه وضعیت</h3></div>
              <div class="p-6 space-y-4">
                 <div class="flex justify-between items-center"><span class="font-medium text-gray-600">درخواست‌های باز</span><span class="font-bold text-lg text-yellow-600">{{ $employeeData['open_tickets_count'] ?? 0 }}</span></div>
                 <div class="flex justify-between items-center"><span class="font-medium text-gray-600">درخواست‌های حل شده</span><span class="font-bold text-lg text-green-600">{{ $employeeData['resolved_tickets_count'] ?? 0 }}</span></div>

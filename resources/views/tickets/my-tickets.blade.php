@@ -8,8 +8,8 @@
     @pushOnce('styles')
     <style>
         .table-custom th { 
-            background-color: #f9fafb; /* gray-50 */
-            color: #374151; /* gray-700 */
+            background-color:rgb(226, 239, 253);
+            color: #374151;
             font-weight: 600; 
             text-align: right; 
             font-size: 0.75rem; 

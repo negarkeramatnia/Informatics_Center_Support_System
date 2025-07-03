@@ -101,7 +101,7 @@
                     </div>
                 </header>
                 
-                <main class="flex-grow p-6">
+                <main class="flex-grow">
                     {{ $slot }}
                 </main>
             </div>

@@ -105,10 +105,10 @@
                 const sidebarOverlay = document.getElementById('sidebar-overlay');
 
                 if (toggleSidebar) {
-                    // toggleSidebar.addEventListener('click', () => {
-                    //     sidebar.classList.toggle('collapsed');
-                    //     mainContent.style.marginRight = sidebar.classList.contains('collapsed') ? '2.5rem' : '2.5rem';
-                    // });
+                    toggleSidebar.addEventListener('click', () => {
+                        sidebar.classList.toggle('collapsed');
+                        mainContent.style.marginRight = sidebar.classList.contains('collapsed');
+                    });
                 }
                 if (mobileToggleSidebar) mobileToggleSidebar.addEventListener('click', () => {
                     sidebar.classList.add('open');
