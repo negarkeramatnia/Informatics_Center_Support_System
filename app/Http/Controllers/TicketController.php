@@ -8,6 +8,15 @@ use Illuminate\Support\Facades\Auth;
 
 class TicketController extends Controller
 {
+    public function index()
+    {
+        // FIX: Added this method to fetch all tickets for the admin panel.
+        // Eager-load the user to prevent N+1 query issues.
+        $tickets = Ticket::with('user')->latest()->paginate(15);
+
+        return view('tickets.index', compact('tickets'));
+    }
+    
     public function create() { return view('tickets.create'); }
 
     public function store(Request $request)

@@ -37,9 +37,15 @@ class DashboardController extends Controller
                 'total_users' => User::count(),
                 'total_open_tickets' => Ticket::whereIn('status', ['pending', 'in_progress'])->count(),
                 'total_assets' => Asset::count(),
-            ];
+                'unassigned_tickets' => Ticket::whereNull('assigned_to')->where('status', 'pending')->count(),
+                'recent_unassigned_tickets' => Ticket::with('user:id,name')
+                                                ->whereNull('assigned_to')
+                                                ->where('status', 'pending')
+                                                ->latest()
+                                                ->take(5)
+                                                ->get(),
+                ];
         }
-
         return view('dashboard', $viewData);
     }
 }

@@ -10,7 +10,8 @@ class AssetController extends Controller
 {
     public function index()
     {
-        return Asset::with('user')->get();
+        $assets = Asset::latest()->paginate(15);
+        return view('admin.assets.index', compact('assets'));
     }
 
     public function store(Request $request)
