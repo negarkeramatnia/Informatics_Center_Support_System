@@ -8,11 +8,24 @@ use Illuminate\Support\Facades\Auth;
 
 class TicketController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // FIX: Added this method to fetch all tickets for the admin panel.
-        // Eager-load the user to prevent N+1 query issues.
-        $tickets = Ticket::with('user')->latest()->paginate(15);
+        // Start building the query
+        $query = Ticket::with('user')->latest();
+
+        // Apply filters based on the request
+        if ($request->has('filter')) {
+            switch ($request->filter) {
+                case 'open':
+                    $query->whereIn('status', ['pending', 'in_progress']);
+                    break;
+                case 'unassigned':
+                    $query->whereNull('assigned_to')->where('status', 'pending');
+                    break;
+            }
+        }
+
+        $tickets = $query->paginate(15);
 
         return view('tickets.index', compact('tickets'));
     }
