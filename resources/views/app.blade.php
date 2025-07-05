@@ -10,10 +10,11 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
         <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
 
+        {{-- This will load all styles from resources/css/app.css --}}
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+        {{-- Styles specific to the sidebar layout --}}
         <style>
-            body { font-family: 'Vazirmatn', sans-serif !important; background-color: #f4f6f9; }
             .sidebar { transition: all 0.3s ease-in-out; }
             .main-content { transition: margin-right 0.3s ease-in-out; }
             .sidebar.collapsed { width: 5.5rem; }
@@ -51,7 +52,7 @@
 
                 <div class="p-4 border-b">
                     <div class="flex items-center user-info-container">
-                        <img src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) . '&color=3B82F6&background=DBEAFE' }}" alt="User" class="w-12 h-12 rounded-full object-cover">
+                        <img src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) . '&color=16A34A&background=D1FAE5' }}" alt="User" class="w-12 h-12 rounded-full object-cover">
                         <div class="mr-3 sidebar-text">
                             <div class="font-medium">{{ Auth::user()->name }}</div>
                             <div class="text-sm text-gray-500 user-role">{{ __(ucfirst(Auth::user()->role)) }}</div>
@@ -64,14 +65,14 @@
                 </nav>
 
                  <div class="p-4 border-t">
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <a href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();" class="menu-item flex items-center w-full px-4 py-3 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-lg">
-                            <i class="fas fa-sign-out-alt ml-3"></i>
-                            <span class="sidebar-text">خروج از سیستم</span>
-                        </a>
-                    </form>
-                </div>
+                     <form method="POST" action="{{ route('logout') }}">
+                         @csrf
+                         <a href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();" class="menu-item flex items-center w-full px-4 py-3 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-lg">
+                             <i class="fas fa-sign-out-alt ml-3"></i>
+                             <span class="sidebar-text">خروج از سیستم</span>
+                         </a>
+                     </form>
+                 </div>
             </aside>
 
             <div id="sidebar-overlay" class="sidebar-overlay md:hidden"></div>
@@ -120,5 +121,6 @@
                 });
             });
         </script>
+        @stack('scripts')
     </body>
 </html>

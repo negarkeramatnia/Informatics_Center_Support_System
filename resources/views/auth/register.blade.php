@@ -193,8 +193,8 @@
                     </div>
 
                     <div>
-                        <label for="phone" class="form-label">شماره تلفن (اختیاری)</label>
-                        <input type="text" id="phone" name="phone" value="{{ old('phone') }}"
+                        <label for="phone" class="form-label">شماره تلفن </label>
+                        <input type="text" id="phone" name="phone" value="{{ old('phone') }}" required
                                class="form-input ltr" placeholder="مثال: 09123456789">
                         @error('phone') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                     </div>
