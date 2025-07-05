@@ -3,17 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ticket;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class TicketController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): View
     {
-        // Start building the query
         $query = Ticket::with('user')->latest();
 
-        // Apply filters based on the request
         if ($request->has('filter')) {
             switch ($request->filter) {
                 case 'open':
@@ -26,7 +26,6 @@ class TicketController extends Controller
         }
 
         $tickets = $query->paginate(15);
-
         return view('tickets.index', compact('tickets'));
     }
     
@@ -34,28 +33,54 @@ class TicketController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'description' => 'required|string',
             'priority' => 'required|in:low,medium,high',
         ]);
 
-        $validated['user_id'] = Auth::id();
-        $validated['status'] = 'pending';
+        Auth::user()->tickets()->create([
+            'title' => $request->title,
+            'description' => $request->description,
+            'priority' => $request->priority,
+            'status' => 'pending',
+        ]);
 
-        Ticket::create($validated);
-
-        return redirect()->route('dashboard')->with('success', 'درخواست شما با موفقیت ثبت شد.');
+        return redirect()->route('tickets.my')->with('success', 'درخواست شما با موفقیت ثبت شد.');
     }
 
+    
     public function myTickets()
     {
         $myTickets = Ticket::where('user_id', Auth::id())->latest()->paginate(10);
         return view('tickets.my-tickets', ['tickets' => $myTickets]);
     }
 
-    public function show(Ticket $ticket)
+    public function show(Ticket $ticket): View
     {
-        return view('tickets.show', ['ticket' => $ticket]);
+        $supportUsers = User::where('role', 'support')->get();
+        return view('tickets.show', compact('ticket', 'supportUsers'));
+    }
+
+    public function assign(Request $request, Ticket $ticket)
+    {
+        if (Auth::user()->role !== 'admin') {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $request->validate([
+            'assigned_to' => 'required|exists:users,id',
+        ]);
+
+        $supportUser = User::find($request->assigned_to);
+        if ($supportUser->role !== 'support') {
+            return back()->with('error', 'کاربر انتخاب شده عضو تیم پشتیبانی نیست.');
+        }
+
+        $ticket->assigned_to = $request->assigned_to;
+        $ticket->status = 'in_progress';
+        $ticket->save();
+
+        return redirect()->route('tickets.show', $ticket)->with('success', 'درخواست با موفقیت به ' . $supportUser->name . ' ارجاع داده شد.');
     }
 }

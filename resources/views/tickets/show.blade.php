@@ -90,6 +90,47 @@
                                 </dl>
                             </div>
                         </div>
+                        {{-- ASSIGNMENT CARD (Only for Admins) --}}
+                        @if(Auth::user()->role === 'admin')
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h4 class="font-bold text-lg mb-4">ارجاع درخواست</h4>
+                            
+                            @if ($ticket->assignedTo)
+                                <div class="mb-4 p-3 bg-blue-50 rounded-md text-sm">
+                                    <p class="font-semibold text-blue-800">ارجاع شده به:</p>
+                                    <p class="text-gray-700">{{ $ticket->assignedTo->name }}</p>
+                                </div>
+                            @else
+                                <div class="mb-4 p-3 bg-yellow-50 rounded-md text-sm">
+                                    <p class="font-semibold text-yellow-800">این درخواست هنوز ارجاع داده نشده است.</p>
+                                </div>
+                            @endif
+
+                            <form action="{{ route('tickets.assign', $ticket) }}" method="POST">
+                                @csrf
+                                <div>
+                                    <label for="assigned_to" class="block font-medium text-sm text-gray-700">ارجاع به کارشناس:</label>
+                                    <select id="assigned_to" name="assigned_to" class="form-input-custom mt-1 block w-full">
+                                        <option value="">-- انتخاب کارشناس --</option>
+                                        @foreach($supportUsers as $supportUser)
+                                            <option value="{{ $supportUser->id }}" {{ $ticket->assigned_to == $supportUser->id ? 'selected' : '' }}>
+                                                {{ $supportUser->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('assigned_to')
+                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div class="mt-4">
+                                    <button type="submit" class="btn-primary-custom w-full flex items-center justify-center">
+                                        <i class="fas fa-user-check mr-2"></i>
+                                        ذخیره ارجاع
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        @endif
                     </div>
 
                 </div>

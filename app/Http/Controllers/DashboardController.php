@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Ticket;
 use App\Models\User;
 use App\Models\Asset;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -25,11 +26,18 @@ class DashboardController extends Controller
             ];
         } 
         elseif ($user->role === 'support') {
+            $viewName = 'dashboard.support';
+            $myTickets = Ticket::where('assigned_to', $user->id);
+            $myActiveTickets = Ticket::where('assigned_to', $user->id)->whereIn('status', ['pending', 'in_progress']);
+
             $viewData['supportData'] = [
-                'new_tickets_count' => Ticket::where('status', 'pending')->count(),
-                'assigned_to_me_count' => Ticket::where('assigned_to', $user->id)->whereIn('status', ['pending', 'in_progress'])->count(),
-                'resolved_today_count' => Ticket::where('status', 'completed')->whereDate('updated_at', today())->count(),
-                'new_high_priority_tickets' => Ticket::with('user:id,name')->where('status', 'pending')->where('priority', 'high')->latest()->take(5)->get(),
+                'my_active_tickets_count' => $myActiveTickets->count(),
+                'high_priority_count' => (clone $myActiveTickets)->where('priority', 'high')->count(),
+                'completed_last_week' => (clone $myTickets)->where('status', 'completed')
+                                             ->where('updated_at', '>=', Carbon::now()->subWeek())
+                                             ->count(),
+                'avg_response_time' => 'N/A', // Placeholder for now
+                'my_active_tickets_list' => (clone $myActiveTickets)->with('user:id,name')->latest('updated_at')->take(10)->get(),
             ];
         } 
         elseif ($user->role === 'admin') {
