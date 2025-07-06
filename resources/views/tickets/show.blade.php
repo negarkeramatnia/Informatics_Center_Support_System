@@ -1,25 +1,28 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
+            {{-- Group for Title and Subtitle --}}
             <div>
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ $ticket->title }}</h2>
                 <p class="text-sm text-gray-500 mt-1">ایجاد شده توسط {{ $ticket->user->name }} در {{ $ticket->jalali_created_at }}</p>
             </div>
+
+            {{-- Group for All Action Buttons --}}
             <div class="flex items-center gap-x-4">
                 <a href="{{ route('dashboard') }}" class="btn-secondary-custom">بازگشت به داشبورد</a>
-                <!-- @if(Auth::id() === $ticket->user_id || Auth::user()->role === 'admin')
-                    <a href="{{ route('tickets.edit', $ticket) }}" class="btn-primary-custom"><i class="fas fa-edit ml-2"></i>ویرایش</a>
-                @endif -->
-            </div>
-                <div class="flex items-center gap-x-4">                
-                {{-- Show Edit button only if ticket is not completed --}}
+
+                {{-- Show Edit button if ticket is not completed and user is authorized --}}
                 @if($ticket->status !== 'completed' && (Auth::id() === $ticket->user_id || Auth::user()->role === 'admin'))
                     <a href="{{ route('tickets.edit', $ticket) }}" class="btn-primary-custom"><i class="fas fa-edit ml-2"></i>ویرایش</a>
                 @endif
-
-                {{-- Show Complete button only if ticket is not completed --}}
                 @if($ticket->status !== 'completed')
-                    @if(in_array(Auth::user()->role, ['admin', 'support']) || Auth::id() === $ticket->user_id)
+                    {{-- Button for the TICKET CREATOR (opens rating modal) --}}
+                    @if(Auth::id() === $ticket->user_id)
+                        <button type="button" x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-ticket-completion')" class="btn-success-custom">
+                            <i class="fas fa-check-circle ml-2"></i>تکمیل و امتیازدهی
+                        </button>
+                    {{-- Button for ADMIN or SUPPORT (direct completion) --}}
+                    @elseif(in_array(Auth::user()->role, ['admin', 'support']))
                         <form action="{{ route('tickets.complete', $ticket) }}" method="POST" onsubmit="return confirm('آیا از تکمیل کردن این درخواست اطمینان دارید؟');">
                             @csrf
                             <button type="submit" class="btn-success-custom">
@@ -37,6 +40,8 @@
     <style>
         .btn-secondary-custom { background-color: #e5e7eb; color: #374151; padding: 0.6rem 1.2rem; border-radius: 0.5rem; font-weight: 600; transition: background-color 0.2s; border: 1px solid #d1d5db; text-decoration: none; }
         .btn-secondary-custom:hover { background-color: #d1d5db; }
+        .btn-success-custom { background-color: #22c55e; color: white; padding: 0.6rem 1.2rem; border-radius: 0.5rem; font-weight: 600; transition: background-color 0.2s; border: none; display: flex; align-items: center; cursor: pointer; }
+        .btn-success-custom:hover { background-color: #16a34a; }
         .workflow-step { display: flex; align-items: flex-start; }
         .workflow-step .icon { display: flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; border-radius: 9999px; }
         .workflow-step .line { flex-grow: 1; width: 2px; margin-right: 1.125rem; }
@@ -48,21 +53,10 @@
         .message-card { display: flex; align-items: flex-start; }
         .message-card:not(:last-child) { border-bottom: 1px solid #e5e7eb; padding-bottom: 1.5rem; margin-bottom: 1.5rem; }
         .message-author-avatar { width: 3rem; height: 3rem; border-radius: 9999px; object-fit: cover; margin-left: 1rem; }
-                .btn-secondary-custom { background-color: #e5e7eb; color: #374151; padding: 0.6rem 1.2rem; border-radius: 0.5rem; font-weight: 600; transition: background-color 0.2s; border: 1px solid #d1d5db; text-decoration: none; }
-        .btn-secondary-custom:hover { background-color: #d1d5db; }
-        .btn-success-custom {
-            background-color: #22c55e;
-            color: white;
-            padding: 0.6rem 1.2rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            transition: background-color 0.2s;
-            border: none;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-        }
-        .btn-success-custom:hover { background-color: #16a34a; }
+        .star-rating { display: flex; flex-direction: row-reverse; justify-content: center; }
+        .star-rating input { display: none; }
+        .star-rating label { font-size: 2.5rem; color: #d1d5db; cursor: pointer; transition: color 0.2s; }
+        .star-rating input:checked ~ label, .star-rating label:hover, .star-rating label:hover ~ label { color: #f59e0b; }
     </style>
     @endPushOnce
 
@@ -89,7 +83,6 @@
                                             <p class="font-semibold">{{ $message->user->name }}</p>
                                             <p class="text-xs text-gray-500">{{ \Morilog\Jalali\Jalalian::fromCarbon($message->created_at)->format('%d %B %Y - H:i') }}</p>
                                         </div>
-                                        {{-- FIX: Changed $message->body to $message->message --}}
                                         <p class="mt-2 text-gray-700 whitespace-pre-wrap">{{ $message->message }}</p>
                                     </div>
                                 </div>
@@ -124,29 +117,44 @@
                             $currentStatusIndex = array_search($ticket->status, $statuses);
                         @endphp
                         <div class="space-y-2">
-                            <div class="workflow-step {{ $currentStatusIndex >= 0 ? 'completed' : 'pending' }}">
-                                <div class="icon"><i class="fas fa-check"></i></div>
-                                <div class="mr-4">
-                                    <p class="font-semibold">درخواست ثبت شد</p>
-                                    <p class="text-sm text-gray-500">{{ $ticket->jalali_created_at }}</p>
-                                </div>
-                            </div>
+                            <div class="workflow-step {{ $currentStatusIndex >= 0 ? 'completed' : 'pending' }}"><div class="icon"><i class="fas fa-check"></i></div><div class="mr-4"><p class="font-semibold">درخواست ثبت شد</p><p class="text-sm text-gray-500">{{ $ticket->jalali_created_at }}</p></div></div>
                             <div class="h-8 workflow-step {{ $currentStatusIndex >= 1 ? 'completed' : 'pending' }}"><div class="line"></div></div>
-                            <div class="workflow-step {{ $currentStatusIndex >= 1 ? ($currentStatusIndex == 1 ? 'active' : 'completed') : 'pending' }}">
-                                <div class="icon"><i class="fas fa-cogs"></i></div>
-                                <div class="mr-4">
-                                    <p class="font-semibold">در حال بررسی</p>
-                                    <p class="text-sm text-gray-500">توسط {{ $ticket->assignedTo->name ?? 'پشتیبانی' }}</p>
-                                </div>
-                            </div>
+                            <div class="workflow-step {{ $currentStatusIndex >= 1 ? ($currentStatusIndex == 1 ? 'active' : 'completed') : 'pending' }}"><div class="icon"><i class="fas fa-cogs"></i></div><div class="mr-4"><p class="font-semibold">در حال بررسی</p><p class="text-sm text-gray-500">توسط {{ $ticket->assignedTo->name ?? 'پشتیبانی' }}</p></div></div>
                             <div class="h-8 workflow-step {{ $currentStatusIndex >= 2 ? 'completed' : 'pending' }}"><div class="line"></div></div>
-                            <div class="workflow-step {{ $currentStatusIndex >= 2 ? 'active' : 'pending' }}">
-                                <div class="icon"><i class="fas fa-flag-checkered"></i></div>
-                                <div class="mr-4"><p class="font-semibold">تکمیل شده</p></div>
-                            </div>
+                            <div class="workflow-step {{ $currentStatusIndex >= 2 ? 'active' : 'pending' }}"><div class="icon"><i class="fas fa-flag-checkered"></i></div><div class="mr-4"><p class="font-semibold">تکمیل شده</p></div></div>
                         </div>
                     </div>
                     
+                    {{-- Details Card --}}
+                    <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                        <h4 class="font-bold text-lg mb-4">جزئیات</h4>
+                        <dl>
+                            <div class="flex justify-between py-2 border-b">
+                                <dt class="text-gray-600">وضعیت:</dt>
+                                <dd><span class="status-badge status-{{ $ticket->status }}">{{ __($ticket->status) }}</span></dd>
+                            </div>
+                            <div class="flex justify-between py-2 border-b">
+                                <dt class="text-gray-600">اولویت:</dt>
+                                <dd><span class="priority-badge priority-{{ $ticket->priority }}">{{ __($ticket->priority) }}</span></dd>
+                            </div>
+                            <div class="flex justify-between pt-2">
+                                <dt class="text-gray-600">ارجاع به:</dt>
+                                <dd class="font-medium">{{ $ticket->assignedTo->name ?? '---' }}</dd>
+                            </div>
+                        </dl>
+                    </div>
+
+                    {{-- Display Rating if Completed --}}
+                    @if($ticket->status === 'completed' && $ticket->rating)
+                    <div class="bg-white shadow-sm sm:rounded-lg p-6 text-center">
+                        <h4 class="font-bold text-lg mb-2">امتیاز ثبت شده</h4>
+                        <div class="text-3xl text-yellow-400">
+                            @for ($i = 0; $i < $ticket->rating; $i++) &#9733; @endfor
+                            @for ($i = $ticket->rating; $i < 5; $i++) <span class="text-gray-300">&#9733;</span> @endfor
+                        </div>
+                    </div>
+                    @endif
+
                     {{-- Assignment Card --}}
                     @if(Auth::user()->role === 'admin')
                         <div class="bg-white shadow-sm sm:rounded-lg p-6">
@@ -170,4 +178,26 @@
             </div>
         </div>
     </div>
+
+    {{-- RATING MODAL (Only used by the ticket creator) --}}
+    <x-modal name="confirm-ticket-completion" focusable>
+        <form method="post" action="{{ route('tickets.complete', $ticket) }}" class="p-6 text-center">
+            @csrf
+            <i class="fas fa-award text-4xl text-yellow-400 mb-4"></i>
+            <h2 class="text-lg font-medium text-gray-900">امتیاز شما به این پشتیبانی</h2>
+            <p class="mt-1 text-sm text-gray-600">لطفا برای کمک به بهبود خدمات، به این درخواست امتیاز دهید.</p>
+            <div class="my-6 star-rating">
+                <input type="radio" id="star5" name="rating" value="5" required /><label for="star5" title="عالی">&#9733;</label>
+                <input type="radio" id="star4" name="rating" value="4" /><label for="star4" title="خوب">&#9733;</label>
+                <input type="radio" id="star3" name="rating" value="3" /><label for="star3" title="متوسط">&#9733;</label>
+                <input type="radio" id="star2" name="rating" value="2" /><label for="star2" title="ضعیف">&#9733;</label>
+                <input type="radio" id="star1" name="rating" value="1" /><label for="star1" title="خیلی ضعیف">&#9733;</label>
+            </div>
+            <x-input-error :messages="$errors->get('rating')" class="mt-2" />
+            <div class="mt-6 flex justify-center gap-x-4">
+                <x-secondary-button x-on:click="$dispatch('close')">انصراف</x-secondary-button>
+                <button type="submit" class="btn-success-custom">ثبت امتیاز و تکمیل درخواست</button>
+            </div>
+        </form>
+    </x-modal>
 </x-app-layout>

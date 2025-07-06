@@ -91,7 +91,7 @@ class TicketController extends Controller
     }
     public function complete(Request $request, Ticket $ticket)
     {
-        // Authorize: Only ticket owner, assigned support, or admin can complete.
+        // Authorization: Ensure only the owner, assigned support, or admin can complete.
         if (
             Auth::id() !== $ticket->user_id &&
             Auth::id() !== $ticket->assigned_to &&
@@ -101,11 +101,23 @@ class TicketController extends Controller
         }
 
         $ticket->status = 'completed';
+        $successMessage = 'درخواست با موفقیت تکمیل شد.';
+
+        // --- FIX: Only validate and save rating if the ticket creator is completing it ---
+        if (Auth::id() === $ticket->user_id) {
+            $request->validate([
+                'rating' => ['required', 'integer', 'min:1', 'max:5'],
+            ], [
+                'rating.required' => 'لطفاً برای تکمیل، یک امتیاز از 1 تا 5 ستاره انتخاب کنید.'
+            ]);
+            $ticket->rating = $request->rating;
+            $successMessage = 'درخواست با موفقیت تکمیل و امتیاز شما ثبت شد.';
+        }
+
         $ticket->save();
 
-        return redirect()->route('tickets.show', $ticket)->with('success', 'درخواست با موفقیت تکمیل شد.');
+        return redirect()->route('tickets.show', $ticket)->with('success', $successMessage);
     }
-    
     public function assign(Request $request, Ticket $ticket)
     {
         if (Auth::user()->role !== 'admin') {
