@@ -1,138 +1,141 @@
 <x-app-layout>
     <x-slot name="header">
+        {{-- FIX: The parent div uses flex and justify-between to position items correctly --}}
         <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('مشاهده درخواست') }} #{{ $ticket->id }}
-            </h2>
-            <a href="{{ route('tickets.my') }}" class="btn-secondary-custom">
-                <i class="fas fa-arrow-right ml-2"></i>
-                بازگشت به لیست
-            </a>
+            {{-- Group for Title and Subtitle (aligns to the right in RTL) --}}
+            <div>
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                    {{ $ticket->title }}
+                </h2>
+                <p class="text-sm text-gray-500 mt-1">
+                    ایجاد شده توسط {{ $ticket->user->name }} در {{ $ticket->jalali_created_at }}
+                </p>
+            </div>
+
+            {{-- Group for Buttons (aligns to the left in RTL) --}}
+            <div class="flex items-center gap-x-4">
+                {{-- FIX: This button now has a proper style --}}
+                <a href="{{ route('dashboard') }}" class="btn-secondary-custom">
+                    بازگشت به داشبورد
+                </a>
+                @if(Auth::id() === $ticket->user_id || Auth::user()->role === 'admin')
+                    <a href="{{ route('tickets.edit', $ticket) }}" class="btn-primary-custom">
+                        <i class="fas fa-edit ml-2"></i>
+                        ویرایش
+                    </a>
+                @endif
+            </div>
         </div>
     </x-slot>
 
     @pushOnce('styles')
-    {{-- You can reuse the badge styles from my-tickets.blade.php --}}
     <style>
-        .status-badge, .priority-badge { 
-            padding: 0.25em 0.75em; 
-            font-size: 0.8rem; 
-            font-weight: 600; 
-            border-radius: 9999px; 
-            display: inline-block; 
-            line-height: 1.5; 
-        }
-        .status-pending { background-color: #fef3c7; color: #92400e; }
-        .status-in_progress { background-color: #dbeafe; color: #1e40af; }
-        .status-completed { background-color: #d1fae5; color: #065f46; }
-        .priority-low { background-color: #dcfce7; color: #166534; }
-        .priority-medium { background-color: #fef9c3; color: #92400e; }
-        .priority-high { background-color: #fee2e2; color: #991b1b; }
+        /* --- FIX: Added style for the secondary "Back" button --- */
         .btn-secondary-custom {
-            background-color: #e5e7eb;
-            color: #374151;
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
+            background-color: #e5e7eb; /* gray-200 */
+            color: #374151; /* gray-700 */
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.5rem;
             font-weight: 600;
             transition: background-color 0.2s;
             border: 1px solid #d1d5db;
+            text-decoration: none;
         }
-        .btn-secondary-custom:hover { background-color: #d1d5db; }
+        .btn-secondary-custom:hover { 
+            background-color: #d1d5db; /* gray-300 */
+        }
+
+        /* Other styles for this page */
+        .workflow-step { display: flex; align-items: flex-start; }
+        .workflow-step .icon { display: flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; border-radius: 9999px; }
+        .workflow-step .line { flex-grow: 1; width: 2px; margin-right: 1.125rem; }
+        .workflow-step.completed .icon { background-color: #22c55e; color: white; }
+        .workflow-step.completed .line { background-color: #22c55e; }
+        .workflow-step.active .icon { background-color: #3b82f6; color: white; }
+        .workflow-step.pending .icon { background-color: #e5e7eb; color: #9ca3af; }
+        .workflow-step.pending .line { background-color: #e5e7eb; }
     </style>
     @endPushOnce
 
     <div class="py-12" dir="rtl">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    
-                    {{-- Ticket Header --}}
-                    <div class="border-b border-gray-200 pb-5 mb-5">
-                        <h3 class="text-2xl font-bold text-gray-800">{{ $ticket->title }}</h3>
-                        <div class="flex items-center mt-2 text-sm text-gray-500">
-                            <span>ایجاد شده توسط: {{ $ticket->user->name }}</span>
-                            <span class="mx-2">&bull;</span>
-                            <span>{{ $ticket->created_at->diffForHumans() }}</span>
-                        </div>
-                    </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
 
-                    {{-- Ticket Details --}}
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {{-- Main Content --}}
-                        <div class="md:col-span-2">
-                            <h4 class="font-bold text-lg mb-2">شرح درخواست</h4>
+                {{-- Main Content (Left Column) --}}
+                <div class="lg:col-span-2 space-y-8">
+                    {{-- Ticket Description --}}
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-6">
+                            <h3 class="font-bold text-lg mb-4">شرح درخواست</h3>
                             <p class="text-gray-700 whitespace-pre-wrap leading-relaxed">
                                 {{ $ticket->description }}
                             </p>
                         </div>
-                        
-                        {{-- Sidebar Info --}}
-                        <div class="md:col-span-1">
-                            <div class="bg-gray-50 rounded-lg p-4">
-                                <h4 class="font-bold text-lg mb-4">جزئیات</h4>
-                                <dl>
-                                    <div class="flex justify-between py-2">
-                                        <dt class="text-gray-600">وضعیت:</dt>
-                                        <dd><span class="status-badge status-{{ $ticket->status }}">{{ __($ticket->status) }}</span></dd>
-                                    </div>
-                                    <div class="flex justify-between py-2">
-                                        <dt class="text-gray-600">اولویت:</dt>
-                                        <dd><span class="priority-badge priority-{{ $ticket->priority }}">{{ __($ticket->priority) }}</span></dd>
-                                    </div>
-                                    <div class="flex justify-between py-2">
-                                        <dt class="text-gray-600">تاریخ ایجاد:</dt>
-                                        <dd class="text-gray-800">{{ $ticket->created_at->format('Y-m-d H:i') }}</dd>
-                                    </div>
-                                    <div class="flex justify-between py-2">
-                                        <dt class="text-gray-600">آخرین بروزرسانی:</dt>
-                                        <dd class="text-gray-800">{{ $ticket->updated_at->format('Y-m-d H:i') }}</dd>
-                                    </div>
-                                </dl>
-                            </div>
-                        </div>
-                        {{-- ASSIGNMENT CARD (Only for Admins) --}}
-                        @if(Auth::user()->role === 'admin')
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <h4 class="font-bold text-lg mb-4">ارجاع درخواست</h4>
-                            
-                            @if ($ticket->assignedTo)
-                                <div class="mb-4 p-3 bg-blue-50 rounded-md text-sm">
-                                    <p class="font-semibold text-blue-800">ارجاع شده به:</p>
-                                    <p class="text-gray-700">{{ $ticket->assignedTo->name }}</p>
-                                </div>
-                            @else
-                                <div class="mb-4 p-3 bg-yellow-50 rounded-md text-sm">
-                                    <p class="font-semibold text-yellow-800">این درخواست هنوز ارجاع داده نشده است.</p>
-                                </div>
-                            @endif
-
-                            <form action="{{ route('tickets.assign', $ticket) }}" method="POST">
-                                @csrf
-                                <div>
-                                    <label for="assigned_to" class="block font-medium text-sm text-gray-700">ارجاع به کارشناس:</label>
-                                    <select id="assigned_to" name="assigned_to" class="form-input-custom mt-1 block w-full">
-                                        <option value="">-- انتخاب کارشناس --</option>
-                                        @foreach($supportUsers as $supportUser)
-                                            <option value="{{ $supportUser->id }}" {{ $ticket->assigned_to == $supportUser->id ? 'selected' : '' }}>
-                                                {{ $supportUser->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @error('assigned_to')
-                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                                <div class="mt-4">
-                                    <button type="submit" class="btn-primary-custom w-full flex items-center justify-center">
-                                        <i class="fas fa-user-check mr-2"></i>
-                                        ذخیره ارجاع
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                        @endif
                     </div>
 
+                    {{-- Notes / Messaging Section --}}
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-6">
+                            <h3 class="font-bold text-lg mb-4">پیام‌رسان</h3>
+                            <div class="text-center text-gray-400 py-8">
+                                <i class="fas fa-comments text-3xl mb-2"></i>
+                                <p>بخش پیام‌رسانی در حال توسعه است.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{-- Sidebar (Right Column) --}}
+                <div class="lg:col-span-1 space-y-6">
+                    {{-- Workflow Tracker --}}
+                    <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                        <h4 class="font-bold text-lg mb-6">روند انجام درخواست</h4>
+                        <div class="space-y-2">
+                            @php
+                                $statuses = ['pending', 'in_progress', 'completed'];
+                                $currentStatusIndex = array_search($ticket->status, $statuses);
+                            @endphp
+
+                            <div class="workflow-step {{ $currentStatusIndex >= 0 ? 'completed' : 'pending' }}">
+                                <div class="icon"><i class="fas fa-check"></i></div>
+                                <div class="mr-4">
+                                    <p class="font-semibold">درخواست ثبت شد</p>
+                                    <p class="text-sm text-gray-500">{{ $ticket->jalali_created_at }}</p>
+                                </div>
+                            </div>
+                            <div class="h-8 workflow-step {{ $currentStatusIndex >= 1 ? 'completed' : 'pending' }}">
+                                <div class="line"></div>
+                            </div>
+
+                            <div class="workflow-step {{ $currentStatusIndex >= 1 ? ($currentStatusIndex == 1 ? 'active' : 'completed') : 'pending' }}">
+                                <div class="icon"><i class="fas fa-cogs"></i></div>
+                                <div class="mr-4">
+                                    <p class="font-semibold">در حال بررسی</p>
+                                    <p class="text-sm text-gray-500">توسط {{ $ticket->assignedTo->name ?? 'پشتیبانی' }}</p>
+                                </div>
+                            </div>
+                            <div class="h-8 workflow-step {{ $currentStatusIndex >= 2 ? 'completed' : 'pending' }}">
+                                <div class="line"></div>
+                            </div>
+
+                             <div class="workflow-step {{ $currentStatusIndex >= 2 ? 'active' : 'pending' }}">
+                                <div class="icon"><i class="fas fa-flag-checkered"></i></div>
+                                <div class="mr-4">
+                                    <p class="font-semibold">تکمیل شده</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                                        {{-- Details Card --}}
+                    <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                         <h4 class="font-bold text-lg mb-4">جزئیات</h4>
+                         {{-- Your existing details code --}}
+                    </div>
+
+                    {{-- Assignment Card --}}
+                    @if(Auth::user()->role === 'admin')
+                        <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

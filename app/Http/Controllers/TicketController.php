@@ -49,7 +49,33 @@ class TicketController extends Controller
         return redirect()->route('tickets.my')->with('success', 'درخواست شما با موفقیت ثبت شد.');
     }
 
-    
+        public function edit(Ticket $ticket)
+    {
+        // Add authorization: only owner or admin can edit
+        if (Auth::id() !== $ticket->user_id && Auth::user()->role !== 'admin') {
+            abort(403);
+        }
+        return view('tickets.edit', compact('ticket'));
+    }
+
+    public function update(Request $request, Ticket $ticket)
+    {
+        // Add authorization
+        if (Auth::id() !== $ticket->user_id && Auth::user()->role !== 'admin') {
+            abort(403);
+        }
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'priority' => 'required|in:low,medium,high',
+        ]);
+
+        $ticket->update($request->only('title', 'description', 'priority'));
+
+        return redirect()->route('tickets.show', $ticket)->with('success', 'درخواست با موفقیت ویرایش شد.');
+    }
+
     public function myTickets()
     {
         $myTickets = Ticket::where('user_id', Auth::id())->latest()->paginate(10);
@@ -58,6 +84,8 @@ class TicketController extends Controller
 
     public function show(Ticket $ticket): View
     {
+        $ticket->load('messages.user');
+
         $supportUsers = User::where('role', 'support')->get();
         return view('tickets.show', compact('ticket', 'supportUsers'));
     }

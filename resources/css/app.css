@@ -66,3 +66,19 @@ body {
 }
 .tab-content { display: none; }
 .tab-content.active { display: block; }
+.auth-card input[type="text"],
+.auth-card input[type="email"],
+.auth-card input[type="password"] {
+    border: 1px solid #d1d5db !important; /* gray-300 with !important to force override */
+    border-radius: 0.5rem !important;
+    box-shadow: none !important;
+}
+
+/* Style for when the input is focused */
+.auth-card input[type="text"]:focus,
+.auth-card input[type="email"]:focus,
+.auth-card input[type="password"]:focus {
+    border-color: #0284c7 !important; /* Blue accent */
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2) !important;
+    outline: none !important;
+}

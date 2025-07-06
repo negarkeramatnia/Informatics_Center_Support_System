@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Message;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MessageController extends Controller
 {
@@ -12,18 +13,34 @@ class MessageController extends Controller
     {
         return Message::with(['user', 'ticket'])->latest()->get();
     }
-
-    public function store(Request $request)
+    /**
+     * Store a newly created message in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Ticket  $ticket
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store(Request $request, Ticket $ticket)
     {
-        $validated = $request->validate([
-            'ticket_id' => 'required|exists:tickets,id',
-            'user_id' => 'required|exists:users,id',
-            'message' => 'required|string',
+        // Only the ticket owner, assigned support, or an admin can comment.
+        if (
+            Auth::id() !== $ticket->user_id &&
+            Auth::id() !== $ticket->assigned_to &&
+            Auth::user()->role !== 'admin'
+        ) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $request->validate([
+            'body' => 'required|string',
         ]);
 
-        $message = Message::create($validated);
+        $ticket->messages()->create([
+            'user_id' => Auth::id(),
+            'body' => $request->body,
+        ]);
 
-        return response()->json($message, 201);
+        return back()->with('success', 'پیام شما با موفقیت ثبت شد.');
     }
 
     public function show(Message $message)

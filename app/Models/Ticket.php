@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Morilog\Jalali\Jalalian;
 
 class Ticket extends Model
 {
@@ -38,5 +40,15 @@ class Ticket extends Model
     public function messages()
     {
         return $this->hasMany(Message::class);
+    }
+
+    public function getJalaliCreatedAtAttribute(): string
+    {
+        return Jalalian::fromCarbon($this->created_at)->format('%A, %d %B %Y - H:i');
+    }
+
+    public function getJalaliUpdatedAtAttribute(): string
+    {
+        return Jalalian::fromCarbon($this->updated_at)->format('%A, %d %B %Y - H:i');
     }
 }
