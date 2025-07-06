@@ -22,7 +22,7 @@ class MessageController extends Controller
      */
     public function store(Request $request, Ticket $ticket)
     {
-        // Only the ticket owner, assigned support, or an admin can comment.
+        // Authorization logic remains the same
         if (
             Auth::id() !== $ticket->user_id &&
             Auth::id() !== $ticket->assigned_to &&
@@ -35,9 +35,10 @@ class MessageController extends Controller
             'body' => 'required|string',
         ]);
 
+        // --- FIX: Changed 'body' to 'message' to match your database column name ---
         $ticket->messages()->create([
             'user_id' => Auth::id(),
-            'body' => $request->body,
+            'message' => $request->body, // The form input is named 'body', but the DB column is 'message'
         ]);
 
         return back()->with('success', 'پیام شما با موفقیت ثبت شد.');
