@@ -7,8 +7,27 @@
             </div>
             <div class="flex items-center gap-x-4">
                 <a href="{{ route('dashboard') }}" class="btn-secondary-custom">بازگشت به داشبورد</a>
-                @if(Auth::id() === $ticket->user_id || Auth::user()->role === 'admin')
+                <!-- @if(Auth::id() === $ticket->user_id || Auth::user()->role === 'admin')
                     <a href="{{ route('tickets.edit', $ticket) }}" class="btn-primary-custom"><i class="fas fa-edit ml-2"></i>ویرایش</a>
+                @endif -->
+            </div>
+                <div class="flex items-center gap-x-4">                
+                {{-- Show Edit button only if ticket is not completed --}}
+                @if($ticket->status !== 'completed' && (Auth::id() === $ticket->user_id || Auth::user()->role === 'admin'))
+                    <a href="{{ route('tickets.edit', $ticket) }}" class="btn-primary-custom"><i class="fas fa-edit ml-2"></i>ویرایش</a>
+                @endif
+
+                {{-- Show Complete button only if ticket is not completed --}}
+                @if($ticket->status !== 'completed')
+                    @if(in_array(Auth::user()->role, ['admin', 'support']) || Auth::id() === $ticket->user_id)
+                        <form action="{{ route('tickets.complete', $ticket) }}" method="POST" onsubmit="return confirm('آیا از تکمیل کردن این درخواست اطمینان دارید؟');">
+                            @csrf
+                            <button type="submit" class="btn-success-custom">
+                                <i class="fas fa-check-circle ml-2"></i>
+                                تکمیل کردن درخواست
+                            </button>
+                        </form>
+                    @endif
                 @endif
             </div>
         </div>
@@ -29,6 +48,21 @@
         .message-card { display: flex; align-items: flex-start; }
         .message-card:not(:last-child) { border-bottom: 1px solid #e5e7eb; padding-bottom: 1.5rem; margin-bottom: 1.5rem; }
         .message-author-avatar { width: 3rem; height: 3rem; border-radius: 9999px; object-fit: cover; margin-left: 1rem; }
+                .btn-secondary-custom { background-color: #e5e7eb; color: #374151; padding: 0.6rem 1.2rem; border-radius: 0.5rem; font-weight: 600; transition: background-color 0.2s; border: 1px solid #d1d5db; text-decoration: none; }
+        .btn-secondary-custom:hover { background-color: #d1d5db; }
+        .btn-success-custom {
+            background-color: #22c55e;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.2s;
+            border: none;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .btn-success-custom:hover { background-color: #16a34a; }
     </style>
     @endPushOnce
 
@@ -70,7 +104,7 @@
                             <form action="{{ route('tickets.messages.store', $ticket) }}" method="POST">
                                 @csrf
                                 <label for="body" class="block font-medium text-sm text-gray-700 mb-2">افزودن یادداشت یا پاسخ</label>
-                                <textarea name="body" id="body" rows="4" class="form-input-custom w-full" placeholder="پاسخ خود را اینجا بنویسید..." required></textarea>
+                                <textarea name="body" id="body" rows="3" class="form-input-custom w-full" placeholder="پاسخ خود را اینجا بنویسید..." required></textarea>
                                 <div class="mt-4 flex justify-end">
                                     <button type="submit" class="btn-primary-custom"><i class="fas fa-paper-plane ml-2"></i>ارسال پاسخ</button>
                                 </div>

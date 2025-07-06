@@ -35,6 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/tickets/{ticket}/assign', [TicketController::class, 'assign'])->name('tickets.assign');
     Route::get('/tickets/{ticket}/edit', [TicketController::class, 'edit'])->name('tickets.edit');
     Route::put('/tickets/{ticket}', [TicketController::class, 'update'])->name('tickets.update');
+    Route::post('/tickets/{ticket}/complete', [App\Http\Controllers\TicketController::class, 'complete'])->name('tickets.complete');
     Route::post('/tickets/{ticket}/messages', [App\Http\Controllers\MessageController::class, 'store'])->name('tickets.messages.store');
 });
 

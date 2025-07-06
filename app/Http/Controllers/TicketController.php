@@ -89,7 +89,23 @@ class TicketController extends Controller
         $supportUsers = User::where('role', 'support')->get();
         return view('tickets.show', compact('ticket', 'supportUsers'));
     }
+    public function complete(Request $request, Ticket $ticket)
+    {
+        // Authorize: Only ticket owner, assigned support, or admin can complete.
+        if (
+            Auth::id() !== $ticket->user_id &&
+            Auth::id() !== $ticket->assigned_to &&
+            Auth::user()->role !== 'admin'
+        ) {
+            abort(403, 'Unauthorized action.');
+        }
 
+        $ticket->status = 'completed';
+        $ticket->save();
+
+        return redirect()->route('tickets.show', $ticket)->with('success', 'درخواست با موفقیت تکمیل شد.');
+    }
+    
     public function assign(Request $request, Ticket $ticket)
     {
         if (Auth::user()->role !== 'admin') {
