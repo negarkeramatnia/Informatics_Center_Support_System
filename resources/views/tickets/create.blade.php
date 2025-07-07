@@ -23,7 +23,7 @@
         .btn-primary-custom {
             background-color:rgb(0, 46, 196);
             color: white;
-            padding: 0.6rem 1.5rem;
+            padding: 0.5rem 0.9rem;
             border-radius: 0.375rem;
             font-weight: 600;
             transition: background-color 0.2s;
@@ -49,7 +49,7 @@
     </style>
     @endPushOnce
 
-    <div class="py-10" dir="rtl">
+    <div dir="rtl">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 md:p-8 text-gray-900">

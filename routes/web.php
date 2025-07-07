@@ -46,7 +46,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::resource('users', UserController::class)->except(['show']);
 
     // Asset Management
-    Route::get('/assets', [AssetController::class, 'index'])->name('assets.index');
+    Route::resource('assets', AssetController::class)->except(['show']);
 
     // Reports Page
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
