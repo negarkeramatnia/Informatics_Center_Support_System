@@ -90,7 +90,7 @@
 
             <div id="mainContent" class="main-content flex-1 flex flex-col overflow-auto">
                 <header class="bg-white shadow sticky top-0 z-10">
-                    <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+                    <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
                         <button id="mobileToggleSidebar" class="md:hidden text-gray-500 hover:text-gray-700 mr-4">
                             <i class="fas fa-bars text-xl"></i>
                         </button>

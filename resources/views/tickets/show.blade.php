@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between" style="display: flex; justify-content: space-between;">
             {{-- Group for Title and Subtitle --}}
             <div>
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ $ticket->title }}</h2>
@@ -8,20 +8,16 @@
             </div>
 
             {{-- Group for All Action Buttons --}}
-            <div class="flex items-center gap-x-4">
+            <div class="flex items-center gap-x-4 justify-start">
                 <a href="{{ route('dashboard') }}" class="btn-secondary-custom">بازگشت به داشبورد</a>
-
-                {{-- Show Edit button if ticket is not completed and user is authorized --}}
                 @if($ticket->status !== 'completed' && (Auth::id() === $ticket->user_id || Auth::user()->role === 'admin'))
                     <a href="{{ route('tickets.edit', $ticket) }}" class="btn-primary-custom"><i class="fas fa-edit ml-2"></i>ویرایش</a>
                 @endif
                 @if($ticket->status !== 'completed')
-                    {{-- Button for the TICKET CREATOR (opens rating modal) --}}
                     @if(Auth::id() === $ticket->user_id)
                         <button type="button" x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-ticket-completion')" class="btn-success-custom">
                             <i class="fas fa-check-circle ml-2"></i>تکمیل و امتیازدهی
                         </button>
-                    {{-- Button for ADMIN or SUPPORT (direct completion) --}}
                     @elseif(in_array(Auth::user()->role, ['admin', 'support']))
                         <form action="{{ route('tickets.complete', $ticket) }}" method="POST" onsubmit="return confirm('آیا از تکمیل کردن این درخواست اطمینان دارید؟');">
                             @csrf
@@ -38,9 +34,9 @@
 
     @pushOnce('styles')
     <style>
-        .btn-secondary-custom { background-color: #e5e7eb; color: #374151; padding: 0.6rem 1.2rem; border-radius: 0.5rem; font-weight: 600; transition: background-color 0.2s; border: 1px solid #d1d5db; text-decoration: none; }
+        .btn-secondary-custom { background-color: #e5e7eb; color: #374151; padding: 0.5rem 0.9rem; border-radius: 0.5rem; font-weight: 600; transition: background-color 0.2s; border: 1px solid #d1d5db; text-decoration: none; }
         .btn-secondary-custom:hover { background-color: #d1d5db; }
-        .btn-success-custom { background-color: #22c55e; color: white; padding: 0.6rem 1.2rem; border-radius: 0.5rem; font-weight: 600; transition: background-color 0.2s; border: none; display: flex; align-items: center; cursor: pointer; }
+        .btn-success-custom { background-color: #22c55e; color: white; padding: 0.5rem 0.9rem; border-radius: 0.5rem; font-weight: 600; transition: background-color 0.2s; border: none; display: flex; align-items: center; cursor: pointer; }
         .btn-success-custom:hover { background-color: #16a34a; }
         .workflow-step { display: flex; align-items: flex-start; }
         .workflow-step .icon { display: flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; border-radius: 9999px; }
@@ -60,7 +56,7 @@
     </style>
     @endPushOnce
 
-    <div class="py-12" dir="rtl">
+    <div dir="rtl">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
 
@@ -124,7 +120,28 @@
                             <div class="workflow-step {{ $currentStatusIndex >= 2 ? 'active' : 'pending' }}"><div class="icon"><i class="fas fa-flag-checkered"></i></div><div class="mr-4"><p class="font-semibold">تکمیل شده</p></div></div>
                         </div>
                     </div>
-                    
+                    {{-- Assigned Devices Card (Visible to Admin/Support) --}}
+                    @if(in_array(Auth::user()->role, ['admin', 'support']))
+                    <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                        <h4 class="font-bold text-lg mb-4">دستگاه‌های اختصاص یافته به کاربر</h4>
+                        @if($ticket->user->assets->isNotEmpty())
+                            <ul class="space-y-2">
+                                @foreach($ticket->user->assets as $asset)
+                                    <li class="text-sm">
+                                        <a href="{{ route('admin.assets.edit', $asset) }}" class="text-blue-600 hover:underline flex items-center">
+                                            <i class="fas fa-desktop ml-2"></i>
+                                            <span>{{ $asset->name }} ({{ $asset->serial_number }})</span>
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @else
+                            <p class="text-sm text-gray-500">هیچ دستگاهی به این کاربر اختصاص داده نشده است.</p>
+                        @endif
+                    </div>
+                    @endif
+
+                    {{-- User Information Card --}}     
                     {{-- Details Card --}}
                     <div class="bg-white shadow-sm sm:rounded-lg p-6">
                         <h4 class="font-bold text-lg mb-4">جزئیات</h4>

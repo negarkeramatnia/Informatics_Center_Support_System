@@ -84,8 +84,7 @@ class TicketController extends Controller
 
     public function show(Ticket $ticket): View
     {
-        $ticket->load('messages.user');
-
+        $ticket->load(['messages.user', 'user.assets']); 
         $supportUsers = User::where('role', 'support')->get();
         return view('tickets.show', compact('ticket', 'supportUsers'));
     }

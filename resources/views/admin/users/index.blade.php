@@ -13,13 +13,25 @@
 
     @pushOnce('styles')
     <style>
-        /* --- FIX: New style for a bordered table --- */
+        .table-bordered {
+            border-collapse: collapse;
+        }
         .table-bordered th,
         .table-bordered td {
             border: 1px solid #e5e7eb; /* gray-200 */
+            padding: 0.75rem;
         }
-        .table-bordered {
-            border-collapse: collapse;
+        /* FIX: Set all table headers to be center-aligned */
+        .table-bordered th {
+            text-align: center;
+        }
+        /* Center all data cells... */
+        .table-bordered td {
+            text-align: center;
+        }
+        /* ...except for the first one, which looks better right-aligned */
+        .table-bordered td:first-child {
+            text-align: right;
         }
     </style>
     @endPushOnce
@@ -28,7 +40,6 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="overflow-x-auto">
-                    {{-- FIX: Added the new 'table-bordered' class --}}
                     <table class="min-w-full table-custom table-bordered">
                         <thead>
                             <tr class="bg-gray-50">
@@ -48,21 +59,19 @@
                                             <img class="h-10 w-10 rounded-full object-cover ml-4" src="{{ $user->profile_picture ? asset('storage/' . $user->profile_picture) : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) }}" alt="{{ $user->name }}">
                                             <div>
                                                 <div class="font-medium text-gray-900">{{ $user->name }}</div>
-                                                {{-- FIX: Removed email from display --}}
                                                 <div class="text-sm text-gray-500">{{ $user->username }}</div>
                                             </div>
                                         </div>
                                     </td>
-                                    {{-- FIX: Added phone number column --}}
-                                    <td class="text-center">{{ $user->phone }}</td>
-                                    <td class="text-center"><span class="priority-badge priority-{{ strtolower($user->role) }}">{{ __($user->role) }}</span></td>
-                                    <td class="text-center">
+                                    <td>{{ $user->phone }}</td>
+                                    <td><span class="priority-badge priority-{{ strtolower($user->role) }}">{{ __($user->role) }}</span></td>
+                                    <td>
                                         <div class="flex items-center justify-center">
                                             <div class="h-2.5 w-2.5 rounded-full {{ $user->status === 'active' ? 'bg-green-500' : 'bg-red-500' }} ml-2"></div>
                                             {{ __($user->status) }}
                                         </div>
                                     </td>
-                                    <td class="text-sm text-gray-500 text-center">{{ $user->created_at->format('Y-m-d') }}</td>
+                                    <td>{{ $user->created_at->format('Y-m-d') }}</td>
                                     <td>
                                         <div class="flex items-center justify-center gap-x-4">
                                             <a href="{{ route('admin.users.edit', $user) }}" class="text-gray-400 hover:text-blue-600" title="ویرایش"><i class="fas fa-edit"></i></a>

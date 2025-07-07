@@ -141,9 +141,8 @@
     </nav>
 
     <div class="content-wrapper px-4">
-        <div class="login-card max-w-lg w-full">
+        <div class="login-card max-w-lg w-full" style="margin-top:2rem">
             <div class="login-card-header text-center">
-                 <img class="logo-img-card mx-auto" src="{{ asset('images/company-logo.png') }}" alt="لوگوی شرکت">
                 <h1 class="text-2xl font-bold">ورود به سامانه پشتیبانی</h1>
                 <p class="text-sm text-blue-100 mt-1">لطفا اطلاعات کاربری خود را وارد نمایید.</p>
             </div>
@@ -153,12 +152,13 @@
                     @csrf
                     <div>
                         <label for="username" class="block text-sm font-medium text-gray-700 mb-2">نام کاربری</label>
-                        <div class="relative">
+                        <div class="relative" >
                             <span class="input-icon">
                                 <i class="fas fa-user text-gray-400"></i>
                             </span>
                             <input type="text" id="username" name="username"
                                    class="form-input w-full"
+                                   style="border: 2px solid #ced4da; border-radius: 8px;"
                                    placeholder="نام کاربری خود را وارد کنید" required>
                         </div>
                     </div>
@@ -173,6 +173,7 @@
                             </span>
                             <input type="password" id="password" name="password"
                                    class="form-input w-full"
+                                   style="border: 2px solid #ced4da; border-radius: 8px;"
                                    placeholder="کلمه عبور خود را وارد کنید" required>
                             <button type="button" id="togglePassword" class="absolute top-1/2 left-3 rtl:right-auto rtl:left-3 transform -translate-y-1/2 text-gray-500 hover:text-blue-700 focus:outline-none">
                                 <i class="fas fa-eye"></i>
@@ -182,7 +183,7 @@
 
                     <div>
                         <button type="submit" class="btn btn-primary-custom w-full text-base py-3">
-                            <i class="fas fa-sign-in-alt ml-2 rtl:mr-2 rtl:ml-0"></i>ورود
+                            <i class="fas fa-sign-in-alt ml-2 rtl:mr-2 rtl:ml-1"></i>ورود
                         </button>
                     </div>
                 </form>

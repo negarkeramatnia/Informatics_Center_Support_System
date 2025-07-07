@@ -162,7 +162,6 @@
 
     <div class="content-wrapper px-4">
         <div class="register-card max-w-xl w-full"> <div class="register-card-header text-center">
-                 <img class="logo-img-card mx-auto" src="{{ asset('images/company-logo.png') }}" alt="لوگوی شرکت">
                 <h1 class="text-2xl font-bold mt-2">ایجاد حساب کاربری جدید</h1>
                 <p class="text-sm text-blue-100 mt-1">اطلاعات خود را برای عضویت در سامانه وارد نمایید.</p>
             </div>
@@ -233,7 +232,7 @@
                     
                     <div>
                         <button type="submit" class="btn btn-primary-custom w-full text-base py-3 mt-2">
-                            <i class="fas fa-user-plus ml-2 rtl:mr-2 rtl:ml-0"></i>ایجاد حساب کاربری
+                            <i class="fas fa-user-plus ml-2 rtl:mr-2 rtl:ml-1"></i>ایجاد حساب کاربری
                         </button>
                     </div>
                 </form>
