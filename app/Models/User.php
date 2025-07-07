@@ -41,7 +41,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Ticket::class);
     }
-
+    public function assets(): HasMany
+    {
+        return $this->hasMany(Asset::class, 'assigned_to');
+    }
     // Relationships
     public function createdTickets()
     {
@@ -61,10 +64,5 @@ class User extends Authenticatable
     public function messageReads()
     {
         return $this->hasMany(MessageRead::class);
-    }
-
-    public function assets()
-    {
-        return $this->hasMany(Asset::class, 'assigned_to');
     }
 }

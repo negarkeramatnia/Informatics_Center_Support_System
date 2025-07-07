@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Asset extends Model
 {
     use HasFactory;
-
+    protected $guarded = [];
     protected $fillable = [
         'name',
         'description',
@@ -22,6 +23,11 @@ class Asset extends Model
 
     // Relationship: Asset is assigned to a User
     public function user()
+    {
+        return $this->belongsTo(User::class, 'assigned_to');
+    }
+
+    public function assignedToUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_to');
     }
