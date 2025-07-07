@@ -42,7 +42,8 @@ Route::middleware('auth')->group(function () {
 // Admin Route Group
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
     // User Management
-    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    // Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::resource('users', UserController::class)->except(['show']);
 
     // Asset Management
     Route::get('/assets', [AssetController::class, 'index'])->name('assets.index');
