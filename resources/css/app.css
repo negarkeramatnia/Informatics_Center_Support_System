@@ -82,3 +82,21 @@ body {
     box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2) !important;
     outline: none !important;
 }
+
+select.form-input-custom {
+    /* Remove the default browser arrow */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    /* Add our custom arrow SVG as a background image */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    
+    /* Position the arrow on the left side */
+    background-position: left 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+
+    /* Add padding on the left to prevent text from overlapping the arrow */
+    padding-left: 2.5rem;
+}
