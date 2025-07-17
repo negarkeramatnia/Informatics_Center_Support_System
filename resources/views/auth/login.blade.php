@@ -150,6 +150,11 @@
             <div class="px-8 py-10">
                 <form id="loginForm" method="POST" action="{{ route('login') }}" class="space-y-6">
                     @csrf
+                        @error('username')
+                            <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-100" role="alert">
+                                {{ __('auth.failed') }}
+                            </div>
+                        @enderror
                     <div>
                         <label for="username" class="block text-sm font-medium text-gray-700 mb-2">نام کاربری</label>
                         <div class="relative" >
