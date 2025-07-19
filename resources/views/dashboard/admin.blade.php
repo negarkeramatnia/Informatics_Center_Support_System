@@ -77,48 +77,33 @@
         </a>
     </div>
 
-    {{-- FIX: This grid places Quick Actions and Performance side-by-side on larger screens --}}
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {{-- Quick Actions Panel --}}
-        <div class="lg:col-span-1 dashboard-card">
-            <div class="dashboard-card-header">
-                <h3 class="dashboard-card-title"><i class="fas fa-bolt mr-2 text-gray-400"></i> دسترسی سریع</h3>
-            </div>
-            <div class="p-6 grid grid-cols-2 gap-4">
-                <a href="{{ route('admin.users.index') }}" class="quick-action-card">
-                    <i class="fas fa-users-cog text-2xl text-green-600 mb-2"></i>
-                    <span>مدیریت کاربران</span>
-                </a>
-                <a href="{{ route('admin.assets.index') }}" class="quick-action-card">
-                    <i class="fas fa-hdd text-2xl text-green-600 mb-2"></i>
-                    <span>مدیریت قطعات</span>
-                </a>
-                <a href="{{ route('admin.reports.index') }}" class="quick-action-card">
-                    <i class="fas fa-chart-line text-2xl text-green-600 mb-2"></i>
-                    <span>گزارش‌ها</span>
-                </a>
-                <a href="{{ route('admin.settings.index') }}" class="quick-action-card">
-                    <i class="fas fa-cog text-2xl text-green-600 mb-2"></i>
-                    <span>تنظیمات</span>
-                </a>
-            </div>
+    {{-- Quick Actions Panel --}}
+    <div class="dashboard-card">
+        <div class="dashboard-card-header">
+            <h3 class="dashboard-card-title"><i class="fas fa-bolt mr-2 text-gray-400"></i> دسترسی سریع</h3>
         </div>
-
-        {{-- Performance Reports Panel --}}
-        <div class="lg:col-span-2 dashboard-card">
-            <div class="dashboard-card-header">
-                <h3 class="dashboard-card-title"><i class="fas fa-chart-bar mr-2 text-gray-400"></i> گزارش عملکرد سیستم</h3>
-            </div>
-            <div class="p-6">
-                <div class="text-center text-gray-400 py-10">
-                    <i class="fas fa-chart-area fa-3x"></i>
-                    <p class="mt-2">نمودار گزارش عملکرد در اینجا نمایش داده می‌شود</p>
-                </div>
-            </div>
+        {{-- FIX: Changed grid-cols-2 to be responsive --}}
+        <div class="p-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+            <a href="{{ route('admin.users.index') }}" class="quick-action-card">
+                <i class="fas fa-users-cog text-2xl text-blue-600 mb-2"></i>
+                <span>مدیریت کاربران</span>
+            </a>
+            <a href="{{ route('admin.assets.index') }}" class="quick-action-card">
+                <i class="fas fa-hdd text-2xl text-blue-600 mb-2"></i>
+                <span>مدیریت قطعات</span>
+            </a>
+            <a href="{{ route('admin.reports.index') }}" class="quick-action-card">
+                <i class="fas fa-chart-line text-2xl text-blue-600 mb-2"></i>
+                <span>گزارش‌ها</span>
+            </a>
+            <a href="{{ route('admin.settings.index') }}" class="quick-action-card">
+                <i class="fas fa-cog text-2xl text-blue-600 mb-2"></i>
+                <span>تنظیمات</span>
+            </a>
         </div>
     </div>
     
-    {{-- FIX: Added a wrapping div with margin-top (mt-8) for proper spacing --}}
+    {{-- Unassigned Tickets Table --}}
     <div class="mt-8">
         <div class="dashboard-card">
             <div class="dashboard-card-header flex justify-between items-center">
