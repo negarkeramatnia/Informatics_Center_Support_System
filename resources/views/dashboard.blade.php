@@ -37,5 +37,4 @@
         @else
             @include('dashboard.user')
         @endif
-    </div>
 </x-app-layout>

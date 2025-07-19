@@ -8,10 +8,11 @@ use App\Models\Ticket;
 use App\Models\User;
 use App\Models\Asset;
 use Carbon\Carbon;
+use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
@@ -19,16 +20,16 @@ class DashboardController extends Controller
 
         if ($user->role === 'user') {
             $viewData['employeeData'] = [
-                'open_tickets_count' => $user->createdTickets()->whereIn('status', ['pending', 'in_progress'])->count(),
-                'resolved_tickets_count' => $user->createdTickets()->where('status', 'completed')->count(),
-                'recent_tickets' => $user->createdTickets()->latest()->take(5)->get(),
+                'open_tickets_count' => $user->tickets()->whereIn('status', ['pending', 'in_progress'])->count(),
+                'resolved_tickets_count' => $user->tickets()->where('status', 'completed')->count(),
+                'recent_tickets' => $user->tickets()->latest()->take(5)->get(),
                 'assigned_assets_count' => $user->assets()->count(),
+                'userAssets' => $user->assets()->get(), // This fetches the assets for the view
             ];
         } 
         elseif ($user->role === 'support') {
-            $viewName = 'dashboard.support';
             $myTickets = Ticket::where('assigned_to', $user->id);
-            $myActiveTickets = Ticket::where('assigned_to', $user->id)->whereIn('status', ['pending', 'in_progress']);
+            $myActiveTickets = (clone $myTickets)->whereIn('status', ['pending', 'in_progress']);
 
             $viewData['supportData'] = [
                 'my_active_tickets_count' => $myActiveTickets->count(),
@@ -52,8 +53,10 @@ class DashboardController extends Controller
                                                 ->latest()
                                                 ->take(5)
                                                 ->get(),
-                ];
+            ];
         }
+
+        // This single view will now handle displaying the correct partial
         return view('dashboard', $viewData);
     }
 }
