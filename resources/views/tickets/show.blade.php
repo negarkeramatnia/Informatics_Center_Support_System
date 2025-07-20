@@ -65,6 +65,29 @@
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                         <h3 class="font-bold text-lg mb-4">شرح درخواست</h3>
                         <p class="text-gray-700 whitespace-pre-wrap leading-relaxed">{{ $ticket->description }}</p>
+                        {{-- --- RATING FORM (for ticket creator on completed tickets) --- --}}
+                        @if($ticket->status === 'completed' && Auth::id() === $ticket->user_id && is_null($ticket->rating))
+                        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                            <form method="post" action="{{ route('tickets.rate', $ticket) }}" class="text-center">
+                                @csrf
+                                <i class="fas fa-award text-4xl text-yellow-400 mb-4"></i>
+                                <h3 class="font-bold text-lg">امتیاز شما به این پشتیبانی</h3>
+                                <p class="mt-1 text-sm text-gray-600">لطفا برای کمک به بهبود خدمات، به این درخواست امتیاز دهید.</p>
+                                <div class="my-6 star-rating">
+                                    <input type="radio" id="star5" name="rating" value="5" required /><label for="star5" title="عالی">&#9733;</label>
+                                    <input type="radio" id="star4" name="rating" value="4" /><label for="star4" title="خوب">&#9733;</label>
+                                    <input type="radio" id="star3" name="rating" value="3" /><label for="star3" title="متوسط">&#9733;</label>
+                                    <input type="radio" id="star2" name="rating" value="2" /><label for="star2" title="ضعیف">&#9733;</label>
+                                    <input type="radio" id="star1" name="rating" value="1" /><label for="star1" title="خیلی ضعیف">&#9733;</label>
+                                </div>
+                                <x-input-error :messages="$errors->get('rating')" class="mt-2" />
+                                
+                                <div class="mt-6 flex justify-center">
+                                    <button type="submit" class="btn-success-custom">ثبت امتیاز</button>
+                                </div>
+                            </form>
+                        </div>
+                        @endif
                     </div>
 
                     {{-- Notes / Messaging Section --}}
@@ -161,17 +184,6 @@
                         </dl>
                     </div>
 
-                    {{-- Display Rating if Completed --}}
-                    @if($ticket->status === 'completed' && $ticket->rating)
-                    <div class="bg-white shadow-sm sm:rounded-lg p-6 text-center">
-                        <h4 class="font-bold text-lg mb-2">امتیاز ثبت شده</h4>
-                        <div class="text-3xl text-yellow-400">
-                            @for ($i = 0; $i < $ticket->rating; $i++) &#9733; @endfor
-                            @for ($i = $ticket->rating; $i < 5; $i++) <span class="text-gray-300">&#9733;</span> @endfor
-                        </div>
-                    </div>
-                    @endif
-
                     {{-- Assignment Card --}}
                     @if(Auth::user()->role === 'admin')
                         <div class="bg-white shadow-sm sm:rounded-lg p-6">
@@ -190,6 +202,17 @@
                                 <div class="mt-4"><button type="submit" class="btn-primary-custom w-full flex items-center justify-center"><i class="fas fa-user-check mr-2"></i>ذخیره ارجاع</button></div>
                             </form>
                         </div>
+                    @endif
+
+                    {{-- Display Rating if Completed --}}
+                    @if($ticket->status === 'completed' && $ticket->rating)
+                    <div class="bg-white shadow-sm sm:rounded-lg p-6 text-center">
+                        <h4 class="font-bold text-lg mb-2">امتیاز ثبت شده</h4>
+                        <div class="text-3xl text-yellow-400">
+                            @for ($i = 0; $i < $ticket->rating; $i++) &#9733; @endfor
+                            @for ($i = $ticket->rating; $i < 5; $i++) <span class="text-gray-300">&#9733;</span> @endfor
+                        </div>
+                    </div>
                     @endif
                 </div>
             </div>

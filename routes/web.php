@@ -37,21 +37,14 @@ Route::middleware('auth')->group(function () {
     Route::put('/tickets/{ticket}', [TicketController::class, 'update'])->name('tickets.update');
     Route::post('/tickets/{ticket}/complete', [App\Http\Controllers\TicketController::class, 'complete'])->name('tickets.complete');
     Route::post('/tickets/{ticket}/messages', [App\Http\Controllers\MessageController::class, 'store'])->name('tickets.messages.store');
+    Route::post('/tickets/{ticket}/rate', [App\Http\Controllers\TicketController::class, 'rate'])->name('tickets.rate');
 });
 
 // Admin Route Group
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
-    // User Management
-    // Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::resource('users', UserController::class)->except(['show']);
-
-    // Asset Management
     Route::resource('assets', AssetController::class)->except(['show']);
-
-    // Reports Page
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
-    
-    // Settings Page
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
 });
 
