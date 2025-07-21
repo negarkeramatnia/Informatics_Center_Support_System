@@ -90,7 +90,7 @@
                         @endif
                     </div>
 
-                    {{-- Notes / Messaging Section --}}
+                    {{-- Messaging Section --}}
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                         <h3 class="font-bold text-lg mb-6">یادداشت‌ها و پیام‌ها</h3>
                         <div class="space-y-6">
@@ -161,6 +161,50 @@
                         @else
                             <p class="text-sm text-gray-500">هیچ دستگاهی به این کاربر اختصاص داده نشده است.</p>
                         @endif
+                    </div>
+                    @endif
+
+                    {{-- --- Allocate Resources Card (for Admin/Support) --- --}}
+                    @if(in_array(Auth::user()->role, ['admin', 'support']))
+                    <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                        <h4 class="font-bold text-lg mb-4">تخصیص منابع و قطعات</h4>
+                        
+                        {{-- List of already allocated assets for THIS ticket --}}
+                        <div class="mb-4">
+                            <p class="text-sm font-semibold text-gray-700">قطعات تخصیص یافته به این درخواست:</p>
+                            @if($ticket->allocatedAssets->isNotEmpty())
+                                <ul class="list-disc list-inside mt-2 text-sm text-gray-600">
+                                    @foreach($ticket->allocatedAssets as $asset)
+                                        <li>{{ $asset->name }} ({{ $asset->serial_number }})</li>
+                                    @endforeach
+                                </ul>
+                            @else
+                                <p class="text-sm text-gray-500 mt-1">هنوز قطعه‌ای به این درخواست تخصیص نیافته است.</p>
+                            @endif
+                        </div>
+
+                        {{-- Form to allocate a new asset --}}
+                        <form action="{{ route('tickets.allocateAsset', $ticket) }}" method="POST" class="mt-4 border-t pt-4">
+                            @csrf
+                            <div>
+                                <label for="asset_id" class="block font-medium text-sm text-gray-700">افزودن قطعه جدید از انبار:</label>
+                                <select id="asset_id" name="asset_id" class="form-input-custom mt-1 block w-full">
+                                    <option value="">-- انتخاب قطعه موجود --</option>
+                                    @foreach($availableAssets as $asset)
+                                        <option value="{{ $asset->id }}">{{ $asset->name }} ({{ $asset->serial_number }})</option>
+                                    @endforeach
+                                </select>
+                                @error('asset_id')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div class="mt-4">
+                                <button type="submit" class="btn-primary-custom w-full flex items-center justify-center">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    تخصیص بده
+                                </button>
+                            </div>
+                        </form>
                     </div>
                     @endif
 

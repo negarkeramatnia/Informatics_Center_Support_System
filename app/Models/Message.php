@@ -3,25 +3,22 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Message extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'ticket_id',
         'user_id',
         'message',
     ];
 
-    // Relationships
-    public function ticket()
+    // Relationships******************
+    public function ticket()//each message belongs to a ticket
     {
         return $this->belongsTo(Ticket::class);
     }
 
-    public function user()
+    public function user()//each message belongs to a user
     {
         return $this->belongsTo(User::class);
     }

@@ -52,9 +52,7 @@ class AssetController extends Controller
         return redirect()->route('admin.assets.index')->with('success', 'دستگاه با موفقیت حذف شد.');
     }
 
-    /**
-     * Get the validation rules based on your database migration.
-     */
+    //used for store() and update()
     protected function getValidationRules($assetId = null): array
     {
         $serialRule = 'required|string|max:255|unique:assets,serial_number';

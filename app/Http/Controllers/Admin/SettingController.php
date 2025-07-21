@@ -9,7 +9,6 @@ class SettingController extends Controller
 {
     public function index()
     {
-        // You can fetch existing settings from the database later
         return view('admin.settings.index');
     }
 }

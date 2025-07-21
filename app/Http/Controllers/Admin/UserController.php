@@ -7,7 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules;
+use Illuminate\Validation\Rules;//for password validation
 
 class UserController extends Controller
 {
@@ -73,7 +73,6 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        // Prevent admin from deleting themselves
         if ($user->id === auth()->id()) {
             return back()->with('error', 'شما نمی‌توانید حساب کاربری خود را حذف کنید.');
         }

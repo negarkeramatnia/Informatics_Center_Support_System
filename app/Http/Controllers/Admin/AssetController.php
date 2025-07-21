@@ -24,8 +24,6 @@ class AssetController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate($this->getValidationRules());
-
-        // Decode JSON strings before creation
         $validated['hardware_details'] = json_decode($validated['hardware_details'] ?? '[]', true);
         $validated['software_details'] = json_decode($validated['software_details'] ?? '[]', true);
 
@@ -42,8 +40,6 @@ class AssetController extends Controller
     public function update(Request $request, Asset $asset)
     {
         $validated = $request->validate($this->getValidationRules($asset->id));
-
-        // Decode JSON strings before updating
         $validated['hardware_details'] = json_decode($validated['hardware_details'] ?? '[]', true);
         $validated['software_details'] = json_decode($validated['software_details'] ?? '[]', true);
         
@@ -61,7 +57,7 @@ class AssetController extends Controller
         return redirect()->route('admin.assets.index')->with('success', 'دستگاه با موفقیت حذف شد.');
     }
 
-    protected function getValidationRules($assetId = null): array
+    protected function getValidationRules($assetId = null): array //for store() and update()
     {
         $serialRule = 'required|string|max:255|unique:assets,serial_number';
         if ($assetId) {

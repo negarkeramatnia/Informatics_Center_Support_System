@@ -2,15 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-
+use Illuminate\Database\Eloquent\Relations\HasMany;//one-to-many
+ 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
-
     protected $fillable = [
         'name',
         'username',
@@ -31,27 +27,22 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'email_verified_at' => 'datetime',//convert it to datatime for jalali...
+            'password' => 'hashed',//before saving in database
             'last_login' => 'datetime',
         ];
     }
 
-    public function tickets(): HasMany
+    public function tickets(): HasMany//one to many    user and tickets
     {
         return $this->hasMany(Ticket::class);
     }
-    public function assets(): HasMany
+    public function assets(): HasMany//one to many 
     {
-        return $this->hasMany(Asset::class, 'assigned_to');
-    }
-    // Relationships
-    public function createdTickets()
-    {
-        return $this->hasMany(Ticket::class, 'user_id');
+        return $this->hasMany(Asset::class, 'assigned_to');//not default user_id
     }
 
-    public function assignedTickets()
+    public function assignedTickets()//for IT support
     {
         return $this->hasMany(Ticket::class, 'assigned_to');
     }
@@ -59,10 +50,5 @@ class User extends Authenticatable
     public function messages()
     {
         return $this->hasMany(Message::class);
-    }
-
-    public function messageReads()
-    {
-        return $this->hasMany(MessageRead::class);
     }
 }

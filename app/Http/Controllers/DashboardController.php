@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Ticket;
 use App\Models\User;
@@ -24,7 +23,7 @@ class DashboardController extends Controller
                 'resolved_tickets_count' => $user->tickets()->where('status', 'completed')->count(),
                 'recent_tickets' => $user->tickets()->latest()->take(5)->get(),
                 'assigned_assets_count' => $user->assets()->count(),
-                'userAssets' => $user->assets()->get(), // This fetches the assets for the view
+                'userAssets' => $user->assets()->get(),
             ];
         } 
         elseif ($user->role === 'support') {
@@ -37,7 +36,7 @@ class DashboardController extends Controller
                 'completed_last_week' => (clone $myTickets)->where('status', 'completed')
                                              ->where('updated_at', '>=', Carbon::now()->subWeek())
                                              ->count(),
-                'avg_response_time' => 'N/A', // Placeholder for now
+                'avg_response_time' => 'N/A',
                 'my_active_tickets_list' => (clone $myActiveTickets)->with('user:id,name')->latest('updated_at')->take(10)->get(),
             ];
         } 
@@ -55,8 +54,6 @@ class DashboardController extends Controller
                                                 ->get(),
             ];
         }
-
-        // This single view will now handle displaying the correct partial
         return view('dashboard', $viewData);
     }
 }

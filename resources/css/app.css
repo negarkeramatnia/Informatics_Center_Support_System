@@ -2,11 +2,6 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-/* ==============================================
-Custom Styles for Informatics Support System
-==============================================
-*/
-
 /* --- General Body & Layout --- */
 body { 
     font-family: 'Vazirmatn', sans-serif !important; 
