@@ -38,6 +38,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/tickets/{ticket}/complete', [App\Http\Controllers\TicketController::class, 'complete'])->name('tickets.complete');
     Route::post('/tickets/{ticket}/messages', [App\Http\Controllers\MessageController::class, 'store'])->name('tickets.messages.store');
     Route::post('/tickets/{ticket}/rate', [App\Http\Controllers\TicketController::class, 'rate'])->name('tickets.rate');
+    Route::post('/tickets/{ticket}/allocate-asset', [App\Http\Controllers\TicketController::class, 'allocateAsset'])->name('tickets.allocateAsset');
 });
 
 // Admin Route Group

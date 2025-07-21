@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Morilog\Jalali\Jalalian;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Ticket extends Model
 {
@@ -50,5 +51,12 @@ class Ticket extends Model
     public function getJalaliUpdatedAtAttribute(): string
     {
         return Jalalian::fromCarbon($this->updated_at)->format('%A, %d %B %Y - H:i');
+    }
+    /**
+     * The assets that are allocated to the ticket.
+     */
+    public function allocatedAssets(): BelongsToMany
+    {
+        return $this->belongsToMany(Asset::class);
     }
 }

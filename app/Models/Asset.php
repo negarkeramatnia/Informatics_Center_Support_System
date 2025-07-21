@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Asset extends Model
 {
@@ -44,5 +45,12 @@ class Asset extends Model
     public function assignedToUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_to');
+    }
+    /**
+     * The tickets that the asset is allocated to.
+     */
+    public function tickets(): BelongsToMany
+    {
+        return $this->belongsToMany(Ticket::class);
     }
 }

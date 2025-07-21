@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Models\Asset;
 
 class TicketController extends Controller
 {
@@ -84,9 +85,10 @@ class TicketController extends Controller
 
     public function show(Ticket $ticket): View
     {
-        $ticket->load(['messages.user', 'user.assets']); 
+        $ticket->load(['messages.user', 'user.assets', 'allocatedAssets']);
         $supportUsers = User::where('role', 'support')->get();
-        return view('tickets.show', compact('ticket', 'supportUsers'));
+        $availableAssets = Asset::where('status', 'available')->orderBy('name')->get();
+        return view('tickets.show', compact('ticket', 'supportUsers', 'availableAssets'));
     }
     // public function complete(Request $request, Ticket $ticket)
     // {
@@ -169,5 +171,33 @@ class TicketController extends Controller
         $ticket->save();
 
         return redirect()->route('tickets.show', $ticket)->with('success', 'امتیاز شما با موفقیت ثبت شد.');
+    }
+        public function allocateAsset(Request $request, Ticket $ticket)
+    {
+        // Authorize: Only admin or assigned support can allocate
+        if (Auth::user()->role !== 'admin' && Auth::id() !== $ticket->assigned_to) {
+            abort(403);
+        }
+
+        $request->validate([
+            'asset_id' => 'required|exists:assets,id',
+        ]);
+
+        $asset = Asset::find($request->asset_id);
+
+        // Check if the asset is actually available
+        if ($asset->status !== 'available') {
+            return back()->with('error', 'این قطعه در حال حاضر موجود نیست.');
+        }
+
+        // Attach the asset to the ticket in the pivot table
+        $ticket->allocatedAssets()->attach($asset->id);
+
+        // Update the asset's main status and assign it to the ticket's user
+        $asset->status = 'assigned';
+        $asset->assigned_to = $ticket->user_id;
+        $asset->save();
+
+        return back()->with('success', 'قطعه با موفقیت به این درخواست تخصیص داده شد.');
     }
 }
