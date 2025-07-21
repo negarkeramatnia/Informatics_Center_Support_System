@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Models\Asset;
 
 class TicketController extends Controller
 {
@@ -29,7 +30,9 @@ class TicketController extends Controller
         return view('tickets.index', compact('tickets'));
     }
     
-    public function create() { return view('tickets.create'); }
+    public function create() { 
+        return view('tickets.create'); 
+    }
 
     public function store(Request $request)
     {
@@ -37,12 +40,17 @@ class TicketController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'priority' => 'required|in:low,medium,high',
+            'category' => 'required|in:software_problem,hardware_request,system_access,other',
         ]);
 
-        Auth::user()->tickets()->create([
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        $user->tickets()->create([
             'title' => $request->title,
             'description' => $request->description,
             'priority' => $request->priority,
+            'category' => $request->category,
             'status' => 'pending',
         ]);
 
@@ -51,7 +59,6 @@ class TicketController extends Controller
 
         public function edit(Ticket $ticket)
     {
-        // Add authorization: only owner or admin can edit
         if (Auth::id() !== $ticket->user_id && Auth::user()->role !== 'admin') {
             abort(403);
         }
@@ -60,7 +67,6 @@ class TicketController extends Controller
 
     public function update(Request $request, Ticket $ticket)
     {
-        // Add authorization
         if (Auth::id() !== $ticket->user_id && Auth::user()->role !== 'admin') {
             abort(403);
         }
@@ -84,39 +90,12 @@ class TicketController extends Controller
 
     public function show(Ticket $ticket): View
     {
-        $ticket->load(['messages.user', 'user.assets']); 
+        $ticket->load(['messages.user', 'user.assets', 'allocatedAssets']);
         $supportUsers = User::where('role', 'support')->get();
-        return view('tickets.show', compact('ticket', 'supportUsers'));
+        $availableAssets = Asset::where('status', 'available')->orderBy('name')->get();
+        return view('tickets.show', compact('ticket', 'supportUsers', 'availableAssets'));
     }
-    // public function complete(Request $request, Ticket $ticket)
-    // {
-    //     // Authorization: Ensure only the owner, assigned support, or admin can complete.
-    //     if (
-    //         Auth::id() !== $ticket->user_id &&
-    //         Auth::id() !== $ticket->assigned_to &&
-    //         Auth::user()->role !== 'admin'
-    //     ) {
-    //         abort(403, 'Unauthorized action.');
-    //     }
 
-    //     $ticket->status = 'completed';
-    //     $successMessage = 'درخواست با موفقیت تکمیل شد.';
-
-    //     // --- FIX: Only validate and save rating if the ticket creator is completing it ---
-    //     if (Auth::id() === $ticket->user_id) {
-    //         $request->validate([
-    //             'rating' => ['required', 'integer', 'min:1', 'max:5'],
-    //         ], [
-    //             'rating.required' => 'لطفاً برای تکمیل، یک امتیاز از 1 تا 5 ستاره انتخاب کنید.'
-    //         ]);
-    //         $ticket->rating = $request->rating;
-    //         $successMessage = 'درخواست با موفقیت تکمیل و امتیاز شما ثبت شد.';
-    //     }
-
-    //     $ticket->save();
-
-    //     return redirect()->route('tickets.show', $ticket)->with('success', $successMessage);
-    // }
     public function assign(Request $request, Ticket $ticket)
     {
         if (Auth::user()->role !== 'admin') {
@@ -140,7 +119,6 @@ class TicketController extends Controller
     }
         public function complete(Ticket $ticket)
     {
-        // Authorize: Only assigned support or admin can complete.
         if (Auth::id() !== $ticket->assigned_to && Auth::user()->role !== 'admin') {
             abort(403, 'Unauthorized action.');
         }
@@ -151,12 +129,8 @@ class TicketController extends Controller
         return redirect()->route('tickets.show', $ticket)->with('success', 'درخواست با موفقیت تکمیل شد.');
     }
 
-    /**
-     * Store the user's rating for a completed ticket.
-     */
     public function rate(Request $request, Ticket $ticket)
     {
-        // Authorize: Only the ticket creator can rate it, and only if it's completed.
         if (Auth::id() !== $ticket->user_id || $ticket->status !== 'completed') {
             abort(403, 'Unauthorized action.');
         }
@@ -169,5 +143,28 @@ class TicketController extends Controller
         $ticket->save();
 
         return redirect()->route('tickets.show', $ticket)->with('success', 'امتیاز شما با موفقیت ثبت شد.');
+    }
+        public function allocateAsset(Request $request, Ticket $ticket)
+    {
+        if (Auth::user()->role !== 'admin' && Auth::id() !== $ticket->assigned_to) {
+            abort(403);
+        }
+
+        $request->validate([
+            'asset_id' => 'required|exists:assets,id',
+        ]);
+
+        $asset = Asset::find($request->asset_id);
+
+        if ($asset->status !== 'available') {
+            return back()->with('error', 'این قطعه در حال حاضر موجود نیست.');
+        }
+        $ticket->allocatedAssets()->attach($asset->id);
+
+        $asset->status = 'assigned';
+        $asset->assigned_to = $ticket->user_id;
+        $asset->save();
+
+        return back()->with('success', 'قطعه با موفقیت به این درخواست تخصیص داده شد.');
     }
 }

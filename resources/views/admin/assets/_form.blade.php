@@ -35,7 +35,6 @@
                         <option value="available" @selected(old('status', $asset->status ?? '') == 'available')>موجود</option>
                         <option value="assigned" @selected(old('status', $asset->status ?? '') == 'assigned')>اختصاص یافته</option>
                         <option value="under_maintenance" @selected(old('status', $asset->status ?? '') == 'under_maintenance')>در حال تعمیر</option>
-                        <option value="expired" @selected(old('status', $asset->status ?? '') == 'expired')>از رده خارج</option>
                     </select>
                     <x-input-error :messages="$errors->get('status')" class="mt-2" />
                 </div>
