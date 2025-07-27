@@ -32,10 +32,10 @@ class UserController extends Controller
         return response()->json($user, 201);
     }
 
-    public function show(User $user)
-    {
-        return $user;
-    }
+    // public function show(User $user)
+    // {
+    //     return $user;
+    // }
 
     public function update(Request $request, User $user)
     {

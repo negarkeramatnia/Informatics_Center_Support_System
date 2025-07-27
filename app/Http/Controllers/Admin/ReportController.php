@@ -12,15 +12,15 @@ class ReportController extends Controller
 {
     public function index()
     {
-        // --- 1. Number of Requests ---
+        // Number of Requests ---
         $totalTickets = Ticket::count();
         $pendingTickets = Ticket::where('status', 'pending')->count();
         $completedTickets = Ticket::where('status', 'completed')->count();
 
-        // --- 2. User Satisfaction ---
+        // User Satisfaction ---
         $averageRating = Ticket::whereNotNull('rating')->avg('rating');
 
-        // --- 3. Response Time (Advanced Calculation) ---
+        // Response Time (Advanced Calculation) ---
         // This calculates the average time in hours from ticket creation to completion.
         $avgResolutionTimeHours = Ticket::where('status', 'completed')
             ->select(DB::raw('AVG(TIMESTAMPDIFF(SECOND, created_at, updated_at)) as avg_seconds'))
@@ -28,7 +28,7 @@ class ReportController extends Controller
 
         $avgResolutionTime = $avgResolutionTimeHours ? number_format($avgResolutionTimeHours / 3600, 2) . ' ساعت' : 'N/A';
         
-        // --- 4. Performance by Support Staff ---
+        // Performance by Support Staff ---
         $supportPerformance = User::where('role', 'support')
             ->withCount(['assignedTickets as completed_tickets_count' => function ($query) {
                 $query->where('status', 'completed');

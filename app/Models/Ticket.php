@@ -2,28 +2,24 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Morilog\Jalali\Jalalian;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;//many-to-many
 
 class Ticket extends Model
 {
-    use HasFactory;
 
     protected $fillable = [
         'user_id',
-        'asset_id',
         'assigned_to',
         'title',
         'description',
         'status',
-        'resolution_notes',
         'priority',
+        'rating',
     ];
 
-    // Relationships
+    // Relationships*************************************
 
     // Creator of the ticket
     public function user()
@@ -31,13 +27,21 @@ class Ticket extends Model
         return $this->belongsTo(User::class);
     }
 
-    // Support staff assigned to the ticket
+    // IT Support assigned to the ticket
     public function assignedUser()
     {
         return $this->belongsTo(User::class, 'assigned_to');
     }
+    
+    //many-to-many
+    //Ticket and the Assets
+    public function allocatedAssets(): BelongsToMany
+    {
+        return $this->belongsToMany(Asset::class);
+    }
 
-    // Messages related to this ticket
+    // Messages related to this ticket 
+    // one-to-many
     public function messages()
     {
         return $this->hasMany(Message::class);
@@ -52,9 +56,7 @@ class Ticket extends Model
     {
         return Jalalian::fromCarbon($this->updated_at)->format('%A, %d %B %Y - H:i');
     }
-    /**
-     * The assets that are allocated to the ticket.
-     */
+
     public function allocatedAssets(): BelongsToMany
     {
         return $this->belongsToMany(Asset::class);

@@ -73,7 +73,6 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        // Prevent admin from deleting themselves
         if ($user->id === auth()->id()) {
             return back()->with('error', 'شما نمی‌توانید حساب کاربری خود را حذف کنید.');
         }

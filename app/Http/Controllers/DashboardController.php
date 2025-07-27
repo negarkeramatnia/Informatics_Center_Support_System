@@ -24,7 +24,7 @@ class DashboardController extends Controller
                 'resolved_tickets_count' => $user->tickets()->where('status', 'completed')->count(),
                 'recent_tickets' => $user->tickets()->latest()->take(5)->get(),
                 'assigned_assets_count' => $user->assets()->count(),
-                'userAssets' => $user->assets()->get(), // This fetches the assets for the view
+                'userAssets' => $user->assets()->get(),
             ];
         } 
         elseif ($user->role === 'support') {
@@ -55,8 +55,6 @@ class DashboardController extends Controller
                                                 ->get(),
             ];
         }
-
-        // This single view will now handle displaying the correct partial
         return view('dashboard', $viewData);
     }
 }
