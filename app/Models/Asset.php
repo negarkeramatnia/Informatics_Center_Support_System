@@ -25,7 +25,7 @@ class Asset extends Model
     ];
 
 
-    public function assignedToUser(): BelongsTo
+    public function assignedToUser(): BelongsTo//each asset for a user
     {
         return $this->belongsTo(User::class, 'assigned_to');
     }

@@ -90,7 +90,7 @@
                         @endif
                     </div>
 
-                    {{-- Notes / Messaging Section --}}
+                    {{-- Messaging Section --}}
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                         <h3 class="font-bold text-lg mb-6">یادداشت‌ها و پیام‌ها</h3>
                         <div class="space-y-6">

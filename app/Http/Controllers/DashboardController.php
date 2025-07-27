@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Ticket;
 use App\Models\User;
@@ -37,7 +36,7 @@ class DashboardController extends Controller
                 'completed_last_week' => (clone $myTickets)->where('status', 'completed')
                                              ->where('updated_at', '>=', Carbon::now()->subWeek())
                                              ->count(),
-                'avg_response_time' => 'N/A', // Placeholder for now
+                'avg_response_time' => 'N/A',
                 'my_active_tickets_list' => (clone $myActiveTickets)->with('user:id,name')->latest('updated_at')->take(10)->get(),
             ];
         } 

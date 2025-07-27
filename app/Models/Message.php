@@ -13,12 +13,12 @@ class Message extends Model
     ];
 
     // Relationships******************
-    public function ticket()
+    public function ticket()//each message belongs to a ticket
     {
         return $this->belongsTo(Ticket::class);
     }
 
-    public function user()
+    public function user()//each message belongs to a user
     {
         return $this->belongsTo(User::class);
     }
