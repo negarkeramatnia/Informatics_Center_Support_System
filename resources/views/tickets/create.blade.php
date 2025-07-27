@@ -79,16 +79,16 @@
                                 @error('description') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
 
-                            {{-- Priority --}}
-                            <div>
-                                <label for="priority" class="block font-medium text-sm text-gray-700 mb-1">اولویت</label>
-                                <select id="priority" name="priority" class="form-input-custom" required>
-                                    <option value="low" @if(old('priority') == 'low') selected @endif>کم</option>
-                                    <option value="medium" @if(old('priority', 'medium') == 'medium') selected @endif>متوسط</option>
-                                    <option value="high" @if(old('priority') == 'high') selected @endif>زیاد</option>
-                                </select>
-                                @error('priority') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
-                            </div>
+                              {{-- Priority --}}
+                                <div>
+                                    <label for="priority" class="block font-medium text-sm text-gray-700 mb-1">اولویت</label>
+                                    <select id="priority" name="priority" class="form-input-custom" required>
+                                        <option value="low" @selected(old('priority') == 'low')>کم</option>
+                                        <option value="medium" @selected(old('priority', 'medium') == 'medium')>متوسط</option>
+                                        <option value="high" @selected(old('priority') == 'high')>زیاد</option>
+                                    </select>
+                                    @error('priority') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                </div>
                         </div>
 
                         {{-- Action Buttons --}}

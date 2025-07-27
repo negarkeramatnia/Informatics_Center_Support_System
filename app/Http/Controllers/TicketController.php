@@ -40,7 +40,7 @@ class TicketController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'priority' => 'required|in:low,medium,high',
-            'category' => 'required|in:software_problem,hardware_request,system_access,other',
+            //'category' => 'required|in:software_problem,hardware_request,system_access,other',
         ]);
 
         /** @var \App\Models\User $user */
@@ -50,7 +50,7 @@ class TicketController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'priority' => $request->priority,
-            'category' => $request->category,
+            //'category' => $request->category,
             'status' => 'pending',
         ]);
 

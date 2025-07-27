@@ -56,9 +56,4 @@ class Ticket extends Model
     {
         return Jalalian::fromCarbon($this->updated_at)->format('%A, %d %B %Y - H:i');
     }
-
-    public function allocatedAssets(): BelongsToMany
-    {
-        return $this->belongsToMany(Asset::class);
-    }
 }

@@ -5,44 +5,27 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Ticket;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
     public function index()
     {
-<<<<<<< HEAD
-        // Number of Requests ---
-=======
         // Number of Requests
->>>>>>> unstable
         $totalTickets = Ticket::count();
         $pendingTickets = Ticket::where('status', 'pending')->count();
         $completedTickets = Ticket::where('status', 'completed')->count();
 
-<<<<<<< HEAD
-        // User Satisfaction ---
-        $averageRating = Ticket::whereNotNull('rating')->avg('rating');
-
-        // Response Time (Advanced Calculation) ---
-        // This calculates the average time in hours from ticket creation to completion.
-=======
         // User Satisfaction
         $averageRating = Ticket::whereNotNull('rating')->avg('rating');
 
         // Response Time
->>>>>>> unstable
         $avgResolutionTimeHours = Ticket::where('status', 'completed')
             ->select(DB::raw('AVG(TIMESTAMPDIFF(SECOND, created_at, updated_at)) as avg_seconds'))
             ->value('avg_seconds');
 
         $avgResolutionTime = $avgResolutionTimeHours ? number_format($avgResolutionTimeHours / 3600, 2) . ' ساعت' : 'N/A';
         
-<<<<<<< HEAD
-        // Performance by Support Staff ---
-=======
->>>>>>> unstable
         $supportPerformance = User::where('role', 'support')
             ->withCount(['assignedTickets as completed_tickets_count' => function ($query) {
                 $query->where('status', 'completed');
