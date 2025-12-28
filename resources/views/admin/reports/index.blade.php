@@ -64,6 +64,49 @@
                 </div>
             </div>
 
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+        <h3 class="font-bold text-lg mb-4">توزیع موضوعی درخواست‌ها</h3>
+        <canvas id="categoryChart"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const ctx = document.getElementById('categoryChart').getContext('2d');
+    const categoryChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['نرم‌افزار', 'سخت‌افزار', 'شبکه', 'دسترسی‌ها', 'سایر'],
+            datasets: [{
+                data: @json($chartData),
+                backgroundColor: [
+                    '#3b82f6', // Blue
+                    '#ef4444', // Red
+                    '#10b981', // Emerald
+                    '#f59e0b', // Amber
+                    '#6b7280'  // Gray
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        font: {
+                            family: 'tahoma' // Or your Persian font
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+
             {{-- Support Staff Performance Table --}}
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 border-b">

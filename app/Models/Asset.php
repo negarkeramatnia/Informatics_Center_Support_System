@@ -12,6 +12,7 @@ class Asset extends Model
         'name',
         'description',
         'serial_number',
+        'ip_address',
         'purchase_date',
         'warranty_expiration',
         'status',

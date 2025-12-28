@@ -82,7 +82,6 @@
         <div class="dashboard-card-header">
             <h3 class="dashboard-card-title"><i class="fas fa-bolt mr-2 text-gray-400"></i> دسترسی سریع</h3>
         </div>
-        {{-- FIX: Changed grid-cols-2 to be responsive --}}
         <div class="p-6 grid grid-cols-2 md:grid-cols-4 gap-4">
             <a href="{{ route('admin.users.index') }}" class="quick-action-card">
                 <i class="fas fa-users-cog text-2xl text-blue-600 mb-2"></i>
@@ -115,6 +114,7 @@
                     <thead>
                         <tr>
                             <th>عنوان</th>
+                            <th>دسته‌بندی</th>
                             <th>کاربر</th>
                             <th>اولویت</th>
                             <th>زمان ثبت</th>
@@ -123,16 +123,20 @@
                     </thead>
                     <tbody>
                         @forelse ($adminData['recent_unassigned_tickets'] ?? [] as $ticket)
-                            <tr>
-                                <td class="font-medium text-gray-900">{{ Str::limit($ticket->title, 45) }}</td>
-                                <td>{{ $ticket->user->name ?? 'N/A' }}</td>
-                                <td><span class="priority-badge priority-{{$ticket->priority}}">{{ __($ticket->priority) }}</span></td>
-                                <td class="text-sm text-gray-500">{{ $ticket->created_at->diffForHumans() }}</td>
-                                <td>
-                                    <a href="{{ route('tickets.show', $ticket) }}" class="text-sm text-blue-600 hover:text-blue-800 font-semibold">بررسی و ارجاع</a>
-                                </td>
-                            </tr>
-                        @empty
+<tr>
+            <td class="font-medium text-gray-900">{{ Str::limit($ticket->title, 45) }}</td>
+            
+            {{-- <--- ADD THIS LINE --}}
+            <td class="text-sm text-gray-600">{{ $ticket->category_label }}</td> 
+            
+            <td>{{ $ticket->user->name ?? 'N/A' }}</td>
+            <td><span class="priority-badge priority-{{$ticket->priority}}">{{ __($ticket->priority) }}</span></td>
+            <td class="text-sm text-gray-500">{{ $ticket->created_at->diffForHumans() }}</td>
+            <td>
+                <a href="{{ route('tickets.show', $ticket) }}" class="text-sm text-blue-600 hover:text-blue-800 font-semibold">بررسی و ارجاع</a>
+            </td>
+        </tr>
+    @empty
                             <tr><td colspan="5" class="text-center py-6 text-gray-500">هیچ درخواست ارجاع‌نشده‌ای وجود ندارد.</td></tr>
                         @endforelse
                     </tbody>

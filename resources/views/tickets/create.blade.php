@@ -72,6 +72,18 @@
                                 @error('title') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
 
+                            <div class="mb-4">
+                                <x-input-label for="category" :value="__('دسته‌بندی مشکل')" />
+                                <select id="category" name="category" class="block mt-1 w-full border-gray-300                             focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                    <option value="software">نرم‌افزار (Software)</option>
+                                    <option value="hardware">سخت‌افزار (Hardware)</option>
+                                    <option value="network">شبکه و اینترنت (Network)</option>
+                                    <option value="access_control">دسترسی و اکانت (Access)</option>
+                                    <option value="other">سایر موارد</option>
+                                </select>
+                                <x-input-error :messages="$errors->get('category')" class="mt-2" />
+                            </div>
+
                             {{-- Description --}}
                             <div>
                                 <label for="description" class="block font-medium text-sm text-gray-700 mb-1">شرح درخواست</label>

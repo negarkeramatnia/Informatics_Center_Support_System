@@ -213,6 +213,16 @@
                     <div class="bg-white shadow-sm sm:rounded-lg p-6">
                         <h4 class="font-bold text-lg mb-4">جزئیات</h4>
                         <dl>
+                            <h4 class="font-bold text-lg mb-4">جزئیات</h4>
+    <dl>
+        <div class="flex justify-between py-2 border-b">
+            <dt class="text-gray-600">دسته‌بندی:</dt>
+            <dd class="font-medium">{{ $ticket->category_label }}</dd>
+        </div>
+        <div class="flex justify-between py-2 border-b">
+            <dt class="text-gray-600">وضعیت:</dt>
+            <dd><span class="status-badge status-{{ $ticket->status }}">{{ __($ticket->status) }}</span></dd>
+        </div>
                             <div class="flex justify-between py-2 border-b">
                                 <dt class="text-gray-600">وضعیت:</dt>
                                 <dd><span class="status-badge status-{{ $ticket->status }}">{{ __($ticket->status) }}</span></dd>

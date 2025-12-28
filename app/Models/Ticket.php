@@ -16,6 +16,7 @@ class Ticket extends Model
         'description',
         'status',
         'priority',
+        'category',
         'rating',
     ];
 
@@ -56,4 +57,16 @@ class Ticket extends Model
     {
         return Jalalian::fromCarbon($this->updated_at)->format('%A, %d %B %Y - H:i');
     }
+
+    public function getCategoryLabelAttribute(): string
+{
+    return match ($this->category) {
+        'software' => 'نرم‌افزار',
+        'hardware' => 'سخت‌افزار',
+        'network' => 'شبکه و اینترنت',
+        'access_control' => 'دسترسی و اکانت',
+        'other' => 'سایر موارد',
+        default => 'نامشخص',
+    };
+}
 }

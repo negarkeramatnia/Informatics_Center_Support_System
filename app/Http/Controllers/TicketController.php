@@ -40,7 +40,8 @@ class TicketController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'priority' => 'required|in:low,medium,high',
-            //'category' => 'required|in:software_problem,hardware_request,system_access,other',
+            // Uncomment and enforce this now:
+            'category' => 'required|in:software,hardware,network,access_control,other', 
         ]);
 
         /** @var \App\Models\User $user */
@@ -50,14 +51,15 @@ class TicketController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'priority' => $request->priority,
-            //'category' => $request->category,
+            'category' => $request->category, // <--- Save the category
             'status' => 'pending',
         ]);
 
-        return redirect()->route('tickets.my')->with('success', 'درخواست شما با موفقیت ثبت شد.');
+        return redirect()->route('tickets.my')
+            ->with('success', 'درخواست شما با موفقیت ثبت شد.');
     }
 
-        public function edit(Ticket $ticket)
+    public function edit(Ticket $ticket)
     {
         if (Auth::id() !== $ticket->user_id && Auth::user()->role !== 'admin') {
             abort(403);

@@ -8,11 +8,27 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index()
-    {
-        $users = User::latest()->paginate(15);
-        return view('admin.users.index', compact('users'));
+    public function index(Request $request)
+{
+    $query = User::query();
+
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where(function($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%")
+              ->orWhere('email', 'like', "%{$search}%")
+              ->orWhere('username', 'like', "%{$search}%")
+              ->orWhere('phone', 'like', "%{$search}%");
+        });
     }
+
+    // Removed Filter Logic
+
+    $users = $query->latest()->paginate(15)->withQueryString();
+    
+    // Removed $departments variable
+    return view('admin.users.index', compact('users'));
+}
 
     public function store(Request $request)
     {

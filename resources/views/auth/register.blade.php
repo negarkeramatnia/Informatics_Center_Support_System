@@ -106,6 +106,18 @@
                     </div>
 
                     <div>
+                        <label for="department" class="form-label">واحد سازمانی</label>
+                        <select id="department" name="department" class="form-select" required>
+                            <option value="">-- انتخاب واحد سازمانی --</option>
+                            @php $depts = ['مدیریت', 'فناوری اطلاعات', 'منابع انسانی', 'مالی', 'حراست', 'خدمات مشترکین', 'فنی و مهندسی']; @endphp
+                            @foreach($depts as $dept)
+                                <option value="{{ $dept }}" @if(old('department') == $dept) selected @endif>{{ $dept }}</option>
+                            @endforeach
+                        </select>
+                        @error('department') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div>
                         <label for="role" class="form-label">نقش کاربری</label>
                         <select name="role" id="role" required class="form-select">
                             <option value="user" @if(old('role') == 'user') selected @endif>کاربر عادی (جهت ثبت درخواست)</option>

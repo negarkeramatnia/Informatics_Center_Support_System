@@ -25,6 +25,7 @@ class RegisteredUserController extends Controller
             'username' => ['required', 'string', 'max:255', 'unique:'.User::class],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'phone' => ['required', 'numeric', 'digits:11'],
+            'department' => ['required', 'string', 'max:255'],
             'role' => ['required', 'in:user,support,admin'],
             'profile_picture' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
@@ -39,6 +40,7 @@ class RegisteredUserController extends Controller
             'phone.required' => 'وارد کردن شماره تلفن الزامی است.',
             'phone.numeric' => 'شماره تلفن باید فقط شامل اعداد باشد.',
             'phone.digits' => 'شماره تلفن باید دقیقاً 11 رقم باشد.',
+            'department.required' => 'انتخاب واحد سازمانی الزامی است.',
             'password.required' => 'وارد کردن رمز عبور الزامی است.',
             'password.confirmed' => 'تکرار رمز عبور با رمز عبور مطابقت ندارد.',
         ]);
@@ -53,6 +55,7 @@ class RegisteredUserController extends Controller
             'username' => $request->username,
             'email' => $request->email,
             'phone' => $request->phone,
+            'department' => $request->department,
             'role' => $request->role,
             'profile_picture' => $path,
             'password' => Hash::make($request->password),

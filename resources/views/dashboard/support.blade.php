@@ -65,23 +65,28 @@
                     <tr>
                         <th>اولویت</th>
                         <th>عنوان</th>
+                        <th>دسته‌بندی</th>
                         <th>کاربر</th>
                         <th>آخرین بروزرسانی</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($supportData['my_active_tickets_list'] ?? [] as $ticket)
-                        <tr>
-                            <td><span class="priority-badge priority-{{$ticket->priority}}">{{ __($ticket->priority) }}</span></td>
-                            <td class="font-medium text-gray-900">{{ Str::limit($ticket->title, 50) }}</td>
-                            <td>{{ $ticket->user->name ?? 'N/A' }}</td>
-                            <td class="text-sm text-gray-500">{{ $ticket->updated_at->diffForHumans() }}</td>
-                            <td>
-                                <a href="{{ route('tickets.show', $ticket) }}" class="text-sm text-blue-600 hover:text-blue-800 font-semibold">مشاهده و پاسخ</a>
-                            </td>
-                        </tr>
-                    @empty
+                @forelse ($supportData['my_active_tickets_list'] ?? [] as $ticket)
+                <tr>
+                    <td><span class="priority-badge priority-{{$ticket->priority}}">{{ __($ticket->priority) }}</span></td>
+                    <td class="font-medium text-gray-900">{{ Str::limit($ticket->title, 50) }}</td>
+                
+                    {{-- <--- ADD THIS LINE --}}
+                    <td class="text-sm text-gray-600">{{ $ticket->category_label }}</td>
+                
+                    <td>{{ $ticket->user->name ?? 'N/A' }}</td>
+                    <td class="text-sm text-gray-500">{{ $ticket->updated_at->diffForHumans() }}</td>
+                    <td>
+                        <a href="{{ route('tickets.show', $ticket) }}" class="text-sm text-blue-600            hover:text-blue-800 font-semibold">مشاهده و پاسخ</a>
+                    </td>
+                </tr>
+                @empty
                         <tr><td colspan="5" class="text-center py-8 text-gray-500">
                             <i class="fas fa-check-circle text-2xl text-green-500 mb-2"></i><br>
                             شما هیچ درخواست فعالی ندارید. کار عالی!
