@@ -44,7 +44,9 @@ Route::middleware('auth')->group(function () {
 // Admin Route Group
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('users', UserController::class)->except(['show']);
-    Route::resource('assets', AssetController::class)->except(['show']);
+    // Route::resource('assets', AssetController::class)->except(['show']);
+    Route::resource('assets', AssetController::class);
+    Route::get('/reports/details', [ReportController::class, 'details'])->name('reports.details');
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
 });

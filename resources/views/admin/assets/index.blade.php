@@ -106,16 +106,26 @@
 
                                     <td>{{ $asset->assignedToUser->name ?? '---' }}</td>
                                     
-                                    <td class="flex items-center gap-x-2">
-                                        <a href="{{ route('admin.assets.edit', $asset) }}" class="text-blue-600 action-icon" title="ویرایش">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <form action="{{ route('admin.assets.destroy', $asset->id) }}" method="POST" onsubmit="return confirm('آیا حذف می‌کنید؟');" class="inline">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" class="text-red-600 action-icon" title="حذف">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
+<td>
+                                        <div class="flex items-center justify-center gap-x-3">
+                                            {{-- View History Button --}}
+                                            <a href="{{ route('admin.assets.show', $asset) }}" class="text-gray-500 hover:text-green-600" title="مشاهده تاریخچه">
+                                                <i class="fas fa-history text-lg"></i>
+                                            </a>
+
+                                            {{-- Edit Button --}}
+                                            <a href="{{ route('admin.assets.edit', $asset) }}" class="text-gray-400 hover:text-blue-600" title="ویرایش">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+
+                                            {{-- Delete Form --}}
+                                            <form action="{{ route('admin.assets.destroy', $asset) }}" method="POST" onsubmit="return confirm('آیا حذف می‌کنید؟');" class="inline">
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="text-gray-400 hover:text-red-600" title="حذف">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty

@@ -105,4 +105,13 @@ public function index(Request $request)
             'software_details' => 'nullable|json',
         ];
     }
+    public function show(Asset $asset)
+    {
+        // Load the user who currently has it, and the history of tickets associated with this asset
+        $asset->load(['assignedToUser', 'tickets' => function($q) {
+            $q->latest(); // Show newest tickets first
+        }, 'tickets.user']);
+
+        return view('admin.assets.show', compact('asset'));
+    }
 }
