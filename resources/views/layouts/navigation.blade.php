@@ -36,25 +36,26 @@
             <span class="sidebar-text">مدیریت قطعات</span>
         </a>
 
-        {{-- NEW REPORTS LINK (Styled Correctly) --}}
+        {{-- NEW REPORTS LINK --}}
         <a href="{{ route('admin.reports.index') }}" class="menu-item flex items-center px-4 py-3 rounded-lg mx-2 mt-1 {{ request()->routeIs('admin.reports*') ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-gray-100' }}">
             <i class="fas fa-chart-pie ml-3 w-5 text-center"></i>
             <span class="sidebar-text">گزارش‌های عملکرد</span>
         </a>
+
+        <a href="{{ route('admin.articles.index') }}" class="menu-item flex items-center px-4 py-3 rounded-lg mx-2 mt-1 {{ request()->routeIs('admin.articles.*') ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-gray-100' }}">
+    <i class="fas fa-pen-nib ml-3 w-5 text-center"></i>
+    <span class="sidebar-text">مدیریت مقالات</span>
+</a>
     @endif
 
+    <a href="{{ route('knowledge-base.index') }}" class="menu-item flex items-center px-4 py-3 rounded-lg mx-2 mt-1 {{ request()->routeIs('knowledge-base.*') ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-gray-100' }}">
+    <i class="fas fa-book-reader ml-3 w-5 text-center"></i>
+    <span class="sidebar-text">پایگاه دانش (FAQ)</span>
+</a>
     {{-- General Settings Link for all roles --}}
     <a href="{{ route('profile.edit') }}" class="menu-item flex items-center px-4 py-3 rounded-lg mx-2 mt-1 {{ request()->routeIs('profile.edit') ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-gray-100' }}">
         <i class="fas fa-user-cog ml-3 w-5 text-center"></i>
         <span class="sidebar-text">پروفایل</span>
     </a>
-    
-    {{-- Logout Button (Optional, usually included in sidebars) --}}
-    <form method="POST" action="{{ route('logout') }}">
-        @csrf
-        <a href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();" class="menu-item flex items-center px-4 py-3 rounded-lg mx-2 mt-1 text-red-600 hover:bg-red-50">
-            <i class="fas fa-sign-out-alt ml-3 w-5 text-center"></i>
-            <span class="sidebar-text">خروج</span>
-        </a>
-    </form>
+
 </div>
