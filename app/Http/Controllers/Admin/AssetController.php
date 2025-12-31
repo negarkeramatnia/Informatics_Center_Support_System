@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Asset;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -37,8 +38,7 @@ public function index(Request $request)
 
         $assets = $query->latest()->paginate(15)->withQueryString();
 
-        // DATA FOR THE DROPDOWN (Matches User Departments)
-        $locations = ['مدیریت', 'فناوری اطلاعات', 'منابع انسانی', 'مالی', 'حراست', 'خدمات مشترکین', 'فنی و مهندسی'];
+        $locations = Setting::getList('departments');
 
         return view('admin.assets.index', compact('assets', 'locations'));
     }

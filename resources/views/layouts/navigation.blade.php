@@ -51,7 +51,14 @@
     <a href="{{ route('knowledge-base.index') }}" class="menu-item flex items-center px-4 py-3 rounded-lg mx-2 mt-1 {{ request()->routeIs('knowledge-base.*') ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-gray-100' }}">
     <i class="fas fa-book-reader ml-3 w-5 text-center"></i>
     <span class="sidebar-text">پایگاه دانش (FAQ)</span>
-</a>
+    </a>
+
+    {{-- Phonebook Link --}}
+    <a href="{{ route('phonebook.index') }}" class="menu-item flex items-center px-4 py-3 rounded-lg mx-2 mt-1 {{ request()->routeIs('phonebook.index') ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-gray-100' }}">
+        <i class="fas fa-address-book ml-3 w-5 text-center"></i>
+        <span class="sidebar-text">دفترچه تلفن</span>
+    </a>
+    
     {{-- General Settings Link for all roles --}}
     <a href="{{ route('profile.edit') }}" class="menu-item flex items-center px-4 py-3 rounded-lg mx-2 mt-1 {{ request()->routeIs('profile.edit') ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-gray-100' }}">
         <i class="fas fa-user-cog ml-3 w-5 text-center"></i>

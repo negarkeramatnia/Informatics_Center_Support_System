@@ -113,18 +113,20 @@
 
     {{-- CHART.JS SCRIPTS --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
+<script>
         // 1. Category Chart (Clickable)
         const ctxCategory = document.getElementById('categoryChart').getContext('2d');
-        const categoryLabels = ['software', 'hardware', 'network', 'access_control', 'other']; 
+        
+        // USE DYNAMIC LABELS FROM CONTROLLER
+        const categoryLabels = @json($categoryLabels); 
         
         new Chart(ctxCategory, {
             type: 'doughnut',
             data: {
-                labels: ['نرم‌افزار', 'سخت‌افزار', 'شبکه', 'دسترسی‌ها', 'سایر'],
+                labels: categoryLabels, // Use the variable here
                 datasets: [{
                     data: @json($categoryCounts),
-                    backgroundColor: ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#6b7280'],
+                    backgroundColor: ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#6b7280', '#8b5cf6', '#ec4899'], // Added more colors just in case you add more categories
                     borderWidth: 0
                 }]
             },
@@ -136,6 +138,7 @@
                     if (activeElements.length > 0) {
                         const index = activeElements[0].index;
                         const selectedCategory = categoryLabels[index];
+                        // Redirect to details page
                         window.location.href = `{{ route('admin.reports.details') }}?category=${selectedCategory}`;
                     }
                 },
@@ -145,7 +148,7 @@
             }
         });
 
-        // 2. Location Chart (Clickable)
+        // 2. Location Chart 
         const ctxLocation = document.getElementById('locationChart').getContext('2d');
         const locationNames = @json($locationLabels); 
 

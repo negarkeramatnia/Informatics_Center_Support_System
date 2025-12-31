@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/tickets/{ticket}/rate', [App\Http\Controllers\TicketController::class, 'rate'])->name('tickets.rate');
     Route::post('/tickets/{ticket}/allocate-asset', [App\Http\Controllers\TicketController::class, 'allocateAsset'])->name('tickets.allocateAsset');
     Route::get('/knowledge-base', [App\Http\Controllers\Admin\ArticleController::class, 'kbIndex'])->name('knowledge-base.index');
+    Route::get('/phonebook', [App\Http\Controllers\PhonebookController::class, 'index'])->name('phonebook.index');
 });
 
 // Admin Route Group
@@ -50,6 +51,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('/reports/details', [ReportController::class, 'details'])->name('reports.details');
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::post('/settings', [SettingController::class, 'store'])->name('settings.store');
     Route::resource('articles', App\Http\Controllers\Admin\ArticleController::class);
 });
 

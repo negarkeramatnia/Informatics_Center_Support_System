@@ -64,14 +64,14 @@
         <a href="{{ route('admin.users.index') }}" class="stat-card">
             <div class="stat-icon bg-purple-100 text-purple-600"><i class="fas fa-users fa-lg"></i></div>
             <div>
-                <p class="text-sm font-medium text-gray-500">کل کاربران</p>
+                <p class="text-sm font-medium text-gray-500">تمام کاربران</p>
                 <p class="text-3xl font-bold text-gray-800">{{ $adminData['total_users'] ?? 0 }}</p>
             </div>
         </a>
         <a href="{{ route('admin.assets.index') }}" class="stat-card">
             <div class="stat-icon bg-blue-100 text-blue-600"><i class="fas fa-microchip fa-lg"></i></div>
             <div>
-                <p class="text-sm font-medium text-gray-500">کل قطعات</p>
+                <p class="text-sm font-medium text-gray-500">تمام قطعات</p>
                 <p class="text-3xl font-bold text-gray-800">{{ $adminData['total_assets'] ?? 0 }}</p>
             </div>
         </a>

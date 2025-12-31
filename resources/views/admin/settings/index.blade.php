@@ -1,41 +1,54 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('تنظیمات کلی سیستم') }}
+            {{ __('تنظیمات سیستم') }}
         </h2>
     </x-slot>
 
     <div class="py-12" dir="rtl">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <h3 class="text-lg font-medium text-gray-900">تنظیمات عمومی</h3>
-                    <p class="mt-1 text-sm text-gray-600 mb-6">تغییرات کلی مربوط به عملکرد و نمایش سیستم را در اینجا اعمال کنید.</p>
+            
+            <form action="{{ route('admin.settings.store') }}" method="POST">
+                @csrf
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     
-                    <form action="#" method="POST" class="space-y-6">
-                        @csrf
-                        {{-- Placeholder for Site Name --}}
-                        <div>
-                            <label for="site_name" class="block font-medium text-sm text-gray-700">عنوان سایت</label>
-                            <input id="site_name" type="text" class="form-input-custom mt-1" value="{{ config('app.name') }}">
+                    {{-- Card 1: Departments --}}
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                        <div class="flex items-center mb-4 text-blue-600">
+                            <i class="fas fa-building ml-2 text-xl"></i>
+                            <h3 class="text-lg font-bold text-gray-800">مدیریت واحدها (دپارتمان‌ها)</h3>
                         </div>
+                        <p class="text-sm text-gray-500 mb-4">
+                            لیست واحدهای سازمانی را وارد کنید. هر واحد را در یک <strong>خط جدید</strong> بنویسید.
+                            این لیست در فرم‌های ثبت کاربر و ثبت قطعات نمایش داده می‌شود.
+                        </p>
+                        <textarea name="departments" rows="10" class="form-input-custom w-full font-medium" placeholder="مثال:&#10;فناوری اطلاعات&#10;مالی&#10;اداری">{{ $departments }}</textarea>
+                    </div>
 
-                        {{-- Placeholder for Maintenance Mode --}}
-                        <div>
-                            <label for="maintenance_mode" class="flex items-center">
-                                <input type="checkbox" id="maintenance_mode" class="rounded border-gray-300 text-pink-600 shadow-sm focus:ring-pink-500">
-                                <span class="mr-2 text-sm text-gray-600">فعال‌سازی حالت تعمیر و نگهداری</span>
-                            </label>
+                    {{-- Card 2: Ticket Categories --}}
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                        <div class="flex items-center mb-4 text-green-600">
+                            <i class="fas fa-tags ml-2 text-xl"></i>
+                            <h3 class="text-lg font-bold text-gray-800">دسته‌بندی‌های تیکت</h3>
                         </div>
-                        
-                        <div class="flex justify-end pt-6 border-t border-gray-200">
-                            <button type="submit" class="btn-primary-custom">
-                                ذخیره تغییرات
-                            </button>
-                        </div>
-                    </form>
+                        <p class="text-sm text-gray-500 mb-4">
+                            دسته‌بندی‌های فنی برای تیکت‌ها (مانند network, hardware). هر مورد در یک <strong>خط جدید</strong>.
+                            <br><span class="text-xs text-red-500">* بهتر است از حروف انگلیسی استفاده کنید.</span>
+                        </p>
+                        <textarea name="ticket_categories" rows="10" class="form-input-custom w-full font-mono text-sm" placeholder="software&#10;hardware">{{ $categories }}</textarea>
+                    </div>
+
                 </div>
-            </div>
+
+                {{-- Save Button --}}
+                <div class="mt-6 flex justify-end">
+                    <button type="submit" class="btn-primary-custom py-3 px-8 text-lg shadow-lg transform hover:-translate-y-1 transition">
+                        <i class="fas fa-save ml-2"></i> ذخیره تنظیمات
+                    </button>
+                </div>
+
+            </form>
         </div>
     </div>
 </x-app-layout>

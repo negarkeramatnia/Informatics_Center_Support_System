@@ -1,14 +1,13 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-
 use App\Http\Controllers\Controller;
 use App\Models\Asset;
+use App\Models\Setting;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
 class ReportController extends Controller
 {
     public function index()
@@ -40,15 +39,22 @@ class ReportController extends Controller
             ->pluck('total', 'category')
             ->all();
             
-        // Ensure all categories have a value, even if 0
-        $allCategories = ['software', 'hardware', 'network', 'access_control', 'other'];
+        // Get dynamic categories from Settings
+        $categoryLabels = Setting::getList('ticket_categories');
+        
+        // Fallback if settings are empty
+        if (empty($categoryLabels)) {
+            $categoryLabels = ['software', 'hardware', 'network', 'access_control', 'other'];
+        }
+
+        // CALCULATE THE COUNTS
         $categoryCounts = [];
-        foreach ($allCategories as $cat) {
+        foreach ($categoryLabels as $cat) {
+            // Check if the category exists in the DB results, otherwise 0
             $categoryCounts[] = $ticketsByCategory[$cat] ?? 0;
         }
 
-        // 2. Assets by Location/Department (Bar Chart)
-        // This uses the "Feature 6" data you just built
+        // 2. Assets by Location/Department
         $assetsByLocation = Asset::select('location', DB::raw('count(*) as total'))
             ->whereNotNull('location')
             ->groupBy('location')
@@ -65,31 +71,29 @@ class ReportController extends Controller
             'avgResolutionTime',
             'supportPerformance',
             'categoryCounts',
+            'categoryLabels',
             'locationLabels',
             'locationCounts'
         ));
     }
 
-public function details(Request $request)
+    public function details(Request $request)
     {
         $query = Ticket::with('user'); 
 
         $title = 'لیست درخواست‌ها';
 
-        // 1. Filter by Category (Chart)
         if ($request->filled('category')) {
             $query->where('category', $request->category);
             $title = 'درخواست‌های مربوط به: ' . __($request->category);
         }
 
-        // 2. Filter by Support Agent (Table)
         if ($request->filled('support_id')) {
             $query->where('assigned_to', $request->support_id)->where('status', 'completed');
             $agentName = User::find($request->support_id)->name ?? 'ناشناس';
             $title = 'درخواست‌های تکمیل شده توسط: ' . $agentName;
         }
 
-        // 3. Filter by Location (Chart)
         if ($request->filled('location')) {
             $query->whereHas('user', function($q) use ($request) {
                 $q->where('department', $request->location);
@@ -97,13 +101,11 @@ public function details(Request $request)
             $title = 'درخواست‌های ثبت شده از واحد: ' . $request->location;
         }
 
-        // 4. Filter by Status (For Top Cards)
         if ($request->filled('status')) {
             $query->where('status', $request->status);
             $title = 'درخواست‌های با وضعیت: ' . __($request->status);
         }
 
-        // 5. Filter by Rated Only (For Rating Card)
         if ($request->has('rated_only')) {
             $query->whereNotNull('rating');
             $title = 'درخواست‌های دارای امتیاز نظرسنجی';
