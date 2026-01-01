@@ -53,6 +53,9 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'store'])->name('settings.store');
     Route::resource('articles', App\Http\Controllers\Admin\ArticleController::class);
+    // Purchase Requests
+    Route::resource('purchase-requests', App\Http\Controllers\Admin\PurchaseRequestController::class)
+        ->name('index', 'purchase-requests.index');
 });
 
 require __DIR__.'/auth.php';

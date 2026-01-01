@@ -36,6 +36,12 @@
             <span class="sidebar-text">مدیریت قطعات</span>
         </a>
 
+        {{-- Purchase Requests --}}
+        <a href="{{ route('admin.purchase-requests.index') }}" class="menu-item flex items-center px-4 py-3     rounded-lg mx-2 mt-1 {{ request()->routeIs('admin.purchase-requests.*') ? 'bg-blue-100 text-blue-700'   : 'text-gray-600 hover:bg-gray-100' }}">
+            <i class="fas fa-shopping-cart ml-3 w-5 text-center"></i>
+            <span class="sidebar-text">درخواست‌های خرید</span>
+        </a>
+
         {{-- NEW REPORTS LINK --}}
         <a href="{{ route('admin.reports.index') }}" class="menu-item flex items-center px-4 py-3 rounded-lg mx-2 mt-1 {{ request()->routeIs('admin.reports*') ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-gray-100' }}">
             <i class="fas fa-chart-pie ml-3 w-5 text-center"></i>

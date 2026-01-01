@@ -1,29 +1,83 @@
 <x-app-layout>
+    {{-- 1. STYLES & VARIABLES --}}
+    @pushOnce('styles')
+    <style>
+        .btn-secondary-custom { @apply bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 font-bold py-2 px-4 rounded-lg shadow-sm transition flex items-center gap-2; }
+        .btn-primary-custom { @apply bg-blue-600 text-white hover:bg-blue-700 font-bold py-2 px-4 rounded-lg shadow-sm transition flex items-center gap-2; }
+        .btn-success-custom { @apply bg-green-600 text-white hover:bg-green-700 font-bold py-2 px-4 rounded-lg shadow-sm transition flex items-center gap-2; }
+        .form-input-custom { @apply border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-lg shadow-sm w-full; }
+    </style>
+    @endPushOnce
+
+    @php
+        // Resolve Support Agent
+        $assignedSupport = $ticket->assignedToUser ?? $ticket->assignedTo;
+
+        // Status Colors
+        $statusStyles = [
+            'pending' => 'bg-amber-100 text-amber-800 border-amber-200',
+            'in_progress' => 'bg-blue-100 text-blue-800 border-blue-200',
+            'completed' => 'bg-green-100 text-green-800 border-green-200',
+            'closed' => 'bg-gray-100 text-gray-600 border-gray-200',
+        ];
+        // Priority Colors
+        $priorityStyles = [
+            'low' => 'text-gray-600 bg-gray-50',
+            'medium' => 'text-blue-600 bg-blue-50',
+            'high' => 'text-orange-600 bg-orange-50',
+            'critical' => 'text-red-600 bg-red-50',
+        ];
+    @endphp
+
+    {{-- 2. HEADER --}}
     <x-slot name="header">
-        <div class="flex items-center justify-between" style="display: flex; justify-content: space-between;">
-            {{-- Group for Title and Subtitle --}}
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+            {{-- Title --}}
             <div>
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ $ticket->title }}</h2>
-                <p class="text-sm text-gray-500 mt-1">ایجاد شده توسط {{ $ticket->user->name }} در {{ $ticket->jalali_created_at }}</p>
+                <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                    <span class="text-gray-400 text-lg">#{{ $ticket->id }}</span>
+                    {{ $ticket->title }}
+                </h2>
+                <p class="text-sm text-gray-500 mt-1">
+                    ایجاد شده توسط <span class="font-medium text-gray-700">{{ $ticket->user->name }}</span>
+                    <span class="mx-1">•</span>
+                    {{ $ticket->created_at->diffForHumans() }}
+                </p>
             </div>
 
-            {{-- Group for All Action Buttons --}}
-            <div class="flex items-center gap-x-4 justify-start">
-                <a href="{{ route('dashboard') }}" class="btn-secondary-custom">بازگشت به داشبورد</a>
+            {{-- Actions --}}
+            <div class="flex flex-wrap items-center gap-2">
+{{-- Actions with SMOOTH BUTTONS --}}
+            <div class="flex flex-wrap items-center gap-3">
+                {{-- Back Button --}}
+                <a href="{{ route('dashboard') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-800 hover:border-gray-300 transition-all shadow-sm">
+                    <i class="fas fa-arrow-right"></i>
+                    <span>بازگشت</span>
+                </a>
+
+                {{-- Edit Button (Admin or Creator) --}}
                 @if($ticket->status !== 'completed' && (Auth::id() === $ticket->user_id || Auth::user()->role === 'admin'))
-                    <a href="{{ route('tickets.edit', $ticket) }}" class="btn-primary-custom"><i class="fas fa-edit ml-2"></i>ویرایش</a>
+                    <a href="{{ route('tickets.edit', $ticket) }}" class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-50 border border-blue-100 rounded-xl text-sm font-medium text-blue-600 hover:bg-blue-100 hover:text-blue-700 transition-all shadow-sm">
+                        <i class="fas fa-edit"></i>
+                        <span>ویرایش</span>
+                    </a>
                 @endif
+
+                {{-- Completion Logic --}}
                 @if($ticket->status !== 'completed')
                     @if(Auth::id() === $ticket->user_id)
-                        <button type="button" x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-ticket-completion')" class="btn-success-custom">
-                            <i class="fas fa-check-circle ml-2"></i>تکمیل و امتیازدهی
+                        {{-- User: Modal for Rating --}}
+                        <button type="button" x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-ticket-completion')" class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-100 rounded-xl text-sm font-medium text-emerald-600 hover:bg-emerald-100 hover:text-emerald-700 transition-all shadow-sm">
+                            <i class="fas fa-check-circle"></i>
+                            <span>تکمیل و امتیازدهی</span>
                         </button>
                     @elseif(in_array(Auth::user()->role, ['admin', 'support']))
+                        {{-- Support/Admin: Direct Complete --}}
                         <form action="{{ route('tickets.complete', $ticket) }}" method="POST" onsubmit="return confirm('آیا از تکمیل کردن این درخواست اطمینان دارید؟');">
                             @csrf
-                            <button type="submit" class="btn-success-custom">
-                                <i class="fas fa-check-circle ml-2"></i>
-                                تکمیل کردن درخواست
+                            <button type="submit" class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-100 rounded-xl text-sm font-medium text-emerald-600 hover:bg-emerald-100 hover:text-emerald-700 transition-all shadow-sm">
+                                <i class="fas fa-check-circle"></i>
+                                <span>تکمیل درخواست</span>
                             </button>
                         </form>
                     @endif
@@ -32,266 +86,169 @@
         </div>
     </x-slot>
 
-    @pushOnce('styles')
-    <style>
-        .btn-secondary-custom { background-color: #e5e7eb; color: #374151; padding: 0.5rem 0.9rem; border-radius: 0.5rem; font-weight: 600; transition: background-color 0.2s; border: 1px solid #d1d5db; text-decoration: none; }
-        .btn-secondary-custom:hover { background-color: #d1d5db; }
-        .btn-success-custom { background-color: #22c55e; color: white; padding: 0.5rem 0.9rem; border-radius: 0.5rem; font-weight: 600; transition: background-color 0.2s; border: none; display: flex; align-items: center; cursor: pointer; }
-        .btn-success-custom:hover { background-color: #16a34a; }
-        .workflow-step { display: flex; align-items: flex-start; }
-        .workflow-step .icon { display: flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; border-radius: 9999px; }
-        .workflow-step .line { flex-grow: 1; width: 2px; margin-right: 1.125rem; }
-        .workflow-step.completed .icon { background-color: #22c55e; color: white; }
-        .workflow-step.completed .line { background-color: #22c55e; }
-        .workflow-step.active .icon { background-color: #3b82f6; color: white; }
-        .workflow-step.pending .icon { background-color: #e5e7eb; color: #9ca3af; }
-        .workflow-step.pending .line { background-color: #e5e7eb; }
-        .message-card { display: flex; align-items: flex-start; }
-        .message-card:not(:last-child) { border-bottom: 1px solid #e5e7eb; padding-bottom: 1.5rem; margin-bottom: 1.5rem; }
-        .message-author-avatar { width: 3rem; height: 3rem; border-radius: 9999px; object-fit: cover; margin-left: 1rem; }
-        .star-rating { display: flex; flex-direction: row-reverse; justify-content: center; }
-        .star-rating input { display: none; }
-        .star-rating label { font-size: 2.5rem; color: #d1d5db; cursor: pointer; transition: color 0.2s; }
-        .star-rating input:checked ~ label, .star-rating label:hover, .star-rating label:hover ~ label { color: #f59e0b; }
-    </style>
-    @endPushOnce
-
-    <div dir="rtl">
+    {{-- 3. MAIN CONTENT GRID --}}
+    <div class="py-8" dir="rtl">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-                {{-- Main Content (Left Column) --}}
-                <div class="lg:col-span-2 space-y-8">
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                        <h3 class="font-bold text-lg mb-4">شرح درخواست</h3>
-                        <p class="text-gray-700 whitespace-pre-wrap leading-relaxed">{{ $ticket->description }}</p>
-                        {{-- --- RATING FORM (for ticket creator on completed tickets) --- --}}
-                        @if($ticket->status === 'completed' && Auth::id() === $ticket->user_id && is_null($ticket->rating))
-                        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                            <form method="post" action="{{ route('tickets.rate', $ticket) }}" class="text-center">
-                                @csrf
-                                <i class="fas fa-award text-4xl text-yellow-400 mb-4"></i>
-                                <h3 class="font-bold text-lg">امتیاز شما به این پشتیبانی</h3>
-                                <p class="mt-1 text-sm text-gray-600">لطفا برای کمک به بهبود خدمات، به این درخواست امتیاز دهید.</p>
-                                <div class="my-6 star-rating">
-                                    <input type="radio" id="star5" name="rating" value="5" required /><label for="star5" title="عالی">&#9733;</label>
-                                    <input type="radio" id="star4" name="rating" value="4" /><label for="star4" title="خوب">&#9733;</label>
-                                    <input type="radio" id="star3" name="rating" value="3" /><label for="star3" title="متوسط">&#9733;</label>
-                                    <input type="radio" id="star2" name="rating" value="2" /><label for="star2" title="ضعیف">&#9733;</label>
-                                    <input type="radio" id="star1" name="rating" value="1" /><label for="star1" title="خیلی ضعیف">&#9733;</label>
-                                </div>
-                                <x-input-error :messages="$errors->get('rating')" class="mt-2" />
-                                
-                                <div class="mt-6 flex justify-center">
-                                    <button type="submit" class="btn-success-custom">ثبت امتیاز</button>
-                                </div>
-                            </form>
+                {{-- SIDEBAR (Col Span 4) --}}
+                <div class="lg:col-span-4 space-y-6 order-last lg:order-first">
+                    
+                    {{-- Status Card --}}
+                    <div class="bg-white shadow-sm rounded-xl border border-gray-100 overflow-hidden">
+                        <div class="bg-gray-50 px-5 py-3 border-b border-gray-100 flex justify-between items-center">
+                            <h3 class="font-bold text-gray-800 text-sm">جزئیات درخواست</h3>
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold border {{ $statusStyles[$ticket->status] ?? 'bg-gray-100' }}">
+                                {{ __($ticket->status) }}
+                            </span>
                         </div>
-                        @endif
-                    </div>
-
-                    {{-- Messaging Section --}}
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                        <h3 class="font-bold text-lg mb-6">یادداشت‌ها و پیام‌ها</h3>
-                        <div class="space-y-6">
-                            @forelse($ticket->messages as $message)
-                                <div class="message-card">
-                                    <img src="{{ $message->user->profile_picture ? asset('storage/' . $message->user->profile_picture) : 'https://ui-avatars.com/api/?name=' . urlencode($message->user->name) }}" alt="{{ $message->user->name }}" class="message-author-avatar">
-                                    <div class="flex-1">
-                                        <div class="flex items-center justify-between">
-                                            <p class="font-semibold">{{ $message->user->name }}</p>
-                                            <p class="text-xs text-gray-500">{{ \Morilog\Jalali\Jalalian::fromCarbon($message->created_at)->format('%d %B %Y - H:i') }}</p>
-                                        </div>
-                                        <p class="mt-2 text-gray-700 whitespace-pre-wrap">{{ $message->message }}</p>
+                        <div class="p-5 space-y-4 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">اولویت</span>
+                                <span class="inline-flex items-center px-2 py-1 rounded text-xs font-bold {{ $priorityStyles[$ticket->priority] ?? 'bg-gray-100' }}">
+                                    {{ __($ticket->priority) }}
+                                </span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">دسته‌بندی</span>
+                                <span class="font-medium">{{ $ticket->category_label ?? __($ticket->category) }}</span>
+                            </div>
+                            <hr class="border-gray-100">
+                            <div>
+                                <span class="text-gray-500 block mb-2">کارشناس مسئول</span>
+                                <div class="font-medium text-gray-800 bg-gray-50 p-2 rounded border border-gray-100 flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold">
+                                        {{ $assignedSupport ? mb_substr($assignedSupport->name, 0, 1) : '?' }}
                                     </div>
+                                    {{ $assignedSupport->name ?? 'منتظر تعیین کارشناس' }}
                                 </div>
-                            @empty
-                                <p class="text-center text-gray-500 py-4">هنوز هیچ پیامی ثبت نشده است.</p>
-                            @endforelse
+                                {{-- Admin Assign --}}
+                                @if(auth()->user()->role === 'admin')
+                                    <form action="{{ route('tickets.assign', $ticket) }}" method="POST" class="mt-2">
+                                        @csrf
+                                        <select name="assigned_to" onchange="this.form.submit()" class="w-full text-xs border-gray-200 rounded-lg">
+                                            <option value="">-- تغییر --</option>
+                                            @foreach(\App\Models\User::whereIn('role', ['support', 'admin'])->get() as $sup)
+                                                <option value="{{ $sup->id }}">{{ $sup->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </form>
+                                @endif
+                            </div>
                         </div>
-
-                        {{-- Add New Message Form --}}
-                        @if(in_array(Auth::user()->role, ['admin', 'support']) || Auth::id() === $ticket->user_id)
-                        <div class="mt-6 pt-6 border-t">
-                            <form action="{{ route('tickets.messages.store', $ticket) }}" method="POST">
-                                @csrf
-                                <label for="body" class="block font-medium text-sm text-gray-700 mb-2">افزودن یادداشت یا پاسخ</label>
-                                <textarea name="body" id="body" rows="3" class="form-input-custom w-full" placeholder="پاسخ خود را اینجا بنویسید..." required></textarea>
-                                <div class="mt-4 flex justify-end">
-                                    <button type="submit" class="btn-primary-custom"><i class="fas fa-paper-plane ml-2"></i>ارسال پاسخ</button>
-                                </div>
-                            </form>
-                        </div>
-                        @endif
                     </div>
+
+                    {{-- Tools (Admin/Support Only) --}}
+                    @if(in_array(auth()->user()->role, ['admin', 'support']))
+                        {{-- Purchase Requests --}}
+                        <div class="bg-white shadow-sm rounded-xl border border-purple-100 overflow-hidden">
+                            <div class="bg-purple-50 px-5 py-3 border-b border-purple-100 flex justify-between items-center">
+                                <h3 class="font-bold text-purple-900 text-sm"><i class="fas fa-shopping-cart ml-1"></i>درخواست خرید</h3>
+                                <a href="{{ route('admin.purchase-requests.create', ['ticket_id' => $ticket->id]) }}" class="text-xs bg-white text-purple-700 hover:bg-purple-100 border border-purple-200 px-2 py-1 rounded transition">
+                                    <i class="fas fa-plus"></i>
+                                </a>
+                            </div>
+                            <div class="p-4">
+                                @forelse($ticket->purchaseRequests as $pr)
+                                    <div class="flex justify-between items-center text-xs bg-gray-50 p-2 rounded border border-gray-100 mb-1">
+                                        <span class="truncate">{{ $pr->item_name }}</span>
+                                        <span class="font-bold {{ $pr->status == 'approved' ? 'text-green-600' : 'text-yellow-600' }}">{{ __($pr->status) }}</span>
+                                    </div>
+                                @empty
+                                    <p class="text-xs text-gray-400 text-center">موردی ثبت نشده است.</p>
+                                @endforelse
+                            </div>
+                        </div>
+                    @endif
+
                 </div>
 
-                {{-- Sidebar (Right Column) --}}
-                <div class="lg:col-span-1 space-y-6">
-                    {{-- Workflow Tracker --}}
-                    <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                        <h4 class="font-bold text-lg mb-6">روند انجام درخواست</h4>
-                        @php
-                            $statuses = ['pending', 'in_progress', 'completed'];
-                            $currentStatusIndex = array_search($ticket->status, $statuses);
-                        @endphp
-                        <div class="space-y-2">
-                            <div class="workflow-step {{ $currentStatusIndex >= 0 ? 'completed' : 'pending' }}"><div class="icon"><i class="fas fa-check"></i></div><div class="mr-4"><p class="font-semibold">درخواست ثبت شد</p><p class="text-sm text-gray-500">{{ $ticket->jalali_created_at }}</p></div></div>
-                            <div class="h-8 workflow-step {{ $currentStatusIndex >= 1 ? 'completed' : 'pending' }}"><div class="line"></div></div>
-                            <div class="workflow-step {{ $currentStatusIndex >= 1 ? ($currentStatusIndex == 1 ? 'active' : 'completed') : 'pending' }}"><div class="icon"><i class="fas fa-cogs"></i></div><div class="mr-4"><p class="font-semibold">در حال بررسی</p><p class="text-sm text-gray-500">توسط {{ $ticket->assignedTo->name ?? 'پشتیبانی' }}</p></div></div>
-                            <div class="h-8 workflow-step {{ $currentStatusIndex >= 2 ? 'completed' : 'pending' }}"><div class="line"></div></div>
-                            <div class="workflow-step {{ $currentStatusIndex >= 2 ? 'active' : 'pending' }}"><div class="icon"><i class="fas fa-flag-checkered"></i></div><div class="mr-4"><p class="font-semibold">تکمیل شده</p></div></div>
+                {{-- MAIN CONTENT (Col Span 8) --}}
+                <div class="lg:col-span-8 space-y-6">
+
+                    {{-- Description --}}
+                    <div class="bg-white shadow-sm rounded-xl border border-gray-100 p-6">
+                        <div class="flex items-start gap-4">
+                            <img src="{{ $ticket->user->profile_picture ? asset('storage/'.$ticket->user->profile_picture) : 'https://ui-avatars.com/api/?name='.urlencode($ticket->user->name) }}" class="w-12 h-12 rounded-full">
+                            <div class="flex-1">
+                                <h3 class="font-bold text-gray-900 text-lg">شرح درخواست</h3>
+                                <p class="text-gray-700 leading-relaxed whitespace-pre-wrap mt-2 text-sm">{{ $ticket->description }}</p>
+                            </div>
                         </div>
                     </div>
-                    {{-- Assigned Devices Card (Visible to Admin/Support) --}}
-                    @if(in_array(Auth::user()->role, ['admin', 'support']))
-                    <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                        <h4 class="font-bold text-lg mb-4">دستگاه‌های اختصاص یافته به کاربر</h4>
-                        @if($ticket->user->assets->isNotEmpty())
-                            <ul class="space-y-2">
-                                @foreach($ticket->user->assets as $asset)
-                                    <li class="text-sm">
-                                        <a href="{{ route('admin.assets.edit', $asset) }}" class="text-blue-600 hover:underline flex items-center">
-                                            <i class="fas fa-desktop ml-2"></i>
-                                            <span>{{ $asset->name }} ({{ $asset->serial_number }})</span>
-                                        </a>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        @else
-                            <p class="text-sm text-gray-500">هیچ دستگاهی به این کاربر اختصاص داده نشده است.</p>
-                        @endif
-                    </div>
-                    @endif
 
-                    {{-- --- Allocate Resources Card (for Admin/Support) --- --}}
-                    @if(in_array(Auth::user()->role, ['admin', 'support']))
-                    <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                        <h4 class="font-bold text-lg mb-4">تخصیص منابع و قطعات</h4>
-                        
-                        {{-- List of already allocated assets for THIS ticket --}}
-                        <div class="mb-4">
-                            <p class="text-sm font-semibold text-gray-700">قطعات تخصیص یافته به این درخواست:</p>
-                            @if($ticket->allocatedAssets->isNotEmpty())
-                                <ul class="list-disc list-inside mt-2 text-sm text-gray-600">
-                                    @foreach($ticket->allocatedAssets as $asset)
-                                        <li>{{ $asset->name }} ({{ $asset->serial_number }})</li>
-                                    @endforeach
-                                </ul>
-                            @else
-                                <p class="text-sm text-gray-500 mt-1">هنوز قطعه‌ای به این درخواست تخصیص نیافته است.</p>
-                            @endif
-                        </div>
-
-                        {{-- Form to allocate a new asset --}}
-                        <form action="{{ route('tickets.allocateAsset', $ticket) }}" method="POST" class="mt-4 border-t pt-4">
-                            @csrf
-                            <div>
-                                <label for="asset_id" class="block font-medium text-sm text-gray-700">افزودن قطعه جدید از انبار:</label>
-                                <select id="asset_id" name="asset_id" class="form-input-custom mt-1 block w-full">
-                                    <option value="">-- انتخاب قطعه موجود --</option>
-                                    @foreach($availableAssets as $asset)
-                                        <option value="{{ $asset->id }}">{{ $asset->name }} ({{ $asset->serial_number }})</option>
-                                    @endforeach
-                                </select>
-                                @error('asset_id')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            <div class="mt-4">
-                                <button type="submit" class="btn-primary-custom w-full flex items-center justify-center">
-                                    <i class="fas fa-plus mr-2"></i>
-                                    تخصیص بده
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                    @endif
-
-                    {{-- User Information Card --}}     
-                    {{-- Details Card --}}
-                    <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                        <h4 class="font-bold text-lg mb-4">جزئیات</h4>
-                        <dl>
-                            <h4 class="font-bold text-lg mb-4">جزئیات</h4>
-    <dl>
-        <div class="flex justify-between py-2 border-b">
-            <dt class="text-gray-600">دسته‌بندی:</dt>
-            <dd class="font-medium">{{ $ticket->category_label }}</dd>
-        </div>
-        <div class="flex justify-between py-2 border-b">
-            <dt class="text-gray-600">وضعیت:</dt>
-            <dd><span class="status-badge status-{{ $ticket->status }}">{{ __($ticket->status) }}</span></dd>
-        </div>
-                            <div class="flex justify-between py-2 border-b">
-                                <dt class="text-gray-600">وضعیت:</dt>
-                                <dd><span class="status-badge status-{{ $ticket->status }}">{{ __($ticket->status) }}</span></dd>
-                            </div>
-                            <div class="flex justify-between py-2 border-b">
-                                <dt class="text-gray-600">اولویت:</dt>
-                                <dd><span class="priority-badge priority-{{ $ticket->priority }}">{{ __($ticket->priority) }}</span></dd>
-                            </div>
-                            <div class="flex justify-between pt-2">
-                                <dt class="text-gray-600">ارجاع به:</dt>
-                                <dd class="font-medium">{{ $ticket->assignedTo->name ?? '---' }}</dd>
-                            </div>
-                        </dl>
+                    {{-- Messages --}}
+                    <div class="relative flex justify-center py-4">
+                        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-200"></div></div>
+                        <span class="relative bg-gray-100 px-3 py-1 rounded-full text-xs font-medium text-gray-500">تاریخچه پیام‌ها</span>
                     </div>
 
-                    {{-- Assignment Card --}}
-                    @if(Auth::user()->role === 'admin')
-                        <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                            <h4 class="font-bold text-lg mb-4">ارجاع درخواست</h4>
-                            <form action="{{ route('tickets.assign', $ticket) }}" method="POST">
-                                @csrf
-                                <div>
-                                    <label for="assigned_to" class="block font-medium text-sm text-gray-700">ارجاع به کارشناس:</label>
-                                    <select id="assigned_to" name="assigned_to" class="form-input-custom mt-1 block w-full">
-                                        <option value="">-- انتخاب کارشناس --</option>
-                                        @foreach($supportUsers as $supportUser)
-                                            <option value="{{ $supportUser->id }}" @selected($ticket->assigned_to == $supportUser->id)>{{ $supportUser->name }}</option>
-                                        @endforeach
-                                    </select>
+                    <div class="space-y-6">
+                        @forelse($ticket->messages as $message)
+                            @php
+                                $isMe = $message->user_id == auth()->id();
+                                $sender = $message->user;
+                                $isSupport = $sender && ($sender->role == 'admin' || $sender->role == 'support');
+                            @endphp
+                            <div class="flex w-full {{ $isMe ? 'justify-start' : 'justify-end' }}">
+                                <div class="flex max-w-[85%] gap-3 {{ $isMe ? 'flex-row' : 'flex-row-reverse' }}">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white shadow-sm border-2 border-white
+                                            {{ $isSupport ? 'bg-blue-600' : 'bg-gray-400' }}">
+                                            {{ $sender ? mb_substr($sender->name, 0, 1) : '?' }}
+                                        </div>
+                                    </div>
+                                    <div class="shadow-sm rounded-2xl p-4 text-sm leading-relaxed border relative min-w-[150px]
+                                        {{ $isMe ? 'bg-blue-50 border-blue-100 text-gray-800 rounded-tr-none' : 'bg-white border-gray-100 text-gray-700 rounded-tl-none' }}">
+                                        <div class="flex justify-between items-center gap-4 mb-2 border-b border-black/5 pb-2">
+                                            <span class="font-bold text-xs {{ $isSupport ? 'text-blue-600' : 'text-gray-900' }}">
+                                                {{ $sender->name ?? 'کاربر' }}
+                                            </span>
+                                            <span class="text-[10px] text-gray-400 dir-ltr">{{ $message->created_at->format('H:i') }}</span>
+                                        </div>
+                                        <div class="whitespace-pre-wrap">{{ $message->message }}</div>
+                                    </div>
                                 </div>
-                                <div class="mt-4"><button type="submit" class="btn-primary-custom w-full flex items-center justify-center"><i class="fas fa-user-check mr-2"></i>ذخیره ارجاع</button></div>
+                            </div>
+                        @empty
+                            <p class="text-center text-gray-500 text-sm">هنوز پیامی ثبت نشده است.</p>
+                        @endforelse
+                    </div>
+
+                    {{-- Reply Box --}}
+                    @if($ticket->status !== 'closed' && $ticket->status !== 'completed')
+                        <div class="bg-white shadow-lg rounded-xl border border-gray-200 p-4 sticky bottom-4 z-10">
+                            <form action="{{ route('tickets.messages.store', $ticket) }}" method="POST">
+                                @csrf
+                                <textarea name="body" rows="3" class="form-input-custom mb-3 text-sm" placeholder="پاسخ خود را بنویسید..." required></textarea>
+                                <div class="flex justify-end">
+                                    <button type="submit" class="btn-primary-custom">
+                                        <i class="fas fa-paper-plane"></i> ارسال
+                                    </button>
+                                </div>
                             </form>
                         </div>
                     @endif
 
-                    {{-- Display Rating if Completed --}}
-                    @if($ticket->status === 'completed' && $ticket->rating)
-                    <div class="bg-white shadow-sm sm:rounded-lg p-6 text-center">
-                        <h4 class="font-bold text-lg mb-2">امتیاز ثبت شده</h4>
-                        <div class="text-3xl text-yellow-400">
-                            @for ($i = 0; $i < $ticket->rating; $i++) &#9733; @endfor
-                            @for ($i = $ticket->rating; $i < 5; $i++) <span class="text-gray-300">&#9733;</span> @endfor
-                        </div>
-                    </div>
-                    @endif
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- RATING MODAL (Only used by the ticket creator) --}}
+    {{-- 4. MODAL --}}
     <x-modal name="confirm-ticket-completion" focusable>
         <form method="post" action="{{ route('tickets.complete', $ticket) }}" class="p-6 text-center">
             @csrf
-            <i class="fas fa-award text-4xl text-yellow-400 mb-4"></i>
-            <h2 class="text-lg font-medium text-gray-900">امتیاز شما به این پشتیبانی</h2>
-            <p class="mt-1 text-sm text-gray-600">لطفا برای کمک به بهبود خدمات، به این درخواست امتیاز دهید.</p>
-            <div class="my-6 star-rating">
-                <input type="radio" id="star5" name="rating" value="5" required /><label for="star5" title="عالی">&#9733;</label>
-                <input type="radio" id="star4" name="rating" value="4" /><label for="star4" title="خوب">&#9733;</label>
-                <input type="radio" id="star3" name="rating" value="3" /><label for="star3" title="متوسط">&#9733;</label>
-                <input type="radio" id="star2" name="rating" value="2" /><label for="star2" title="ضعیف">&#9733;</label>
-                <input type="radio" id="star1" name="rating" value="1" /><label for="star1" title="خیلی ضعیف">&#9733;</label>
+            <h2 class="text-lg font-bold text-gray-900 mb-4">ثبت امتیاز</h2>
+            <div class="flex flex-row-reverse justify-center gap-2 text-2xl mb-6">
+                @foreach(range(5,1) as $i)
+                    <button type="submit" name="rating" value="{{ $i }}" class="text-gray-300 hover:text-yellow-400 transition transform hover:scale-110">
+                        <i class="fas fa-star"></i>
+                    </button>
+                @endforeach
             </div>
-            <x-input-error :messages="$errors->get('rating')" class="mt-2" />
-            <div class="mt-6 flex justify-center gap-x-4">
-                <x-secondary-button x-on:click="$dispatch('close')">انصراف</x-secondary-button>
-                <button type="submit" class="btn-success-custom">ثبت امتیاز و تکمیل درخواست</button>
-            </div>
+            <p class="text-sm text-gray-500 mb-6">با انتخاب ستاره، درخواست بسته می‌شود.</p>
+            <x-secondary-button x-on:click="$dispatch('close')">انصراف</x-secondary-button>
         </form>
     </x-modal>
 </x-app-layout>
