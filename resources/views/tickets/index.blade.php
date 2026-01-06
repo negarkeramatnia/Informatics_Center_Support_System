@@ -44,6 +44,7 @@
                                     <tr>
                                         <td class="font-medium">{{ Str::limit($ticket->title, 40) }}</td>
                                         <td class="text-sm text-gray-600">{{ $ticket->user->name }}</td>
+                                        <td class="text-sm text-gray-600">{{ $ticket->category_label }}</td>
                                         <td><span class="status-badge status-{{ $ticket->status }}">{{ __($ticket->status) }}</span></td>
                                         <td><span class="priority-badge priority-{{ $ticket->priority }}">{{ __($ticket->priority) }}</span></td>
                                         <td class="text-sm text-gray-500">{{ $ticket->updated_at->diffForHumans() }}</td>

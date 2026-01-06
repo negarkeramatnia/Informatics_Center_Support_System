@@ -8,10 +8,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
+    /*Display the user's profile form.*/
     public function edit(Request $request): View
     {
         return view('profile.edit', [
@@ -19,27 +19,35 @@ class ProfileController extends Controller
         ]);
     }
 
+    /*Update the user's profile information.*/
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $user = $request->user();
-        $user->fill($request->validated());
+        $request->user()->fill($request->validated());
 
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
-        }
-        if ($request->hasFile('profile_picture')) {
-            if ($user->profile_picture) {
-                Storage::disk('public')->delete($user->profile_picture);
-            }
-            $path = $request->file('profile_picture')->store('profile-pictures', 'public');
-            $user->profile_picture = $path;
+        if ($request->user()->isDirty('email')) {
+            $request->user()->email_verified_at = null;
         }
 
-        $user->save();
+        $request->user()->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
+    /*Update the user's theme preference.*/
+    public function updateTheme(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'theme' => ['required', 'in:light,dark'],
+        ]);
+
+        $request->user()->update([
+            'theme' => $request->theme,
+        ]);
+
+        return back()->with('status', 'theme-updated');
+    }
+
+    /*Delete the user's account.*/
     public function destroy(Request $request): RedirectResponse
     {
         $request->validateWithBag('userDeletion', [

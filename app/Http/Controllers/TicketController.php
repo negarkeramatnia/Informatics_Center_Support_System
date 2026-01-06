@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use App\Models\Asset;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\NewTicketCreated;
 
 class TicketController extends Controller
 {
@@ -47,13 +49,19 @@ class TicketController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        $user->tickets()->create([
+        $ticket = $user->tickets()->create([
             'title' => $request->title,
             'description' => $request->description,
             'priority' => $request->priority,
-            'category' => $request->category, // <--- Save the category
+            'category' => $request->category,
             'status' => 'pending',
         ]);
+
+        // Find all users who are Admin or Support
+        $recipients = User::whereIn('role', ['admin', 'support'])->get();
+        
+        // Send the notification
+        Notification::send($recipients, new NewTicketCreated($ticket));
 
         return redirect()->route('tickets.my')
             ->with('success', 'درخواست شما با موفقیت ثبت شد.');
@@ -116,6 +124,9 @@ class TicketController extends Controller
         $ticket->assigned_to = $request->assigned_to;
         $ticket->status = 'in_progress';
         $ticket->save();
+
+        // We reuse the NewTicketCreated notification or you can create a specific 'TicketAssigned' one later.
+        $supportUser->notify(new NewTicketCreated($ticket));
 
         return redirect()->route('tickets.show', $ticket)->with('success', 'درخواست با موفقیت به ' . $supportUser->name . ' ارجاع داده شد.');
     }

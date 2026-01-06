@@ -41,6 +41,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/tickets/{ticket}/allocate-asset', [App\Http\Controllers\TicketController::class, 'allocateAsset'])->name('tickets.allocateAsset');
     Route::get('/knowledge-base', [App\Http\Controllers\Admin\ArticleController::class, 'kbIndex'])->name('knowledge-base.index');
     Route::get('/phonebook', [App\Http\Controllers\PhonebookController::class, 'index'])->name('phonebook.index');
+    Route::get('/notifications/{id}/read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [App\Http\Controllers\NotificationController::class, 'markAllRead'])->name('notifications.readAll');
+    Route::patch('/profile/theme', [ProfileController::class, 'updateTheme'])->name('profile.theme.update');
 });
 
 // Admin Route Group
@@ -56,6 +59,10 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     // Purchase Requests
     Route::resource('purchase-requests', App\Http\Controllers\Admin\PurchaseRequestController::class)
         ->name('index', 'purchase-requests.index');
+
+    // Admin System Alerts
+    Route::get('/admin/notifications/create', [App\Http\Controllers\NotificationController::class, 'createAlert'])->name('admin.notifications.create');
+    Route::post('/admin/notifications/send', [App\Http\Controllers\NotificationController::class, 'sendAlert'])->name('admin.notifications.send');
 });
 
 require __DIR__.'/auth.php';
