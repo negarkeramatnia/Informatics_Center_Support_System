@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\HasMany;//one-to-many
- 
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class User extends Authenticatable
 {
-    protected $fillable = [
+    use HasFactory, Notifiable;
+protected $fillable = [
         'name',
         'username',
         'email',
@@ -18,6 +21,7 @@ class User extends Authenticatable
         'profile_picture',
         'department',
         'last_login',
+        'theme',
     ];
 
     protected $hidden = [
