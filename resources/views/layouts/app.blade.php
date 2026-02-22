@@ -20,105 +20,30 @@
             .sidebar.collapsed .sidebar-text, .sidebar.collapsed .logo-text, .sidebar.collapsed .user-role { display: none; }
             [x-cloak] { display: none !important; }
 
-            /* ==============================================================
-               🚀 GLOBAL DARK MODE ENGINE V2 (Ultimate Visibility)
-               ============================================================== */
+            /* Global Dark Mode Engine V2 */
+            html.dark body { background-color: #0f172a !important; color: #f8fafc !important; }
+            html.dark .bg-white, html.dark .bg-gray-50, html.dark .bg-gray-100 { background-color: #1e293b !important; border-color: #334155 !important; color: #f8fafc !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4) !important; }
             
-            /* 1. Main Background */
-            html.dark body {
-                background-color: #0f172a !important; /* Deep Premium Slate */
-                color: #f8fafc !important; /* Bright White */
-            }
+            html.dark .text-gray-900, html.dark .text-gray-800, html.dark .text-gray-700, html.dark .text-gray-600 { color: #f8fafc !important; }
+            html.dark .text-gray-500, html.dark .text-gray-400 { color: #cbd5e1 !important; }
+            html.dark h1, html.dark h2, html.dark h3, html.dark h4, html.dark h5, html.dark h6, html.dark .font-bold, html.dark .font-semibold { color: #ffffff !important; }
 
-            /* 2. Force White Cards, Sidebars & Containers to turn Dark */
-            html.dark .bg-white,
-            html.dark .bg-gray-50,
-            html.dark .bg-gray-100 {
-                background-color: #1e293b !important; /* Slate 800 */
-                border-color: #334155 !important; /* Slate 700 */
-                color: #f8fafc !important; 
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4) !important;
-            }
+            html.dark table { color: #f8fafc !important; }
+            html.dark th, html.dark thead { background-color: #0f172a !important; color: #93c5fd !important; border-bottom: 2px solid #334155 !important; }
+            html.dark td, html.dark tr { background-color: #1e293b !important; border-bottom: 1px solid #334155 !important; }
+            html.dark tbody tr:hover, html.dark tbody tr:hover td { background-color: #334155 !important; }
 
-            /* 3. ULTRA AGGRESSIVE TEXT FIXES (Headers, Sidebar, Lists) */
-            /* Flip all dark text to bright white */
-            html.dark .text-gray-900,
-            html.dark .text-gray-800,
-            html.dark .text-gray-700,
-            html.dark .text-gray-600 {
-                color: #f8fafc !important; /* Brilliant White */
-            }
-            
-            /* Flip muted text to a visible silver */
-            html.dark .text-blue-800,
-            html.dark .text-blue-900 {
-                color: #cbd5e1 !important; /* Silver/Slate 300 - Highly Readable */
-            }
+            html.dark input[type="text"], html.dark input[type="email"], html.dark input[type="password"], html.dark input[type="number"], html.dark input[type="tel"], html.dark input[type="search"], html.dark select, html.dark textarea { background-color: #0f172a !important; border-color: #475569 !important; color: #ffffff !important; }
+            html.dark input::placeholder, html.dark textarea::placeholder { color: #94a3b8 !important; }
+            html.dark input:focus, html.dark select:focus, html.dark textarea:focus { border-color: #3b82f6 !important; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4) !important; }
 
-            /* Explicit headings & bold text force white */
-            html.dark h1, html.dark h2, html.dark h3, html.dark h4, html.dark h5, html.dark h6, 
-            html.dark .font-bold, html.dark .font-semibold {
-                color: #ffffff !important; 
-            }
-
-            /* 4. Fix Tables Globally */
-            html.dark table { 
-                color: #f8fafc !important; 
-            }
-            html.dark th, html.dark thead {
-                background-color: #0f172a !important; /* Darker Headers for contrast */
-                color: #93c5fd !important; /* Soft Blue text for headers so they pop */
-                border-bottom: 2px solid #334155 !important;
-            }
-            html.dark td, html.dark tr {
-                background-color: #1e293b !important; /* Dark Rows */
-                border-bottom: 1px solid #334155 !important;
-            }
-            html.dark tbody tr:hover, html.dark tbody tr:hover td {
-                background-color: #334155 !important; /* Hover effect */
-            }
-
-            /* 5. Fix Form Inputs, Selects & Textareas */
-            html.dark input[type="text"],
-            html.dark input[type="email"],
-            html.dark input[type="password"],
-            html.dark input[type="number"],
-            html.dark input[type="tel"],
-            html.dark input[type="search"],
-            html.dark select,
-            html.dark textarea {
-                background-color: #0f172a !important; /* Very dark inner input */
-                border-color: #475569 !important;
-                color: #ffffff !important;
-            }
-            html.dark input::placeholder,
-            html.dark textarea::placeholder {
-                color: #94a3b8 !important; /* Visible placeholder */
-            }
-            html.dark input:focus,
-            html.dark select:focus,
-            html.dark textarea:focus {
-                border-color: #3b82f6 !important; /* Blue glow */
-                box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4) !important;
-            }
-
-            /* 6. Soft Colored Badges (Alerts, Statuses) */
             html.dark .bg-blue-50, html.dark .bg-blue-100 { background-color: rgba(59, 130, 246, 0.15) !important; border-color: rgba(59, 130, 246, 0.3) !important; color: #93c5fd !important; }
             html.dark .text-blue-600, html.dark .text-blue-700 { color: #60a5fa !important; }
-            
             html.dark .bg-green-50, html.dark .bg-emerald-50 { background-color: rgba(16, 185, 129, 0.15) !important; border-color: rgba(16, 185, 129, 0.3) !important; color: #6ee7b7 !important; }
             html.dark .text-green-600, html.dark .text-green-700 { color: #34d399 !important; }
-            
             html.dark .bg-yellow-50, html.dark .bg-orange-50 { background-color: rgba(245, 158, 11, 0.15) !important; border-color: rgba(245, 158, 11, 0.3) !important; color: #fcd34d !important; }
             html.dark .text-yellow-600, html.dark .text-orange-700 { color: #fbbf24 !important; }
-
-            /* 7. Hover effects for sidebar links */
-            html.dark .sidebar a:hover,
-            html.dark .sidebar a:hover i,
-            html.dark .sidebar a:hover span {
-                color: #60a5fa !important; /* Light blue on hover */
-                background-color: #334155 !important;
-            }
+            html.dark .sidebar a:hover, html.dark .sidebar a:hover i, html.dark .sidebar a:hover span { color: #60a5fa !important; background-color: #334155 !important; }
         </style>
         @stack('styles')
     </head>
@@ -126,7 +51,7 @@
         <div class="flex h-screen overflow-hidden">
             
             <aside id="sidebar" class="sidebar bg-white dark:bg-[#1e293b] text-gray-800 dark:text-gray-200 w-72 shadow-lg flex flex-col flex-shrink-0 border-l dark:border-[#334155] transition-colors duration-300 z-30">
-                <div class="p-4 flex items-center justify-between border-b dark:border-[#334155] h-16 transition-colors duration-300">
+                <div class="p-4 flex items-center justify-between border-b dark:border-[#334155] h-16 shrink-0 transition-colors duration-300">
                     <div class="flex items-center sidebar-text">
                         <a href="{{ route('dashboard') }}" class="flex items-center">
                             <img src="{{ asset('images/company-logo.png') }}" alt="Logo" class="h-10 w-10 object-contain">
@@ -167,21 +92,21 @@
 
             <div id="mainContent" class="main-content flex-1 flex flex-col overflow-auto relative">
                 
-                <header class="bg-white dark:bg-[#1e293b] shadow-sm sticky top-0 z-20 transition-colors duration-300 h-16 border-b dark:border-[#334155]">
-                    <div class="w-full h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+                <header class="bg-white dark:bg-[#1e293b] shadow-sm sticky top-0 z-20 transition-colors duration-300 h-16 shrink-0 border-b dark:border-[#334155]">
+                    <div class="w-full h-full px-4 sm:px-6 lg:px-8 flex items-center">
                         
-                        <div class="flex items-center gap-4">
-                            <button id="mobileToggleSidebar" class="md:hidden text-gray-500 hover:text-gray-700 dark:text-gray-300 focus:outline-none">
-                                <i class="fas fa-bars text-xl"></i>
-                            </button>
-                            @if (isset($header))
-                                <div class="font-semibold text-gray-800 dark:text-white flex items-center">
-                                    {{ $header }}
-                                </div>
-                            @endif
-                        </div>
+                        <button id="mobileToggleSidebar" class="md:hidden text-gray-500 hover:text-gray-700 dark:text-gray-300 focus:outline-none ml-4 shrink-0">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
 
-                        <div class="flex items-center gap-3">
+                        @if (isset($header))
+                            <div class="flex-1 min-w-0 flex items-center h-full">
+                                {{ $header }}
+                            </div>
+                        @endif
+
+                        <div class="flex items-center gap-3 shrink-0 mr-auto pl-2 border-r border-gray-200 dark:border-gray-700 pr-4 ml-2 h-8">
+                            
                             <form method="POST" action="{{ route('profile.theme.update') }}" class="flex items-center m-0">
                                 @csrf
                                 @method('patch')

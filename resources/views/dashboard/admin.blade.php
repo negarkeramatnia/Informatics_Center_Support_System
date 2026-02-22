@@ -78,30 +78,51 @@
         </a>
     </div>
 
-    {{-- Quick Actions Panel --}}
-    <div class="dashboard-card bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-transparent dark:border-gray-700">
-        <div class="dashboard-card-header border-b border-gray-100 dark:border-gray-700 p-4">
-            <h3 class="dashboard-card-title text-lg font-bold text-gray-800 dark:text-white">
-                <i class="fas fa-bolt mr-2 text-gray-400 dark:text-gray-500"></i> دسترسی سریع
+{{-- Quick Actions Panel --}}
+    <div class="dashboard-card bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden mt-8">
+        <div class="dashboard-card-header border-b border-gray-100 dark:border-slate-700 p-5 bg-gray-50/50 dark:bg-slate-800/80">
+            <h3 class="dashboard-card-title text-lg font-bold text-gray-800 dark:text-white flex items-center">
+                <div class="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center mr-3 ml-3 shadow-sm border border-blue-200 dark:border-blue-800/50">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                دسترسی سریع
             </h3>
         </div>
-        <div class="p-6 grid grid-cols-2 md:grid-cols-4 gap-4">
-            <a href="{{ route('admin.users.index') }}" class="quick-action-card bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-100 dark:border-gray-600">
-                <i class="fas fa-users-cog text-2xl text-blue-600 dark:text-blue-400 mb-2"></i>
-                <span>مدیریت کاربران</span>
+
+        <div class="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
+            
+            {{-- Action 1: Users --}}
+            <a href="{{ route('admin.users.index') }}" class="group flex flex-col items-center justify-center p-6 bg-white dark:bg-slate-700/40 rounded-xl border border-gray-200 dark:border-slate-600 transition-all duration-300 hover:shadow-lg dark:hover:shadow-blue-900/20 hover:-translate-y-1 hover:border-blue-300 dark:hover:border-blue-500/60 hover:bg-blue-50 dark:hover:bg-slate-700">
+                <div class="w-14 h-14 rounded-full bg-gray-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/40 transition-all duration-300 shadow-sm border border-gray-100 dark:border-slate-600">
+                    <i class="fas fa-users-cog"></i>
+                </div>
+                <span class="font-semibold text-gray-700 dark:text-gray-200 group-hover:text-blue-700 dark:group-hover:text-white transition-colors">مدیریت کاربران</span>
             </a>
-            <a href="{{ route('admin.assets.index') }}" class="quick-action-card bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-100 dark:border-gray-600">
-                <i class="fas fa-hdd text-2xl text-blue-600 dark:text-blue-400 mb-2"></i>
-                <span>مدیریت قطعات</span>
+
+            {{-- Action 2: Assets --}}
+            <a href="{{ route('admin.assets.index') }}" class="group flex flex-col items-center justify-center p-6 bg-white dark:bg-slate-700/40 rounded-xl border border-gray-200 dark:border-slate-600 transition-all duration-300 hover:shadow-lg dark:hover:shadow-blue-900/20 hover:-translate-y-1 hover:border-blue-300 dark:hover:border-blue-500/60 hover:bg-blue-50 dark:hover:bg-slate-700">
+                <div class="w-14 h-14 rounded-full bg-gray-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/40 transition-all duration-300 shadow-sm border border-gray-100 dark:border-slate-600">
+                    <i class="fas fa-hdd"></i>
+                </div>
+                <span class="font-semibold text-gray-700 dark:text-gray-200 group-hover:text-blue-700 dark:group-hover:text-white transition-colors">مدیریت قطعات</span>
             </a>
-            <a href="{{ route('admin.reports.index') }}" class="quick-action-card bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-100 dark:border-gray-600">
-                <i class="fas fa-chart-line text-2xl text-blue-600 dark:text-blue-400 mb-2"></i>
-                <span>گزارش‌ها</span>
+
+            {{-- Action 3: Reports --}}
+            <a href="{{ route('admin.reports.index') }}" class="group flex flex-col items-center justify-center p-6 bg-white dark:bg-slate-700/40 rounded-xl border border-gray-200 dark:border-slate-600 transition-all duration-300 hover:shadow-lg dark:hover:shadow-blue-900/20 hover:-translate-y-1 hover:border-blue-300 dark:hover:border-blue-500/60 hover:bg-blue-50 dark:hover:bg-slate-700">
+                <div class="w-14 h-14 rounded-full bg-gray-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/40 transition-all duration-300 shadow-sm border border-gray-100 dark:border-slate-600">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <span class="font-semibold text-gray-700 dark:text-gray-200 group-hover:text-blue-700 dark:group-hover:text-white transition-colors">گزارش‌ها</span>
             </a>
-            <a href="{{ route('admin.settings.index') }}" class="quick-action-card bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-100 dark:border-gray-600">
-                <i class="fas fa-cog text-2xl text-blue-600 dark:text-blue-400 mb-2"></i>
-                <span>تنظیمات</span>
+
+            {{-- Action 4: Settings --}}
+            <a href="{{ route('admin.settings.index') }}" class="group flex flex-col items-center justify-center p-6 bg-white dark:bg-slate-700/40 rounded-xl border border-gray-200 dark:border-slate-600 transition-all duration-300 hover:shadow-lg dark:hover:shadow-blue-900/20 hover:-translate-y-1 hover:border-blue-300 dark:hover:border-blue-500/60 hover:bg-blue-50 dark:hover:bg-slate-700">
+                <div class="w-14 h-14 rounded-full bg-gray-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/40 transition-all duration-300 shadow-sm border border-gray-100 dark:border-slate-600">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <span class="font-semibold text-gray-700 dark:text-gray-200 group-hover:text-blue-700 dark:group-hover:text-white transition-colors">تنظیمات</span>
             </a>
+
         </div>
     </div>
     

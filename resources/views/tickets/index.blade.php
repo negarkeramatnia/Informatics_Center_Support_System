@@ -1,75 +1,99 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('همه درخواست‌ها') }}
-        </h2>
+<x-slot name="header">
+        <div class="flex flex-col sm:flex-row justify-between items-center w-full gap-4">
+            
+            <h2 class="font-bold text-xl text-gray-800 dark:text-white leading-tight flex items-center gap-2">
+                <i class="fas fa-ticket-alt text-blue-500"></i>
+                {{ __('همه درخواست‌ها') }}
+            </h2>
+            
+            <a href="{{ route('tickets.create') }}" class="group flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-medium transition-all duration-300 shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:-translate-y-0.5">
+                <i class="fas fa-plus-circle transition-transform group-hover:rotate-90"></i>
+                <span>ثبت درخواست جدید</span>
+            </a>
+
+        </div>
     </x-slot>
 
-    @pushOnce('styles')
-    <style>
-        .table-custom th { background-color: #f9fafb; color: #374151; font-weight: 600; text-align: right; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.75rem 1.5rem; }
-        .table-custom td { padding: 1rem 1.5rem; border-bottom-width: 1px; border-color: #e5e7eb; vertical-align: middle; color: #374151; }
-        .table-custom tbody tr:last-child td { border-bottom-width: 0; }
-        .table-custom tbody tr:hover { background-color: #f9fafb; }
-        
-        .status-badge, .priority-badge { padding: 0.25em 0.75em; font-size: 0.75rem; font-weight: 600; border-radius: 9999px; display: inline-block; line-height: 1.5; }
-        .status-pending { background-color: #fef3c7; color: #92400e; }
-        .status-in_progress { background-color: #dbeafe; color: #1e40af; }
-        .status-completed { background-color: #d1fae5; color: #065f46; }
-        .priority-low { background-color: #dcfce7; color: #166534; }
-        .priority-medium { background-color: #fef9c3; color: #92400e; }
-        .priority-high { background-color: #fee2e2; color: #991b1b; }
-    </style>
-    @endPushOnce
-
-    <div dir="rtl">
+    <div class="py-8" dir="rtl">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-0">
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full table-custom">
-                            <thead>
-                                <tr>
-                                    <th>عنوان درخواست</th>
-                                    <th>ایجاد کننده</th>
-                                    <th>دسته‌بندی</th>
-                                    <th>وضعیت</th>
-                                    <th>اولویت</th>
-                                    <th>آخرین بروزرسانی</th>
-                                    <th></th>
+            
+            <div class="bg-white dark:bg-slate-800 shadow-sm sm:rounded-2xl border border-gray-100 dark:border-slate-700 overflow-hidden transition-colors duration-300">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right border-collapse">
+                        
+                        <thead class="bg-gray-50 dark:bg-slate-900/50 text-gray-500 dark:text-gray-400 text-xs uppercase font-semibold">
+                            <tr>
+                                <th class="px-6 py-4 border-b border-gray-100 dark:border-slate-700">عنوان درخواست</th>
+                                <th class="px-6 py-4 border-b border-gray-100 dark:border-slate-700">ایجاد کننده</th>
+                                <th class="px-6 py-4 border-b border-gray-100 dark:border-slate-700">دسته‌بندی</th>
+                                <th class="px-6 py-4 border-b border-gray-100 dark:border-slate-700 text-center">وضعیت</th>
+                                <th class="px-6 py-4 border-b border-gray-100 dark:border-slate-700 text-center">اولویت</th>
+                                <th class="px-6 py-4 border-b border-gray-100 dark:border-slate-700 text-center">آخرین بروزرسانی</th>
+                                <th class="px-6 py-4 border-b border-gray-100 dark:border-slate-700 text-center">عملیات</th>
+                            </tr>
+                        </thead>
+                        
+                        <tbody class="divide-y divide-gray-100 dark:divide-slate-700 text-sm">
+                            @forelse ($tickets as $ticket)
+                                <tr class="hover:bg-gray-50 dark:hover:bg-slate-700/30 transition-colors">
+                                    
+                                    {{-- 🔴 THE FIX: Added dark:text-white to ensure the title is highly visible --}}
+                                    <td class="px-6 py-4 font-bold text-gray-900 dark:text-white">
+                                        {{ Str::limit($ticket->title, 45) }}
+                                    </td>
+                                    
+                                    <td class="px-6 py-4 text-gray-700 dark:text-gray-300 font-medium">
+                                        {{ $ticket->user->name ?? 'کاربر' }}
+                                    </td>
+                                    
+                                    <td class="px-6 py-4 text-gray-600 dark:text-gray-400">
+                                        {{ $ticket->category_label ?? $ticket->category }}
+                                    </td>
+                                    
+                                    <td class="px-6 py-4 text-center">
+                                        <span class="status-badge status-{{$ticket->status}} dark:opacity-90">
+                                            {{ __($ticket->status) }}
+                                        </span>
+                                    </td>
+                                    
+                                    <td class="px-6 py-4 text-center">
+                                        <span class="priority-badge priority-{{$ticket->priority}} dark:opacity-90">
+                                            {{ __($ticket->priority) }}
+                                        </span>
+                                    </td>
+                                    
+                                    <td class="px-6 py-4 text-center text-gray-500 dark:text-gray-400 dir-ltr">
+                                        {{ $ticket->updated_at->diffForHumans() }}
+                                    </td>
+                                    
+                                    <td class="px-6 py-4 text-center">
+                                        <a href="{{ route('tickets.show', $ticket) }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-bold transition-colors">
+                                            مشاهده
+                                        </a>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($tickets as $ticket)
-                                    <tr>
-                                        <td class="font-medium">{{ Str::limit($ticket->title, 40) }}</td>
-                                        <td class="text-sm text-gray-600">{{ $ticket->user->name }}</td>
-                                        <td class="text-sm text-gray-600">{{ $ticket->category_label }}</td>
-                                        <td><span class="status-badge status-{{ $ticket->status }}">{{ __($ticket->status) }}</span></td>
-                                        <td><span class="priority-badge priority-{{ $ticket->priority }}">{{ __($ticket->priority) }}</span></td>
-                                        <td class="text-sm text-gray-500">{{ $ticket->updated_at->diffForHumans() }}</td>
-                                        <td>
-                                            {{-- Admin can also view the ticket details --}}
-                                            <a href="{{ route('tickets.show', $ticket) }}" class="text-sm text-blue-600 hover:text-blue-800 font-semibold">مشاهده</a>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="6" class="text-center py-10 text-gray-500">
-                                            در حال حاضر هیچ درخواستی در سیستم ثبت نشده است.
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    @if ($tickets->hasPages())
-                        <div class="p-4 border-t border-gray-200">
-                            {{ $tickets->links() }}
-                        </div>
-                    @endif
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="text-center py-12 text-gray-500 dark:text-gray-400">
+                                        <div class="flex flex-col items-center justify-center">
+                                            <i class="fas fa-inbox text-4xl mb-3 opacity-30"></i>
+                                            <span>هیچ درخواستی یافت نشد.</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
+
+                {{-- Pagination Links (if they exist) --}}
+                @if(method_exists($tickets, 'links'))
+                    <div class="p-4 border-t border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50">
+                        {{ $tickets->links() }}
+                    </div>
+                @endif
+                
             </div>
         </div>
     </div>

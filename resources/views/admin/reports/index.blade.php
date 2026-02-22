@@ -1,58 +1,48 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-bold text-xl text-gray-800 dark:text-white leading-tight flex items-center gap-2">
+            <i class="fas fa-chart-pie text-blue-500"></i>
             {{ __('گزارش‌های عملکرد سیستم') }}
         </h2>
     </x-slot>
 
-    @pushOnce('styles')
-    <style>
-        .report-card { background-color: #ffffff; border-radius: 0.75rem; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
-        .report-card-title { font-size: 0.875rem; font-weight: 600; color: #6b7280; margin-bottom: 0.5rem; }
-        .report-card-value { font-size: 2.25rem; font-weight: 700; color: #1f2937; }
-        .rating-stars { color: #f59e0b; }
-        .table-bordered { border-collapse: collapse; }
-        .table-bordered th, .table-bordered td { border: 1px solid #e5e7eb; padding: 1rem; }
-    </style>
-    @endPushOnce
-
-    <div class="py-12" dir="rtl">
+    <div class="py-8" dir="rtl">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
 
-            {{-- 1. Top Statistics Cards (Clickable) --}}
+            {{-- 1. Top Statistics Cards (Clickable, Dark Mode Ready) --}}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 
                 {{-- Card 1: Total Tickets --}}
-                <a href="{{ route('admin.reports.details') }}" class="block transform transition duration-200 hover:scale-105">
-                    <div class="report-card h-full border-b-4 border-blue-500 hover:shadow-lg transition">
-                        <p class="report-card-title">کل درخواست‌ها</p>
-                        <p class="report-card-value text-blue-600">{{ $totalTickets }}</p>
+                <a href="{{ route('admin.reports.details') }}" class="block transform transition duration-300 hover:scale-105 group">
+                    <div class="bg-white dark:bg-slate-800 h-full rounded-xl p-6 shadow-sm hover:shadow-lg border border-gray-100 dark:border-slate-700 border-b-4 border-b-blue-500 transition-all flex flex-col items-center justify-center">
+                        <p class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-2">کل درخواست‌ها</p>
+                        <p class="text-3xl font-black text-blue-600 dark:text-blue-400">{{ $totalTickets }}</p>
                     </div>
                 </a>
 
                 {{-- Card 2: Completed Tickets --}}
-                <a href="{{ route('admin.reports.details', ['status' => 'completed']) }}" class="block transform transition duration-200 hover:scale-105">
-                    <div class="report-card h-full border-b-4 border-green-500 hover:shadow-lg transition">
-                        <p class="report-card-title">درخواست‌های تکمیل شده</p>
-                        <p class="report-card-value text-green-600">{{ $completedTickets }}</p>
+                <a href="{{ route('admin.reports.details', ['status' => 'completed']) }}" class="block transform transition duration-300 hover:scale-105 group">
+                    <div class="bg-white dark:bg-slate-800 h-full rounded-xl p-6 shadow-sm hover:shadow-lg border border-gray-100 dark:border-slate-700 border-b-4 border-b-green-500 transition-all flex flex-col items-center justify-center">
+                        <p class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-2">درخواست‌های تکمیل شده</p>
+                        <p class="text-3xl font-black text-green-600 dark:text-green-400">{{ $completedTickets }}</p>
                     </div>
                 </a>
 
                 {{-- Card 3: Average Rating --}}
-                <a href="{{ route('admin.reports.details', ['rated_only' => 1]) }}" class="block transform transition duration-200 hover:scale-105">
-                    <div class="report-card h-full border-b-4 border-yellow-400 hover:shadow-lg transition">
-                        <p class="report-card-title">میانگین رضایت کاربران</p>
-                        <p class="report-card-value rating-stars">
-                            {{ number_format($averageRating, 2) }} <span class="text-lg">&#9733;</span>
+                <a href="{{ route('admin.reports.details', ['rated_only' => 1]) }}" class="block transform transition duration-300 hover:scale-105 group">
+                    <div class="bg-white dark:bg-slate-800 h-full rounded-xl p-6 shadow-sm hover:shadow-lg border border-gray-100 dark:border-slate-700 border-b-4 border-b-yellow-400 transition-all flex flex-col items-center justify-center">
+                        <p class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-2">میانگین رضایت کاربران</p>
+                        <p class="text-3xl font-black text-yellow-500 dark:text-yellow-400 flex items-center gap-2">
+                            {{ number_format($averageRating, 2) }} <i class="fas fa-star text-xl"></i>
                         </p>
                     </div>
                 </a>
 
                 {{-- Card 4: Avg Resolution Time --}}
-                <a href="{{ route('admin.reports.details', ['status' => 'completed']) }}" class="block transform transition duration-200 hover:scale-105">
-                    <div class="report-card h-full border-b-4 border-indigo-500 hover:shadow-lg transition">
-                        <p class="report-card-title">میانگین زمان حل</p>
-                        <p class="report-card-value text-xl mt-2 text-indigo-600">{{ $avgResolutionTime }}</p>
+                <a href="{{ route('admin.reports.details', ['status' => 'completed']) }}" class="block transform transition duration-300 hover:scale-105 group">
+                    <div class="bg-white dark:bg-slate-800 h-full rounded-xl p-6 shadow-sm hover:shadow-lg border border-gray-100 dark:border-slate-700 border-b-4 border-b-indigo-500 transition-all flex flex-col items-center justify-center">
+                        <p class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-2">میانگین زمان حل</p>
+                        <p class="text-3xl font-black text-indigo-600 dark:text-indigo-400">{{ $avgResolutionTime }}</p>
                     </div>
                 </a>
             </div>
@@ -61,47 +51,63 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 
                 {{-- Chart 1: Tickets by Category --}}
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                    <h3 class="text-lg font-semibold mb-4 text-gray-700">توزیع موضوعی درخواست‌ها</h3>
-                    <div class="relative h-64">
+                <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
+                        <i class="fas fa-chart-pie text-gray-400"></i> توزیع موضوعی درخواست‌ها
+                    </h3>
+                    <div class="relative h-64 w-full">
                         <canvas id="categoryChart"></canvas>
                     </div>
                 </div>
 
                 {{-- Chart 2: Assets by Department --}}
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                    <h3 class="text-lg font-semibold mb-4 text-gray-700">توزیع تجهیزات در واحدها</h3>
-                    <div class="relative h-64">
+                <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
+                        <i class="fas fa-chart-bar text-gray-400"></i> توزیع تجهیزات در واحدها
+                    </h3>
+                    <div class="relative h-64 w-full">
                         <canvas id="locationChart"></canvas>
                     </div>
                 </div>
             </div>
 
             {{-- 3. Support Staff Performance Table --}}
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 border-b">
-                    <h3 class="text-lg font-semibold">عملکرد کارشناسان پشتیبانی</h3>
+            <div class="bg-white dark:bg-slate-800 shadow-sm rounded-xl border border-gray-300 dark:border-slate-600 mt-8 overflow-hidden">
+                <div class="p-4 border-b border-gray-300 dark:border-slate-600 bg-gray-50 dark:bg-slate-900/50">
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                        <i class="fas fa-users-cog text-blue-500"></i> عملکرد کارشناسان پشتیبانی
+                    </h3>
                 </div>
+                
                 <div class="overflow-x-auto">
-                    <table class="min-w-full table-custom table-bordered">
-                        <thead>
-                            <tr class="bg-gray-50">
-                                <th class="text-center">نام کارشناس</th>
-                                <th class="text-center">تعداد درخواست‌های تکمیل شده</th>
-                                <th class="text-center">میانگین امتیاز رضایت</th>
+                    <table class="w-full text-center border-collapse">
+                        <thead class="bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 text-sm font-bold uppercase">
+                            <tr>
+                                <th class="p-4 border-b border-gray-300 dark:border-slate-600 border-l border-gray-300 dark:border-l-slate-600">نام کارشناس</th>
+                                <th class="p-4 border-b border-gray-300 dark:border-slate-600 border-l border-gray-300 dark:border-l-slate-600">تعداد درخواست‌های تکمیل شده</th>
+                                <th class="p-4 border-b border-gray-300 dark:border-slate-600">میانگین امتیاز رضایت</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="text-gray-800 dark:text-gray-200 text-sm">
                             @forelse ($supportPerformance as $support)
-                                <tr class="hover:bg-blue-50 transition cursor-pointer" onclick="window.location='{{ route('admin.reports.details', ['support_id' => $support->id]) }}'">
-                                    <td class="font-medium text-center text-blue-600 underline-offset-4">{{ $support->name }}</td>
-                                    <td class="text-center">{{ $support->completed_tickets_count }}</td>
-                                    <td class="text-center rating-stars font-semibold">
-                                        {{ $support->average_rating ? number_format($support->average_rating, 2) : 'N/A' }}
+                                <tr class="border-b border-gray-300 dark:border-slate-600 hover:bg-blue-50 dark:hover:bg-slate-700/50 transition cursor-pointer" onclick="window.location='{{ route('admin.reports.details', ['support_id' => $support->id]) }}'">
+                                    <td class="p-4 border-l border-gray-300 dark:border-l-slate-600 font-bold text-blue-600 dark:text-blue-400">
+                                        {{ $support->name }}
+                                    </td>
+                                    <td class="p-4 border-l border-gray-300 dark:border-l-slate-600 font-bold text-lg">
+                                        {{ $support->completed_tickets_count }}
+                                    </td>
+                                    <td class="p-4 font-bold text-yellow-500 dark:text-yellow-400 flex items-center justify-center gap-1">
+                                        {{ $support->average_rating ? number_format($support->average_rating, 2) : 'N/A' }} 
+                                        @if($support->average_rating) <i class="fas fa-star text-xs"></i> @endif
                                     </td>
                                 </tr>
                             @empty
-                                <tr><td colspan="3" class="text-center py-8 text-gray-500">هیچ کارشناس پشتیبانی برای نمایش عملکرد وجود ندارد.</td></tr>
+                                <tr>
+                                    <td colspan="3" class="p-8 text-center text-gray-500 dark:text-gray-400">
+                                        هیچ کارشناس پشتیبانی برای نمایش عملکرد وجود ندارد.
+                                    </td>
+                                </tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -111,77 +117,86 @@
         </div>
     </div>
 
+    @push('scripts')
     {{-- CHART.JS SCRIPTS --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-        // 1. Category Chart (Clickable)
-        const ctxCategory = document.getElementById('categoryChart').getContext('2d');
-        
-        // USE DYNAMIC LABELS FROM CONTROLLER
-        const categoryLabels = @json($categoryLabels); 
-        
-        new Chart(ctxCategory, {
-            type: 'doughnut',
-            data: {
-                labels: categoryLabels, // Use the variable here
-                datasets: [{
-                    data: @json($categoryCounts),
-                    backgroundColor: ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#6b7280', '#8b5cf6', '#ec4899'], // Added more colors just in case you add more categories
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { position: 'right', rtl: true, labels: { font: { family: 'Vazirmatn' } } } },
-                onClick: (e, activeElements) => {
-                    if (activeElements.length > 0) {
-                        const index = activeElements[0].index;
-                        const selectedCategory = categoryLabels[index];
-                        // Redirect to details page
-                        window.location.href = `{{ route('admin.reports.details') }}?category=${selectedCategory}`;
-                    }
-                },
-                onHover: (event, chartElement) => {
-                    event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
-                }
-            }
-        });
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            // Setup Dark Mode Colors for Charts
+            const isDark = document.documentElement.classList.contains('dark');
+            const textColor = isDark ? '#cbd5e1' : '#475569';
+            const gridColor = isDark ? '#334155' : '#e2e8f0';
 
-        // 2. Location Chart 
-        const ctxLocation = document.getElementById('locationChart').getContext('2d');
-        const locationNames = @json($locationLabels); 
-
-        new Chart(ctxLocation, {
-            type: 'bar',
-            data: {
-                labels: locationNames,
-                datasets: [{
-                    label: 'تعداد تجهیزات (مشاهده لیست)',
-                    data: @json($locationCounts),
-                    backgroundColor: '#6366f1',
-                    borderRadius: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: { beginAtZero: true, grid: { display: false } },
-                    x: { grid: { display: false }, ticks: { font: { family: 'Vazirmatn' } } }
+            // 1. Category Chart (Clickable)
+            const ctxCategory = document.getElementById('categoryChart').getContext('2d');
+            const categoryLabels = @json($categoryLabels); 
+            
+            new Chart(ctxCategory, {
+                type: 'doughnut',
+                data: {
+                    labels: categoryLabels,
+                    datasets: [{
+                        data: @json($categoryCounts),
+                        backgroundColor: ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#6b7280', '#8b5cf6', '#ec4899'], 
+                        borderWidth: isDark ? 2 : 0,
+                        borderColor: isDark ? '#1e293b' : '#ffffff',
+                    }]
                 },
-                onClick: (e, activeElements) => {
-                    if (activeElements.length > 0) {
-                        const index = activeElements[0].index;
-                        const selectedLocation = locationNames[index];
-                        window.location.href = `{{ route('admin.reports.details') }}?location=${encodeURIComponent(selectedLocation)}`;
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'right', rtl: true, labels: { color: textColor, font: { family: 'Vazirmatn' } } } },
+                    cutout: '65%',
+                    onClick: (e, activeElements) => {
+                        if (activeElements.length > 0) {
+                            const index = activeElements[0].index;
+                            const selectedCategory = categoryLabels[index];
+                            window.location.href = `{{ route('admin.reports.details') }}?category=${selectedCategory}`;
+                        }
+                    },
+                    onHover: (event, chartElement) => {
+                        event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
                     }
-                },
-                onHover: (event, chartElement) => {
-                    event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
                 }
-            }
+            });
+
+            // 2. Location Chart 
+            const ctxLocation = document.getElementById('locationChart').getContext('2d');
+            const locationNames = @json($locationLabels); 
+
+            new Chart(ctxLocation, {
+                type: 'bar',
+                data: {
+                    labels: locationNames,
+                    datasets: [{
+                        label: 'تعداد تجهیزات',
+                        data: @json($locationCounts),
+                        backgroundColor: '#6366f1',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor, stepSize: 1 } },
+                        x: { grid: { display: false }, ticks: { color: textColor, font: { family: 'Vazirmatn' } } }
+                    },
+                    onClick: (e, activeElements) => {
+                        if (activeElements.length > 0) {
+                            const index = activeElements[0].index;
+                            const selectedLocation = locationNames[index];
+                            window.location.href = `{{ route('admin.reports.details') }}?location=${encodeURIComponent(selectedLocation)}`;
+                        }
+                    },
+                    onHover: (event, chartElement) => {
+                        event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
+                    }
+                }
+            });
         });
     </script>
+    @endpush
 </x-app-layout>

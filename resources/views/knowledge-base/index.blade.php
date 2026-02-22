@@ -43,22 +43,24 @@
                         <div class="p-6">
                             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-3">
                                 {{-- Title and Category --}}
-                                <div class="flex items-center gap-3">
-                                    @php
-                                        $catColors = [
-                                            'general' => 'bg-gray-100 text-gray-800',
-                                            'software' => 'bg-blue-100 text-blue-800',
-                                            'hardware' => 'bg-red-100 text-red-800',
-                                            'network' => 'bg-green-100 text-green-800',
-                                            'security' => 'bg-purple-100 text-purple-800',
-                                        ];
-                                        $catColor = $catColors[$article->category] ?? 'bg-gray-100 text-gray-800';
-                                    @endphp
-                                    <span class="{{ $catColor }} text-xs font-semibold px-2.5 py-1 rounded-md whitespace-nowrap">
-                                        {{ __($article->category) }}
-                                    </span>
-                                    <h4 class="text-lg font-bold text-gray-800">{{ $article->title }}</h4>
-                                </div>
+{{-- PREMIUM CATEGORY BADGES (Dark Mode Safe) --}}
+                                    @if($article->category === 'hardware')
+                                        <span class="px-3 py-1 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border border-red-200 dark:border-red-800 rounded-full text-xs font-bold">
+                                            hardware
+                                        </span>
+                                    @elseif($article->category === 'network')
+                                        <span class="px-3 py-1 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 border border-green-200 dark:border-green-800 rounded-full text-xs font-bold">
+                                            network
+                                        </span>
+                                    @elseif($article->category === 'software')
+                                        <span class="px-3 py-1 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border border-blue-200 dark:border-blue-800 rounded-full text-xs font-bold">
+                                            software
+                                        </span>
+                                    @else
+                                        <span class="px-3 py-1 bg-gray-100 text-gray-700 dark:bg-gray-700/50 dark:text-gray-300 border border-gray-200 dark:border-gray-600 rounded-full text-xs font-bold">
+                                            {{ $article->category ?? 'general' }}
+                                        </span>
+                                    @endif
 
                                 {{-- Date --}}
                                 <span class="text-gray-400 text-xs flex items-center whitespace-nowrap">

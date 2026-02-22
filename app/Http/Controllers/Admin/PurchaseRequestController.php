@@ -8,11 +8,10 @@ use Illuminate\Http\Request;
 
 class PurchaseRequestController extends Controller
 {
-    // List all requests
-    public function index()
+public function index()
     {
-        $requests = PurchaseRequest::with('user')->latest()->paginate(10);
-        return view('admin.purchase-requests.index', compact('requests'));
+        $purchaseRequests = PurchaseRequest::with('user')->latest()->paginate(10);
+        return view('admin.purchase-requests.index', compact('purchaseRequests'));
     }
 
     // Show creation form

@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\AssetController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\PurchaseRequestController;
 
 // Welcome Page Route (for guests)
 Route::get('/', function () {
@@ -59,6 +60,8 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     // Purchase Requests
     Route::resource('purchase-requests', App\Http\Controllers\Admin\PurchaseRequestController::class)
         ->name('index', 'purchase-requests.index');
+
+    Route::resource('purchase-requests', PurchaseRequestController::class);
 
     // Admin System Alerts
     Route::get('/admin/notifications/create', [App\Http\Controllers\NotificationController::class, 'createAlert'])->name('admin.notifications.create');

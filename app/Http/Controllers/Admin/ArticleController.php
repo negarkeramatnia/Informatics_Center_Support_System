@@ -33,10 +33,11 @@ class ArticleController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'content' => 'required|string',
             'category' => 'required|string',
+            'content' => 'required',
+            'is_published' => 'required|boolean',
         ]);
-
+        
         Article::create($request->all());
         return redirect()->route('admin.articles.index')->with('success', 'مقاله آموزشی ثبت شد.');
     }
