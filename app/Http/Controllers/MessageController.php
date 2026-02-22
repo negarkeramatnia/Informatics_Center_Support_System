@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class MessageController extends Controller
 {
-    public function store(Request $request, Ticket $ticket)
+public function store(Request $request, Ticket $ticket)
     {
         if (
             Auth::id() !== $ticket->user_id &&
@@ -19,11 +19,12 @@ class MessageController extends Controller
         }
 
         $request->validate([
-            'body' => 'required|string',
+            'message' => 'required|string', 
         ]);
+        
         $ticket->messages()->create([
             'user_id' => Auth::id(),
-            'message' => $request->body,
+            'message' => $request->message, // FIXED: pull 'message' from request
         ]);
 
         return back()->with('success', 'پیام شما با موفقیت ثبت شد.');

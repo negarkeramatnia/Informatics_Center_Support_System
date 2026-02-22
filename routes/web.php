@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\AssetController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\Admin\PurchaseRequestController;
 
 // Welcome Page Route (for guests)
@@ -45,6 +46,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/notifications/{id}/read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifications/read-all', [App\Http\Controllers\NotificationController::class, 'markAllRead'])->name('notifications.readAll');
     Route::patch('/profile/theme', [ProfileController::class, 'updateTheme'])->name('profile.theme.update');
+    Route::post('/tickets/{ticket}/messages', [MessageController::class, 'store'])->name('messages.store');
+    Route::post('/tickets/{ticket}/assets', [TicketController::class, 'attachAsset'])->name('tickets.assets.attach');
 });
 
 // Admin Route Group
@@ -60,8 +63,6 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     // Purchase Requests
     Route::resource('purchase-requests', App\Http\Controllers\Admin\PurchaseRequestController::class)
         ->name('index', 'purchase-requests.index');
-
-    Route::resource('purchase-requests', PurchaseRequestController::class);
 
     // Admin System Alerts
     Route::get('/admin/notifications/create', [App\Http\Controllers\NotificationController::class, 'createAlert'])->name('admin.notifications.create');

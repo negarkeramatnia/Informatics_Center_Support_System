@@ -1,14 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ __('پایگاه دانش (سوالات متداول)') }}</h2>
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-100 leading-tight">{{ __('پایگاه دانش (سوالات متداول)') }}</h2>
     </x-slot>
 
     <div class="py-12" dir="rtl">
         <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
             
             {{-- SEARCH BAR SECTION --}}
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-8 p-8 text-center">
-                <h3 class="text-2xl font-bold text-gray-800 mb-6">چطور می‌توانیم به شما کمک کنیم؟</h3>
+            <div class="bg-white dark:bg-slate-800 overflow-hidden shadow-sm sm:rounded-lg mb-8 p-8 text-center transition-colors duration-300 border border-transparent dark:border-slate-700">
+                <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">چطور می‌توانیم به شما کمک کنیم؟</h3>
                 
                 <form method="GET" action="{{ route('knowledge-base.index') }}" class="max-w-3xl mx-auto relative flex items-center">
                     
@@ -20,12 +20,12 @@
                     {{-- Input Field --}}
                     <input type="text" name="search" value="{{ request('search') }}" 
                            placeholder="جستجو در مقالات آموزشی (مثلا: فراموشی رمز عبور)..." 
-                           class="w-full border-gray-300 rounded-xl py-4 {{ request('search') ? 'pl-12' : 'pl-6' }} pr-14 shadow-sm focus:border-green-500 focus:ring focus:ring-green-200 transition text-gray-700 leading-tight">
+                           class="w-full bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-200 rounded-xl py-4 {{ request('search') ? 'pl-12' : 'pl-6' }} pr-14 shadow-sm focus:border-green-500 focus:ring focus:ring-green-200 dark:focus:ring-green-900/50 transition leading-tight placeholder-gray-400 dark:placeholder-gray-500">
                     
                     {{-- Cancel Button (Left - appears when searching) --}}
                     @if(request('search'))
                         <a href="{{ route('knowledge-base.index') }}" 
-                           class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full w-8 h-8 flex items-center justify-center transition"
+                           class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-full w-8 h-8 flex items-center justify-center transition"
                            title="پاک کردن جستجو">
                             <i class="fas fa-times text-lg"></i>
                         </a>
@@ -34,16 +34,19 @@
             </div>
 
             {{-- ARTICLES LIST (Rows) --}}
-            {{-- Changed from 'grid' to 'flex-col' so they stack vertically --}}
             <div class="flex flex-col space-y-4">
                 @forelse($articles as $article)
-                    <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition duration-300 border border-gray-100 overflow-hidden">
+                    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-md transition duration-300 border border-gray-100 dark:border-slate-700 overflow-hidden">
                         
                         {{-- Article Header Row --}}
                         <div class="p-6">
                             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-3">
+                                
                                 {{-- Title and Category --}}
-{{-- PREMIUM CATEGORY BADGES (Dark Mode Safe) --}}
+                                <div class="flex items-center gap-3">
+                                    <h4 class="text-lg font-bold text-gray-800 dark:text-white">{{ $article->title }}</h4>
+                                    
+                                    {{-- PREMIUM CATEGORY BADGES (Dark Mode Safe) --}}
                                     @if($article->category === 'hardware')
                                         <span class="px-3 py-1 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border border-red-200 dark:border-red-800 rounded-full text-xs font-bold">
                                             hardware
@@ -61,28 +64,29 @@
                                             {{ $article->category ?? 'general' }}
                                         </span>
                                     @endif
+                                </div>
 
                                 {{-- Date --}}
-                                <span class="text-gray-400 text-xs flex items-center whitespace-nowrap">
+                                <span class="text-gray-400 dark:text-gray-500 text-xs flex items-center whitespace-nowrap">
                                     <i class="far fa-clock ml-1"></i>
                                     {{ $article->created_at->diffForHumans() }}
                                 </span>
                             </div>
 
                             {{-- Preview Text --}}
-                            <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                            <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-4">
                                 {{ Str::limit(strip_tags($article->content), 200) }}
                             </p>
 
                             {{-- Collapsible Details Section --}}
-                            <details class="group bg-gray-50 rounded-lg border border-gray-100">
-                                <summary class="list-none text-green-600 hover:text-green-700 cursor-pointer text-sm font-bold flex items-center justify-between w-full p-4 select-none transition group-open:bg-green-50 group-open:text-green-800 rounded-lg">
+                            <details class="group bg-gray-50 dark:bg-slate-700/30 rounded-lg border border-gray-100 dark:border-slate-700 transition-colors">
+                                <summary class="list-none text-green-600 dark:text-green-500 hover:text-green-700 dark:hover:text-green-400 cursor-pointer text-sm font-bold flex items-center justify-between w-full p-4 select-none transition group-open:bg-green-50 dark:group-open:bg-green-900/20 group-open:text-green-800 dark:group-open:text-green-400 rounded-lg">
                                     <span>مشاهده پاسخ کامل</span>
                                     <span class="group-open:rotate-180 transition-transform duration-200">
                                         <i class="fas fa-chevron-down"></i>
                                     </span>
                                 </summary>
-                                <div class="p-6 border-t border-gray-100 text-gray-800 leading-8 whitespace-pre-wrap animate-fadeIn text-sm">
+                                <div class="p-6 border-t border-gray-100 dark:border-slate-700/50 text-gray-800 dark:text-gray-200 leading-8 whitespace-pre-wrap animate-fadeIn text-sm">
                                     {{ $article->content }}
                                 </div>
                             </details>
@@ -90,24 +94,21 @@
                     </div>
                 @empty
                     @if(request('search'))
-                        <div class="text-center py-16 text-gray-500 bg-white rounded-xl shadow-sm border border-gray-100">
-                            <i class="fas fa-search text-5xl mb-4 text-gray-200 block"></i>
-                            <p class="text-lg font-medium text-gray-600">هیچ مقاله‌ای با عبارت "{{ request('search') }}" یافت نشد.</p>
-                            <a href="{{ route('knowledge-base.index') }}" class="text-green-600 hover:underline mt-2 block">
+                        <div class="text-center py-16 text-gray-500 dark:text-gray-400 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 transition-colors">
+                            <i class="fas fa-search text-5xl mb-4 text-gray-200 dark:text-slate-600 block"></i>
+                            <p class="text-lg font-medium text-gray-600 dark:text-gray-300">هیچ مقاله‌ای با عبارت "{{ request('search') }}" یافت نشد.</p>
+                            <a href="{{ route('knowledge-base.index') }}" class="text-green-600 dark:text-green-500 hover:underline mt-2 block">
                                 مشاهده همه مقالات
                             </a>
                         </div>
                     @else
-                         <div class="text-center py-16 text-gray-500 bg-white rounded-xl shadow-sm border border-gray-100">
-                            <i class="fas fa-book-open text-5xl mb-4 text-gray-200 block"></i>
-                            <p class="text-lg font-medium text-gray-600">هنوز مقاله‌ای در پایگاه دانش ثبت نشده است.</p>
+                         <div class="text-center py-16 text-gray-500 dark:text-gray-400 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 transition-colors">
+                            <i class="fas fa-book-open text-5xl mb-4 text-gray-200 dark:text-slate-600 block"></i>
+                            <p class="text-lg font-medium text-gray-600 dark:text-gray-300">هنوز مقاله‌ای در پایگاه دانش ثبت نشده است.</p>
                         </div>
                     @endif
                 @endforelse
             </div>
-            
-            {{-- Pagination (if you added paginate to controller) --}}
-            {{-- <div class="mt-6">{{ $articles->links() }}</div> --}}
             
         </div>
     </div>

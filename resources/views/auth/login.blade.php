@@ -2,7 +2,8 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>ورود به سامانه - پشتیبانی انفورماتیک</title>
+    <title>@hasSection('title') @yield('title') - @endif مرکز انفورماتیک</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/company-logo.png') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -257,13 +258,6 @@
                                 <i class="fas fa-eye"></i>
                             </button>
                         </div>
-                    </div>
-
-                    <div class="block mt-4">
-                        <label for="remember_me" class="inline-flex items-center">
-                            <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600" name="remember">
-                            <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('مرا به خاطر بسپار') }}</span>
-                        </label>
                     </div>
 
                     <div>

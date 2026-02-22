@@ -1,11 +1,11 @@
 <section>
     <header>
-        <h2 class="text-lg font-medium text-gray-900">
+        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
             {{ __('اطلاعات پروفایل') }}
         </h2>
 
-        <p class="mt-1 text-sm text-gray-600">
-            {{ __("اطلاعات پروفایل و آدرس ایمیل حساب خود را به‌روز کنید.") }}
+        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+            {{ __("اطلاعات حساب کاربری و آدرس ایمیل خود را بروزرسانی کنید.") }}
         </p>
     </header>
 
@@ -17,78 +17,31 @@
         @csrf
         @method('patch')
 
-        {{-- Profile Picture --}}
-        <div class="flex items-center space-x-4 space-x-reverse">
-            <img src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) . '&color=0284C7&background=E0F2FE' }}" alt="{{ Auth::user()->name }}" class="w-20 h-20 rounded-full object-cover">
-            <div>
-                <label for="profile_picture" class="block font-medium text-sm text-gray-700">عکس پروفایل جدید</label>
-                <input id="profile_picture" name="profile_picture" type="file" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
-                <p class="text-xs text-gray-500 mt-1">PNG, JPG (حداکثر 2MB)</p>
-                @error('profile_picture')
-                    <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
-                @enderror
-            </div>
+        {{-- Name Field --}}
+        <div>
+            <x-input-label for="name" :value="__('نام و نام خانوادگی')" class="dark:text-gray-300" />
+            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full dark:bg-slate-900 dark:border-slate-700 dark:text-gray-300 dark:focus:border-blue-500 dark:focus:ring-blue-500" :value="old('name', $user->name)" required autofocus autocomplete="name" />
+            <x-input-error class="mt-2" :messages="$errors->get('name')" />
         </div>
 
-        {{-- Name --}}
+        {{-- Email Field --}}
         <div>
-            <label for="name" class="block font-medium text-sm text-gray-700">{{ __('نام و نام خانوادگی') }}</label>
-            <input id="name" name="name" type="text" class="form-input-custom mt-1 block w-full" value="{{ old('name', Auth::user()->name) }}" required autofocus autocomplete="name" />
-            @error('name')
-                <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
-            @enderror
-        </div>
+            <x-input-label for="email" :value="__('آدرس ایمیل')" class="dark:text-gray-300" />
+            <x-text-input id="email" name="email" type="email" class="mt-1 block w-full dark:bg-slate-900 dark:border-slate-700 dark:text-gray-300 dark:focus:border-blue-500 dark:focus:ring-blue-500" :value="old('email', $user->email)" required autocomplete="username" />
+            <x-input-error class="mt-2" :messages="$errors->get('email')" />
 
-        {{-- Username --}}
-        <div>
-            <label for="username" class="block font-medium text-sm text-gray-700">{{ __('نام کاربری (انگلیسی)') }}</label>
-            <input id="username" name="username" type="text" class="form-input-custom mt-1 block w-full ltr" value="{{ old('username', Auth::user()->username) }}" required />
-            @error('username')
-                <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
-            @enderror
-        </div>
-        
-        {{-- Phone --}}
-        <div>
-            <label for="phone" class="block font-medium text-sm text-gray-700">{{ __('شماره تلفن') }}</label>
-            {{-- FIX: Added maxlength and pattern for better UX --}}
-            <input 
-                id="phone" 
-                name="phone" 
-                type="tel" 
-                inputmode="numeric" 
-                class="form-input-custom mt-1 block w-full ltr" 
-                value="{{ old('phone', Auth::user()->phone) }}"
-                maxlength="11"
-                pattern="[0-9]{11}"
-                required 
-            />
-            <p class="mt-1 text-xs text-gray-500">مثال: 09123456789</p>
-            @error('phone')
-                <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
-            @enderror
-        </div>
-
-        {{-- Email --}}
-        <div>
-            <label for="email" class="block font-medium text-sm text-gray-700">{{ __('ایمیل') }}</label>
-            <input id="email" name="email" type="email" class="form-input-custom mt-1 block w-full ltr" value="{{ old('email', Auth::user()->email) }}" required autocomplete="username" />
-            @error('email')
-                <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
-            @enderror
-
-            @if (Auth::user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! Auth::user()->hasVerifiedEmail())
+            @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
                 <div>
-                    <p class="text-sm mt-2 text-gray-800">
+                    <p class="text-sm mt-2 text-gray-800 dark:text-gray-300">
                         {{ __('آدرس ایمیل شما تایید نشده است.') }}
 
-                        <button form="send-verification" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <button form="send-verification" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800">
                             {{ __('برای ارسال مجدد ایمیل تایید اینجا کلیک کنید.') }}
                         </button>
                     </p>
 
                     @if (session('status') === 'verification-link-sent')
-                        <p class="mt-2 font-medium text-sm text-green-600">
+                        <p class="mt-2 font-medium text-sm text-green-600 dark:text-green-400">
                             {{ __('یک لینک تایید جدید به آدرس ایمیل شما ارسال شد.') }}
                         </p>
                     @endif
@@ -96,8 +49,39 @@
             @endif
         </div>
 
+        {{-- Phone/Mobile Field (If you added this) --}}
+        <div>
+             <x-input-label for="phone" :value="__('شماره تماس')" class="dark:text-gray-300" />
+             <x-text-input id="phone" name="phone" type="text" class="mt-1 block w-full dark:bg-slate-900 dark:border-slate-700 dark:text-gray-300 dark:focus:border-blue-500 dark:focus:ring-blue-500 dir-ltr" :value="old('phone', $user->phone)" placeholder="0912..." />
+             <x-input-error class="mt-2" :messages="$errors->get('phone')" />
+        </div>
+
+        {{-- Department Field (If you added this) --}}
+        <div>
+             <x-input-label for="department" :value="__('واحد سازمانی')" class="dark:text-gray-300" />
+             <x-text-input id="department" name="department" type="text" class="mt-1 block w-full dark:bg-slate-900 dark:border-slate-700 dark:text-gray-300 dark:focus:border-blue-500 dark:focus:ring-blue-500" :value="old('department', $user->department)" />
+             <x-input-error class="mt-2" :messages="$errors->get('department')" />
+        </div>
+
+        {{-- Profile Photo (If you added this) --}}
+        <div>
+            <x-input-label for="profile_picture" :value="__('تصویر پروفایل جدید')" class="dark:text-gray-300" />
+            <input type="file" id="profile_picture" name="profile_picture" class="mt-1 block w-full text-sm text-gray-500 dark:text-gray-400
+                file:mr-4 file:py-2 file:px-4
+                file:rounded-full file:border-0
+                file:text-sm file:font-semibold
+                file:bg-blue-50 file:text-blue-700
+                hover:file:bg-blue-100
+                dark:file:bg-slate-700 dark:file:text-slate-300
+            "/>
+            <x-input-error class="mt-2" :messages="$errors->get('profile_picture')" />
+        </div>
+
+
         <div class="flex items-center gap-4">
-            <button type="submit" class="btn-primary-custom">{{ __('ذخیره') }}</button>
+            <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+    {{ __('ذخیره') }}
+</button>
 
             @if (session('status') === 'profile-updated')
                 <p
@@ -105,7 +89,7 @@
                     x-show="show"
                     x-transition
                     x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600"
+                    class="text-sm text-gray-600 dark:text-gray-400"
                 >{{ __('ذخیره شد.') }}</p>
             @endif
         </div>
