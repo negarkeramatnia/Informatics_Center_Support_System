@@ -7,15 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 class PurchaseRequest extends Model
 {
     protected $fillable = [
-        'user_id', 'ticket_id',
-        'item_name', 'quantity', 
-        'estimated_price', 'url', 'reason', 'status'
+        'user_id',
+        'ticket_id',
+        'item_name',
+        'quantity',
+        'estimated_price',
+        'url',
+        'reason',
+        'status',
     ];
 
-    public function user()
+public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
+
     public function ticket()
     {
         return $this->belongsTo(Ticket::class);

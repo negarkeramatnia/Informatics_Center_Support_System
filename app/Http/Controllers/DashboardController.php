@@ -27,7 +27,11 @@ class DashboardController extends Controller
             ];
         } 
         elseif ($user->role === 'support') {
-            $myTickets = Ticket::where('assigned_to', $user->id);
+            // FIXED: Look inside the pivot table using whereHas
+            $myTickets = Ticket::whereHas('assignees', function($query) use ($user) {
+                $query->where('users.id', $user->id);
+            });
+            
             $myActiveTickets = (clone $myTickets)->whereIn('status', ['pending', 'in_progress']);
 
             $viewData['supportData'] = [
@@ -45,15 +49,20 @@ class DashboardController extends Controller
                 'total_users' => User::count(),
                 'total_open_tickets' => Ticket::whereIn('status', ['pending', 'in_progress'])->count(),
                 'total_assets' => Asset::count(),
-                'unassigned_tickets' => Ticket::whereNull('assigned_to')->where('status', 'pending')->count(),
+                
+                // FIXED: Find tickets that have zero assignees connected to them
+                'unassigned_tickets' => Ticket::whereDoesntHave('assignees')->where('status', 'pending')->count(),
+                
+                // FIXED: Get recent tickets with zero assignees
                 'recent_unassigned_tickets' => Ticket::with('user:id,name')
-                                                ->whereNull('assigned_to')
+                                                ->whereDoesntHave('assignees')
                                                 ->where('status', 'pending')
                                                 ->latest()
                                                 ->take(5)
                                                 ->get(),
             ];
         }
+        
         return view('dashboard', $viewData);
     }
 }

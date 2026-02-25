@@ -47,13 +47,17 @@ protected $fillable = [
         return $this->hasMany(Asset::class, 'assigned_to');//not default user_id
     }
 
-    public function assignedTickets()//for IT support
+    public function assignedTickets()
     {
-        return $this->hasMany(Ticket::class, 'assigned_to');
+        return $this->belongsToMany(Ticket::class, 'ticket_user', 'user_id', 'ticket_id');
     }
 
     public function messages()
     {
         return $this->hasMany(Message::class);
+    }
+    public function assignees()
+    {
+        return $this->belongsToMany(User::class, 'ticket_user', 'ticket_id', 'user_id');
     }
 }

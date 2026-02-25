@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 
 class AssetController extends Controller
 {
-public function index(Request $request)
+    public function index(Request $request)
     {
         $query = Asset::with('assignedToUser');
 
@@ -45,8 +45,14 @@ public function index(Request $request)
 
     public function create()
     {
-        $users = User::orderBy('name')->get();
-        return view('admin.assets.create', compact('users'));
+    // Fetch users for the Assignee dropdown
+    $users = User::all();
+    
+    // Fetch departments (Assuming you save them in the Settings table)
+    $departmentsString = Setting::where('key', 'departments')->value('value');
+    $departments = $departmentsString ? explode("\n", str_replace("\r", "", $departmentsString)) : [];
+
+    return view('admin.assets.create', compact('users', 'departments'));
     }
 
     public function store(Request $request)

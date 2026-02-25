@@ -15,7 +15,7 @@ class TicketController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Ticket::with('user')->latest();
+        $query = Ticket::with('user', 'assignees')->latest();
 
         if ($request->has('filter')) {
             switch ($request->filter) {
@@ -23,7 +23,21 @@ class TicketController extends Controller
                     $query->whereIn('status', ['pending', 'in_progress']);
                     break;
                 case 'unassigned':
-                    $query->whereNull('assigned_to')->where('status', 'pending');
+                    $query->whereDoesntHave('assignees')->where('status', 'pending');
+                    break;
+                case 'my_active':
+                    $query->whereHas('assignees', fn($q) => $q->where('users.id', Auth::id()))
+                          ->whereIn('status', ['pending', 'in_progress']);
+                    break;
+                case 'my_high':
+                    $query->whereHas('assignees', fn($q) => $q->where('users.id', Auth::id()))
+                          ->where('priority', 'high')
+                          ->whereIn('status', ['pending', 'in_progress']);
+                    break;
+                case 'my_completed':
+                    $query->whereHas('assignees', fn($q) => $q->where('users.id', Auth::id()))
+                          ->where('status', 'completed')
+                          ->where('updated_at', '>=', now()->subWeek());
                     break;
             }
         }
@@ -32,9 +46,7 @@ class TicketController extends Controller
         return view('tickets.index', compact('tickets'));
     }
     
-    public function create() { 
-        return view('tickets.create'); 
-    }
+    public function create() { return view('tickets.create'); }
 
     public function store(Request $request)
     {
@@ -42,14 +54,10 @@ class TicketController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'priority' => 'required|in:low,medium,high',
-            // Uncomment and enforce this now:
             'category' => 'required|in:software,hardware,network,access_control,other', 
         ]);
 
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-
-        $ticket = $user->tickets()->create([
+        $ticket = Auth::user()->tickets()->create([
             'title' => $request->title,
             'description' => $request->description,
             'priority' => $request->priority,
@@ -57,29 +65,21 @@ class TicketController extends Controller
             'status' => 'pending',
         ]);
 
-        // Find all users who are Admin or Support
         $recipients = User::whereIn('role', ['admin', 'support'])->get();
-        
-        // Send the notification
         Notification::send($recipients, new NewTicketCreated($ticket));
 
-        return redirect()->route('tickets.my')
-            ->with('success', 'درخواست شما با موفقیت ثبت شد.');
+        return redirect()->route('tickets.my')->with('success', 'درخواست شما با موفقیت ثبت شد.');
     }
 
     public function edit(Ticket $ticket)
     {
-        if (Auth::id() !== $ticket->user_id && Auth::user()->role !== 'admin') {
-            abort(403);
-        }
+        if (Auth::id() !== $ticket->user_id && Auth::user()->role !== 'admin') abort(403);
         return view('tickets.edit', compact('ticket'));
     }
 
     public function update(Request $request, Ticket $ticket)
     {
-        if (Auth::id() !== $ticket->user_id && Auth::user()->role !== 'admin') {
-            abort(403);
-        }
+        if (Auth::id() !== $ticket->user_id && Auth::user()->role !== 'admin') abort(403);
 
         $request->validate([
             'title' => 'required|string|max:255',
@@ -88,7 +88,6 @@ class TicketController extends Controller
         ]);
 
         $ticket->update($request->only('title', 'description', 'priority'));
-
         return redirect()->route('tickets.show', $ticket)->with('success', 'درخواست با موفقیت ویرایش شد.');
     }
 
@@ -100,7 +99,7 @@ class TicketController extends Controller
 
     public function show(Ticket $ticket): View
     {
-        $ticket->load(['messages.user', 'user.assets', 'allocatedAssets']);
+        $ticket->load(['messages.user', 'user.assets', 'allocatedAssets', 'assignees']);
         $supportUsers = User::where('role', 'support')->get();
         $availableAssets = Asset::where('status', 'available')->orderBy('name')->get();
         return view('tickets.show', compact('ticket', 'supportUsers', 'availableAssets'));
@@ -108,31 +107,24 @@ class TicketController extends Controller
 
     public function assign(Request $request, Ticket $ticket)
     {
-        if (Auth::user()->role !== 'admin') {
-            abort(403, 'Unauthorized action.');
-        }
+        if (Auth::user()->role !== 'admin') abort(403, 'Unauthorized action.');
 
         $request->validate([
-            'assigned_to' => 'required|exists:users,id',
+            'assigned_to' => 'required|array',
+            'assigned_to.*' => 'exists:users,id',
         ]);
 
-        $supportUser = User::find($request->assigned_to);
-        if ($supportUser->role !== 'support') {
-            return back()->with('error', 'کاربر انتخاب شده عضو تیم پشتیبانی نیست.');
-        }
-
-        $ticket->assigned_to = $request->assigned_to;
+        // Sync attaches an array of IDs to the pivot table
+        $ticket->assignees()->sync($request->assigned_to);
         $ticket->status = 'in_progress';
         $ticket->save();
 
-        // We reuse the NewTicketCreated notification or you can create a specific 'TicketAssigned' one later.
-        $supportUser->notify(new NewTicketCreated($ticket));
-
-        return redirect()->route('tickets.show', $ticket)->with('success', 'درخواست با موفقیت به ' . $supportUser->name . ' ارجاع داده شد.');
+        return redirect()->route('tickets.show', $ticket)->with('success', 'درخواست با موفقیت به کارشناسان ارجاع داده شد.');
     }
-        public function complete(Ticket $ticket)
+
+    public function complete(Ticket $ticket)
     {
-        if (Auth::id() !== $ticket->assigned_to && Auth::user()->role !== 'admin') {
+        if (!$ticket->assignees->contains(Auth::id()) && Auth::user()->role !== 'admin') {
             abort(403, 'Unauthorized action.');
         }
 
@@ -144,40 +136,29 @@ class TicketController extends Controller
 
     public function rate(Request $request, Ticket $ticket)
     {
-        if (Auth::id() !== $ticket->user_id || $ticket->status !== 'completed') {
-            abort(403, 'Unauthorized action.');
-        }
+        if (Auth::id() !== $ticket->user_id || $ticket->status !== 'completed') abort(403);
 
-        $request->validate([
-            'rating' => ['required', 'integer', 'min:1', 'max:5'],
-        ]);
-
+        $request->validate(['rating' => ['required', 'integer', 'min:1', 'max:5']]);
         $ticket->rating = $request->rating;
         $ticket->save();
 
         return redirect()->route('tickets.show', $ticket)->with('success', 'امتیاز شما با موفقیت ثبت شد.');
     }
-        public function allocateAsset(Request $request, Ticket $ticket)
-    {
-        if (Auth::user()->role !== 'admin' && Auth::id() !== $ticket->assigned_to) {
-            abort(403);
-        }
 
-        $request->validate([
-            'asset_id' => 'required|exists:assets,id',
-        ]);
+    public function allocateAsset(Request $request, Ticket $ticket)
+    {
+        if (Auth::user()->role !== 'admin' && !$ticket->assignees->contains(Auth::id())) abort(403);
+
+        $request->validate(['asset_id' => 'required|exists:assets,id']);
 
         $asset = Asset::find($request->asset_id);
-
-        if ($asset->status !== 'available') {
-            return back()->with('error', 'این قطعه در حال حاضر موجود نیست.');
-        }
+        if ($asset->status !== 'available') return back()->with('error', 'این قطعه در حال حاضر موجود نیست.');
+        
         $ticket->allocatedAssets()->attach($asset->id);
-
         $asset->status = 'assigned';
         $asset->assigned_to = $ticket->user_id;
         $asset->save();
 
-        return back()->with('success', 'قطعه با موفقیت به این درخواست تخصیص داده شد.');
+        return back()->with('success', 'قطعه با موفقیت تخصیص داده شد.');
     }
 }

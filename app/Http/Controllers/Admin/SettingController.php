@@ -10,11 +10,12 @@ class SettingController extends Controller
 {
     public function index()
     {
-        // Fetch existing settings or default to empty
-        $departments = Setting::find('departments')->value ?? '';
-        $categories = Setting::find('ticket_categories')->value ?? '';
-
-        return view('admin.settings.index', compact('departments', 'categories'));
+        // Fetch your existing settings from the database
+        $departments = Setting::where('key', 'departments')->value('value');
+        $ticketCategories = Setting::where('key', 'ticket_categories')->value('value');
+    
+        // Pass them to the view so the textareas can pre-fill
+        return view('admin.settings.index', compact('departments', 'ticketCategories'));
     }
 
     public function store(Request $request)

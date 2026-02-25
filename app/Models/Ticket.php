@@ -4,14 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Morilog\Jalali\Jalalian;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;//many-to-many
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Ticket extends Model
 {
-
     protected $fillable = [
         'user_id',
-        'assigned_to',
+        // Note: 'assigned_to' is completely removed from here!
         'title',
         'description',
         'status',
@@ -20,7 +19,7 @@ class Ticket extends Model
         'rating',
     ];
 
-    // Relationships*************************************
+    // Relationships *************************************
 
     // Creator of the ticket
     public function user()
@@ -28,21 +27,19 @@ class Ticket extends Model
         return $this->belongsTo(User::class);
     }
 
-    // IT Support assigned to the ticket
-    public function assignedUser()
+    // NEW LOGIC: IT Support users assigned to the ticket (Many-to-Many)
+    public function assignees(): BelongsToMany
     {
-        return $this->belongsTo(User::class, 'assigned_to');
+        return $this->belongsToMany(User::class, 'ticket_user', 'ticket_id', 'user_id');
     }
     
-    //many-to-many
-    //Ticket and the Assets
+    // Many-to-many: Ticket and the Assets
     public function allocatedAssets(): BelongsToMany
     {
         return $this->belongsToMany(Asset::class);
     }
 
-    // Messages related to this ticket 
-    // one-to-many
+    // Messages related to this ticket (one-to-many)
     public function messages()
     {
         return $this->hasMany(Message::class);
