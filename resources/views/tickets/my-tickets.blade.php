@@ -61,18 +61,18 @@
                                             $badgeClass = $statusColors[$ticket->status] ?? 'bg-gray-100 text-gray-700 dark:bg-gray-700/50 dark:text-gray-300 border-gray-200 dark:border-gray-600';
                                         @endphp
                                         <span class="px-3 py-1 border rounded-full text-xs font-bold {{ $badgeClass }} whitespace-nowrap">
-                                            {{ __($ticket->status) }}
+                                            {{ __('app.' . $ticket->status) }}
                                         </span>
                                     </td>
 
                                     {{-- Priority Badge --}}
                                     <td class="px-6 py-4 text-center">
                                         @if($ticket->priority === 'high')
-                                            <span class="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 rounded-full text-xs font-bold px-3 py-1 whitespace-nowrap">بالا</span>
+                                            <span class="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 rounded-full text-xs font-bold px-3 py-1 whitespace-nowrap">{{ __('app.high') }}</span>
                                         @elseif($ticket->priority === 'medium')
-                                            <span class="bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 rounded-full text-xs font-bold px-3 py-1 whitespace-nowrap">متوسط</span>
+                                            <span class="bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 rounded-full text-xs font-bold px-3 py-1 whitespace-nowrap">{{ __('app.medium') }}</span>
                                         @else
-                                            <span class="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 rounded-full text-xs font-bold px-3 py-1 whitespace-nowrap">عادی</span>
+                                            <span class="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 rounded-full text-xs font-bold px-3 py-1 whitespace-nowrap">{{ __('app.low') }}</span>
                                         @endif
                                     </td>
                                     

@@ -111,12 +111,12 @@
                                     </td>
                                     
                                     <td class="px-6 py-4 text-center text-gray-700 dark:text-gray-300 font-medium">
-                                        {{ $asset->user->name ?? ($asset->assigned_to ?? '---') }}
+                                        {{ optional($asset->assignedToUser)->name ?? '---' }}
                                     </td>
                                     
                                     <td class="px-6 py-4 text-center">
                                         <div class="flex items-center justify-center gap-3">
-                                            <a href="#" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition transform hover:scale-110" title="تاریخچه">
+                                            <a href="{{ route('admin.assets.show', $asset) }}" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition transform hover:scale-110" title="تاریخچه">
                                                 <i class="fas fa-history text-lg"></i>
                                             </a>
                                             <a href="{{ route('admin.assets.edit', $asset) }}" class="text-blue-500 hover:text-blue-700 dark:hover:text-blue-400 transition transform hover:scale-110" title="ویرایش">

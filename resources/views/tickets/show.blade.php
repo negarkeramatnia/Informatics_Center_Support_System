@@ -100,7 +100,7 @@
                 @endif
                 
                 {{-- Back Button --}}
-                <a href="{{ url()->previous() }}" class="flex items-center gap-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300 px-5 py-2.5 rounded-xl font-bold transition-all">
+                <a href="{{ route('dashboard') }}" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-gray-300 px-5 py-2.5                 rounded-xl font-bold transition-all shadow-sm border border-slate-700">
                     بازگشت <i class="fas fa-arrow-left text-sm"></i>
                 </a>
             </div>
@@ -249,24 +249,24 @@
                                     $badgeClass = $statusColors[$ticket->status] ?? 'bg-gray-100 text-gray-700 dark:bg-gray-700/50 dark:text-gray-300';
                                 @endphp
                                 <span class="px-3 py-1 rounded-full text-xs font-bold {{ $badgeClass }}">
-                                    {{ __($ticket->status) }}
+                                    {{ __('app.' . $ticket->status) }}
                                 </span>
                             </div>
 
                             <div class="flex justify-between items-center">
                                 <span class="text-sm text-gray-500 dark:text-gray-400">اولویت:</span>
                                 @if($ticket->priority === 'high')
-                                    <span class="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 rounded-full text-xs font-bold px-3 py-1">بالا</span>
+                                    <span class="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 rounded-full text-xs font-bold px-3 py-1">{{ __('app.high') }}</span>
                                 @elseif($ticket->priority === 'medium')
-                                    <span class="bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 rounded-full text-xs font-bold px-3 py-1">متوسط</span>
+                                    <span class="bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 rounded-full text-xs font-bold px-3 py-1">{{ __('app.medium') }}</span>
                                 @else
-                                    <span class="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 rounded-full text-xs font-bold px-3 py-1">عادی</span>
+                                    <span class="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 rounded-full text-xs font-bold px-3 py-1">{{ __('app.low') }}</span>
                                 @endif
                             </div>
 
                             <div class="flex justify-between items-center">
                                 <span class="text-sm text-gray-500 dark:text-gray-400">دسته‌بندی:</span>
-                                <span class="text-sm font-bold text-gray-900 dark:text-white">{{ __($ticket->category) }}</span>
+                                <span class="text-sm font-bold text-gray-900 dark:text-white">{{ __('app.' . $ticket->category) }}</span>
                             </div>
 
                             <hr class="border-gray-100 dark:border-slate-700">

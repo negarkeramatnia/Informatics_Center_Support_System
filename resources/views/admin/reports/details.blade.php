@@ -52,7 +52,7 @@
                                     </td>
                                     
                                     <td class="px-6 py-4 text-center text-gray-600 dark:text-gray-400">
-                                        {{ __($ticket->category) }}
+                                        {{ __('app.' . $ticket->category) }}
                                     </td>
                                     
                                     <td class="px-6 py-4 text-center text-gray-500 dark:text-gray-400 dir-ltr text-xs">
@@ -67,7 +67,7 @@
                                         @elseif($ticket->status === 'completed' || $ticket->status === 'closed')
                                             <span class="px-3 py-1 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 border border-green-200 dark:border-green-800 rounded-full text-xs font-bold">تکمیل شده</span>
                                         @else
-                                            <span class="px-3 py-1 bg-gray-100 text-gray-700 dark:bg-gray-700/50 dark:text-gray-300 border border-gray-200 dark:border-gray-600 rounded-full text-xs font-bold">{{ __($ticket->status) }}</span>
+                                            <span class="px-3 py-1 bg-gray-100 text-gray-700 dark:bg-gray-700/50 dark:text-gray-300 border border-gray-200 dark:border-gray-600 rounded-full text-xs font-bold">{{ __('app.' . $ticket->status) }}</span>
                                         @endif
                                     </td>
                                     

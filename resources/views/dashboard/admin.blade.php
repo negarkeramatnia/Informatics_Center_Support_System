@@ -151,10 +151,22 @@
                         @forelse ($adminData['recent_unassigned_tickets'] ?? [] as $ticket)
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
                                 <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ Str::limit($ticket->title, 45) }}</td>
-                                <td class="px-6 py-4 text-gray-600 dark:text-gray-300">{{ $ticket->category_label }}</td> 
+                                <td class="px-6 py-4">
+                                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-slate-600">
+                                        {{ $ticket->category_label }}
+                                    </span>
+                                </td> 
                                 <td class="px-6 py-4 text-gray-700 dark:text-gray-300">{{ $ticket->user->name ?? 'N/A' }}</td>
                                 <td class="px-6 py-4">
-                                    <span class="priority-badge priority-{{$ticket->priority}} dark:opacity-90">{{ __($ticket->priority) }}</span>
+                                    @php
+                                        $priorityColors = [
+                                            'high' => 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border border-red-200 dark:border-red-800',
+                                            'medium' => 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-800',
+                                            'low' => 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border border-blue-200 dark:border-blue-800',
+                                        ];
+                                        $priorityBadgeClass = $priorityColors[$ticket->priority] ?? 'bg-gray-100 text-gray-700 dark:bg-gray-700/50 dark:text-gray-300 border border-gray-200 dark:border-gray-600';
+                                    @endphp
+                                    <span class="px-3 py-1 rounded-full text-xs font-bold {{ $priorityBadgeClass }}">{{ __('app.' . $ticket->priority) }}</span>
                                 </td>
                                 <td class="px-6 py-4 text-gray-500 dark:text-gray-400">{{ $ticket->created_at->diffForHumans() }}</td>
                                 <td class="px-6 py-4">

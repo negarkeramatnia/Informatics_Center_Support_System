@@ -115,7 +115,7 @@ class AssetController extends Controller
     {
         // Load the user who currently has it, and the history of tickets associated with this asset
         $asset->load(['assignedToUser', 'tickets' => function($q) {
-            $q->latest(); // Show newest tickets first
+            $q->orderBy('created_at'); // Show history from first request to last
         }, 'tickets.user']);
 
         return view('admin.assets.show', compact('asset'));
