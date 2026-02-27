@@ -13,37 +13,57 @@ use App\Notifications\NewTicketCreated;
 
 class TicketController extends Controller
 {
-    public function index(Request $request): View
+public function index(\Illuminate\Http\Request $request)
     {
-        $query = Ticket::with('user', 'assignees')->latest();
+        // 1. Start a fresh database query
+        $query = \App\Models\Ticket::query();
+        $user = auth()->user();
 
-        if ($request->has('filter')) {
-            switch ($request->filter) {
-                case 'open':
-                    $query->whereIn('status', ['pending', 'in_progress']);
-                    break;
-                case 'unassigned':
-                    $query->whereDoesntHave('assignees')->where('status', 'pending');
-                    break;
-                case 'my_active':
-                    $query->whereHas('assignees', fn($q) => $q->where('users.id', Auth::id()))
-                          ->whereIn('status', ['pending', 'in_progress']);
-                    break;
-                case 'my_high':
-                    $query->whereHas('assignees', fn($q) => $q->where('users.id', Auth::id()))
-                          ->where('priority', 'high')
-                          ->whereIn('status', ['pending', 'in_progress']);
-                    break;
-                case 'my_completed':
-                    $query->whereHas('assignees', fn($q) => $q->where('users.id', Auth::id()))
-                          ->where('status', 'completed')
-                          ->where('updated_at', '>=', now()->subWeek());
-                    break;
-            }
+        // 2. STRICT ROLE-BASED SECURITY
+        if ($user->role === 'user') {
+            // Normal users ONLY see tickets they created
+            $query->where('user_id', $user->id);
+            $pageTitle = 'همه درخواست‌های من';
+        } 
+        elseif ($user->role === 'support') {
+            // Support users ONLY see tickets assigned to them via the pivot table!
+            $query->whereHas('assignees', function($q) use ($user) {
+                $q->where('users.id', $user->id);
+            });
+            $pageTitle = 'درخواست‌های ارجاع شده به من';
+        }
+        else {
+            // Admins see everything
+            $pageTitle = 'همه درخواست‌ها در سیستم';
         }
 
-        $tickets = $query->paginate(15);
-        return view('tickets.index', compact('tickets'));
+        // 3. The Dashboard Filters (Refining the secure base query)
+        if ($request->status === 'active') {
+            $query->whereIn('status', ['pending', 'open', 'in_progress']);
+            $pageTitle = $user->role === 'support' ? 'درخواست‌های فعال من' : 'درخواست‌های فعال';
+        } 
+        elseif ($request->status === 'in_progress') {
+            $query->where('status', 'in_progress'); 
+            $pageTitle = 'درخواست‌های در حال بررسی';
+        } 
+        elseif ($request->status === 'completed') {
+            $query->where('status', 'completed');
+            $pageTitle = 'درخواست‌های تکمیل شده';
+        } 
+        elseif ($request->priority === 'high') {
+            $query->where('priority', 'high');
+            $pageTitle = 'درخواست‌های اولویت بالا';
+        }
+        elseif ($request->status === 'completed_recent') {
+            $query->where('status', 'completed')
+                  ->where('updated_at', '>=', now()->subDays(7));
+            $pageTitle = 'تکمیل شده (هفته اخیر)';
+        }
+
+        // 4. Fetch the results and preserve the URL parameters
+        $tickets = $query->latest()->paginate(10)->withQueryString();
+        
+        return view('tickets.index', compact('tickets', 'pageTitle'));
     }
     
     public function create() { return view('tickets.create'); }

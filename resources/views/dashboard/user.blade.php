@@ -1,29 +1,30 @@
 <div class="space-y-8">
     
-    {{-- KPI CARDS (2 Column Grid - CLICKABLE) --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-        
-        {{-- Active Tickets Card --}}
-        <a href="{{ route('tickets.my') }}" class="dashboard-card group bg-white dark:bg-slate-800 shadow-sm rounded-2xl p-6 border border-gray-100 dark:border-slate-700 flex items-center justify-between transition-all duration-300 hover:shadow-md hover:border-blue-300 dark:hover:border-blue-500 hover:-translate-y-1">
-            <div>
-                <p class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">درخواست‌های فعال من</p>
-                <h4 class="text-3xl font-black text-gray-900 dark:text-white">{{ $employeeData['open_tickets_count'] ?? 0 }}</h4>
-            </div>
-            <div class="w-14 h-14 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center text-2xl shadow-inner group-hover:scale-110 transition-transform">
-                <i class="fas fa-folder-open"></i>
-            </div>
-        </a>
+{{-- DASHBOARD CARDS --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    
+    {{-- RIGHT CARD: In Progress Tickets (Since the page is RTL, the first item is on the right) --}}
+    <a href="{{ url('/tickets?status=active') }}" class="flex items-center justify-between p-6 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-3xl hover:bg-gray-50 dark:hover:bg-slate-700/80 transition-all shadow-sm group">
+        <div class="flex flex-col">
+            <h3 class="text-gray-500 dark:text-gray-400 text-sm font-bold mb-2">درخواست‌های فعال من</h3>
+            <p class="text-gray-900 dark:text-white text-3xl font-black">{{ $employeeData['open_tickets_count'] ?? 0 }}</p>
+        </div>
+        <div class="w-14 h-14 rounded-2xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform">
+            <i class="fas fa-folder-open text-2xl"></i>
+        </div>
+    </a>
 
-        {{-- Completed Tickets Card --}}
-        <a href="{{ route('tickets.my') }}" class="dashboard-card group bg-white dark:bg-slate-800 shadow-sm rounded-2xl p-6 border border-gray-100 dark:border-slate-700 flex items-center justify-between transition-all duration-300 hover:shadow-md hover:border-green-300 dark:hover:border-green-500 hover:-translate-y-1">
-            <div>
-                <p class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-1 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">درخواست‌های تکمیل شده</p>
-                <h4 class="text-3xl font-black text-gray-900 dark:text-white">{{ $employeeData['resolved_tickets_count'] ?? 0 }}</h4>
-            </div>
-            <div class="w-14 h-14 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 flex items-center justify-center text-2xl shadow-inner group-hover:scale-110 transition-transform">
-                <i class="fas fa-check-circle"></i>
-            </div>
-        </a>
+    {{-- LEFT CARD: Completed Tickets --}}
+    <a href="{{ url('/tickets?status=completed') }}" class="flex items-center justify-between p-6 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-3xl hover:bg-gray-50 dark:hover:bg-slate-700/80 transition-all shadow-sm group">
+        <div class="flex flex-col">
+            <h3 class="text-gray-500 dark:text-gray-400 text-sm font-bold mb-2">درخواست‌های تکمیل شده</h3>
+            <p class="text-gray-900 dark:text-white text-3xl font-black">{{ $employeeData['resolved_tickets_count'] ?? 0 }}</p>
+        </div>
+        <div class="w-14 h-14 rounded-2xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400 group-hover:scale-110 transition-transform">
+            <i class="fas fa-check-circle text-2xl"></i>
+        </div>
+    </a>
+
     </div>
 
     {{-- RECENT TICKETS TABLE --}}
@@ -49,7 +50,7 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-slate-700 text-sm">
-                    @forelse ($employeeData['recent_tickets'] as $ticket)
+                    @forelse ($tickets as $ticket)
                         <tr class="hover:bg-gray-50 dark:hover:bg-slate-700/30 transition-colors">
                             <td class="px-6 py-4 text-right font-bold text-gray-900 dark:text-white">
                                 {{ Str::limit($ticket->title, 50) }}

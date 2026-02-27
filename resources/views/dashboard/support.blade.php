@@ -1,51 +1,53 @@
 <div class="space-y-8">
     
-    {{-- KPI CARDS (4 Column Grid) --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        
-        {{-- 1. Active Tickets Link (FIXED LINK) --}}
-        <a href="{{ route('tickets.index', ['filter' => 'my_active']) }}" class="dashboard-card group bg-white dark:bg-slate-800 shadow-sm rounded-2xl p-6 border border-gray-100 dark:border-slate-700 flex items-center justify-between transition-all duration-300 hover:shadow-md hover:border-blue-300 dark:hover:border-blue-500 hover:-translate-y-1">
-            <div>
-                <p class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">درخواست‌های فعال من</p>
-                <h4 class="text-3xl font-black text-gray-900 dark:text-white">{{ $supportData['my_active_tickets_count'] ?? 0 }}</h4>
-            </div>
-            <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition-transform">
-                <i class="fas fa-inbox"></i>
-            </div>
-        </a>
-
-        {{-- 2. High Priority Link (FIXED LINK) --}}
-        <a href="{{ route('tickets.index', ['filter' => 'my_high']) }}" class="dashboard-card group bg-white dark:bg-slate-800 shadow-sm rounded-2xl p-6 border border-gray-100 dark:border-slate-700 flex items-center justify-between transition-all duration-300 hover:shadow-md hover:border-red-300 dark:hover:border-red-500 hover:-translate-y-1">
-            <div>
-                <p class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-1 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">اولویت بالا</p>
-                <h4 class="text-3xl font-black text-gray-900 dark:text-white">{{ $supportData['high_priority_count'] ?? 0 }}</h4>
-            </div>
-            <div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition-transform">
-                <i class="fas fa-exclamation-triangle"></i>
-            </div>
-        </a>
-
-        {{-- 3. Completed This Week Link (FIXED LINK) --}}
-        <a href="{{ route('tickets.index', ['filter' => 'my_completed']) }}" class="dashboard-card group bg-white dark:bg-slate-800 shadow-sm rounded-2xl p-6 border border-gray-100 dark:border-slate-700 flex items-center justify-between transition-all duration-300 hover:shadow-md hover:border-green-300 dark:hover:border-green-500 hover:-translate-y-1">
-            <div>
-                <p class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-1 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">تکمیل شده (هفته اخیر)</p>
-                <h4 class="text-3xl font-black text-gray-900 dark:text-white">{{ $supportData['completed_last_week'] ?? 0 }}</h4>
-            </div>
-            <div class="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition-transform">
-                <i class="fas fa-check-double"></i>
-            </div>
-        </a>
-
-        {{-- 4. Average Response Time (REMOVED LINK - IT IS NOW JUST A CARD) --}}
-        <div class="dashboard-card bg-white dark:bg-slate-800 shadow-sm rounded-2xl p-6 border border-gray-100 dark:border-slate-700 flex items-center justify-between transition-all duration-300">
-            <div>
-                <p class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-1">میانگین زمان پاسخ</p>
-                <h4 class="text-3xl font-black text-gray-900 dark:text-white">{{ $supportData['avg_response_time'] ?? 'N/A' }}</h4>
-            </div>
-            <div class="w-12 h-12 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xl shadow-inner">
-                <i class="fas fa-stopwatch"></i>
-            </div>
+{{-- SUPPORT DASHBOARD CARDS (4-Column Grid) --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+    
+    {{-- CARD 1: Active Tickets (Link) --}}
+    <a href="{{ url('/tickets?status=active') }}" class="flex items-center justify-between p-6 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-3xl hover:bg-gray-50 dark:hover:bg-slate-700/80 transition-all shadow-sm group">
+        <div class="flex flex-col">
+            <h3 class="text-gray-500 dark:text-gray-400 text-sm font-bold mb-2">درخواست‌های فعال من</h3>
+            <p class="text-gray-900 dark:text-white text-3xl font-black">{{ $supportData['active_tickets'] ?? 0 }}</p>
         </div>
+        <div class="w-14 h-14 rounded-2xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform">
+            <i class="fas fa-inbox text-2xl"></i>
+        </div>
+    </a>
+
+    {{-- CARD 2: High Priority (Link) --}}
+    <a href="{{ url('/tickets?priority=high') }}" class="flex items-center justify-between p-6 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-3xl hover:bg-gray-50 dark:hover:bg-slate-700/80 transition-all shadow-sm group">
+        <div class="flex flex-col">
+            <h3 class="text-gray-500 dark:text-gray-400 text-sm font-bold mb-2">اولویت بالا</h3>
+            <p class="text-red-600 dark:text-red-400 text-3xl font-black">{{ $supportData['high_priority'] ?? 0 }}</p>
+        </div>
+        <div class="w-14 h-14 rounded-2xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600 dark:text-red-400 group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(239,68,68,0.2)]">
+            <i class="fas fa-exclamation-triangle text-2xl animate-pulse"></i>
+        </div>
+    </a>
+
+    {{-- CARD 3: Completed Recently (Link with FIXED Single Checkmark) --}}
+    <a href="{{ url('/tickets?status=completed_recent') }}" class="flex items-center justify-between p-6 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-3xl hover:bg-gray-50 dark:hover:bg-slate-700/80 transition-all shadow-sm group">
+        <div class="flex flex-col">
+            <h3 class="text-gray-500 dark:text-gray-400 text-sm font-bold mb-2">تکمیل شده (هفته اخیر)</h3>
+            <p class="text-gray-900 dark:text-white text-3xl font-black">{{ $supportData['completed_recent'] ?? 0 }}</p>
+        </div>
+        <div class="w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform">
+            {{-- Fixed: Changed from fa-check-double to a clean, single fa-check --}}
+            <i class="fas fa-check text-2xl"></i>
+        </div>
+    </a>
+
+    {{-- CARD 4: Average Response Time (Static Metric Box - NOT a link) --}}
+<div class="flex items-center justify-between p-6 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-3xl shadow-sm">
+        <div class="flex flex-col">
+            <h3 class="text-gray-500 dark:text-gray-400 text-sm font-bold mb-2">میانگین زمان پاسخ</h3>
+            <p class="text-gray-900 dark:text-white text-2xl font-black">{{ $supportData['avg_response_time'] ?? '---' }}</p>
+        </div>
+        <div class="w-14 h-14 rounded-2xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+            <i class="fas fa-stopwatch text-2xl"></i>
+        </div>
+    </div>
+
     </div>
 
     {{-- TABLE: MY ACTIVE TICKETS (NOW FULL WIDTH) --}}

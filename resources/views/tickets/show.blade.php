@@ -100,7 +100,7 @@
                 @endif
                 
                 {{-- Back Button --}}
-                <a href="{{ url()->previous() }}" class="flex items-center gap-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300 px-5 py-2.5 rounded-xl font-bold transition-all">
+                <a href="{{ route('dashboard') }}" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-gray-300 px-5 py-2.5                 rounded-xl font-bold transition-all shadow-sm border border-slate-700">
                     بازگشت <i class="fas fa-arrow-left text-sm"></i>
                 </a>
             </div>
